@@ -2,8 +2,11 @@
 #include<string.h>
 #include<stdlib.h>
 #include<math.h>
+#include<stdarg.h>
 
-#define showd(x) printf("#x:%lf", x);
+#ifndef _AWSHEAD
 
+    #define show(x) printf(""#x":%d", x);
+#endif
 //BY AW
 //2017.9.15
