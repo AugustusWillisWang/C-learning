@@ -3,6 +3,7 @@
 #include<stdlib.h>
 #include<math.h>
 #include<stdarg.h>
+#include<time.h>
 
 //大写宏
 #ifndef _AWSHEAD
@@ -15,7 +16,7 @@
     //值追踪
     #define CK(x) (printf("track: "#x":%d\n", x)*0+x)
     //值追踪
-    #define CP (printf("checkpoint. line:%d\n",__LINE__)
+    #define CP (printf("checkpoint. line:%d\n",__LINE__))
     //检查点
     #define BP (printf("breakpoint. line:%d\n",__LINE__),getchar())
     //断点

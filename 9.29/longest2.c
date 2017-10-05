@@ -37,6 +37,9 @@ int main()
         //判断最大
         if (cnt > max)
         {
+            for (int i = 0; maxs[i] != '\0';i++)
+            maxs2[i] = maxs[i];
+            max2 = max;
             max = cnt;
             for (int i = 0; read[i] != '\0';i++)
                 maxs[i] = read[i];

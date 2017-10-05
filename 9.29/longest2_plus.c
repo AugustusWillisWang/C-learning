@@ -1,5 +1,5 @@
 #include"lazy.h"
-#define LEN 100
+#define LENG 100
 
 char* my_strcpy(char* dest,char* sour){
     int i = 0;
@@ -34,16 +34,16 @@ int my_gets(char* str){
 }
 
 void clear(char* chararray){
-    for (int i = 0; i < LEN;i++){
+    for (int i = 0; i < LENG;i++){
         chararray[i] = 0;
     }
 }
 
 int main()
 {
-    char a[LEN];
-    char b[LEN];
-    char temp[LEN];
+    char a[LENG];
+    char b[LENG];
+    char temp[LENG];
     clear(a);
     clear(b);
     clear(temp);
@@ -52,6 +52,8 @@ int main()
     while(my_gets(temp)){
         if ( my_strlen(temp) > lena)
         {
+            lenb = lena;
+            my_strcpy(b, a);
             lena = my_strlen(temp);
             my_strcpy(a, temp);
         }
@@ -60,9 +62,9 @@ int main()
             my_strcpy(b, temp);
         }
     }
-    show(my_strlen(a));
-    show(my_strlen(b));
-        show(my_strlen(temp));
+    SHOW(my_strlen(a));
+    SHOW(my_strlen(b));
+        SHOW(my_strlen(temp));
         puts(a);
         puts(b);
 }
