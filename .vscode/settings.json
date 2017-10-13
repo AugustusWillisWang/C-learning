@@ -1,5 +1,6 @@
 {
     "files.associations": {
-        "lazy.h": "c"
+        "lazy.h": "c",
+        "stdio.h": "c"
     }
 }
