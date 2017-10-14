@@ -7,7 +7,7 @@ long long int fact(int input){
         printf("wrong fact!");
         return 1;
     }
-    if(input>100)
+    if(input>50)
         puts("Warning: too big input may cause trouble!\n");
     while (input > 0)
     {
