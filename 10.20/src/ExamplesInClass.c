@@ -22,6 +22,66 @@ int choose_part(unsigned int input,int left,int right){
     return input;
 }
 
+int eg8(){
+    char c;
+    unsigned char uc;
+    int a, b;
+    c = 0xff;
+    uc = c;
+    a = c;
+    b = uc;
+    CK(a);
+    CK(b);
+    return 0;
+}
+
+int eg9(){
+    int org;
+    int a, b, c;
+    org = 0x12345678;
+    a = (char)org;
+    b = (short)org;
+    CK(a);
+    CK(b);
+    org = 0x123456ff;
+    a = (char)org;
+    b = (short)org;
+    CK(a);
+    CK(b);
+    return 0;
+}
+
+int eg11(){
+    int a = 5, b;
+    b = a++ + a++;
+    CK(b);
+    CK(a);
+    return 0;
+}
+
+int eg12(){
+    int a[] = {1, 2, 3, 4, 5};
+    int i = 0,j;
+    a[i] = i++;
+    for (j = 0; j < 5;j++){
+        CK(a[j]);
+    }
+    return 0;
+}
+
+int eg17(){
+    for (int i = 0; i < 1000;i++){
+        printf("%6d%c", i, (i % 10 == 9 || i == 999) ? '\n' : ' ');
+    }
+    return 0;
+}
+
+int eg18(){
+    for (int i = 0; i < 100;i++){
+        printf("You have %d item%s. \n", i, (i > 1) ? "s" : "");
+    }
+}
+
 //main里面尝试了课上的各种操作
 int main(){
     char ca=255;
