@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "lazy.h": "c",
-        "stdio.h": "c"
+        "stdio.h": "c",
+        "limits": "c"
     }
 }
