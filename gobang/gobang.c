@@ -9,6 +9,17 @@
     ManualSetUpAll(); \
     JudgeWin();
 
+/*
+Todo:
+
+timer
+saver
+board
+weight Gen
+
+
+*/
+
 int board[BOUNDRY][BOUNDRY];
 int printboard[BOUNDRY][BOUNDRY];
 
@@ -86,7 +97,7 @@ int PvpMode()
     int colornow = BLACK;
     while (!JudgeWin())
     {
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < 30; i++)
             puts("");
         LICENSE;
         puts("------------------------------------------");
@@ -128,7 +139,7 @@ int PveMode()
     int movecnt = 1;
     int colornow = BLACK;
 
-    for (int i = 0; i < 10; i++)
+    for (int i = 0; i < 30; i++)
         puts("");
     LICENSE;
     puts("------------------------------------------");
@@ -136,7 +147,7 @@ int PveMode()
     puts("Please choose your side: 1 for the black and 2 for the white");
     int player;
     scanf("%d", &player);
-    while (player != 1 || player != 2)
+    while (player != 1 && player != 2)
     {
         puts("Wrong input!\nPlease choose your side: 1 for the black and 2 for the white");
         scanf("%d", &player);
@@ -145,11 +156,11 @@ int PveMode()
 
     while (!JudgeWin())
     {
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < 30; i++)
             puts("");
         LICENSE;
         puts("------------------------------------------");
-        puts("This is pve mode.");
+        puts("This is pvp mode.");
         puts("The board now is:");
         ShowBoardArray();
         puts("------------------------------------------");
