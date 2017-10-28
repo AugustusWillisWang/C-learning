@@ -1,19 +1,18 @@
 #include "lazy.h"
+#include "charlib.h"
 #define BOUNDRY 19
 #define BLACK 1
 #define WHITE 2
 #define NORMAL 0
 #define CLEAR 1
-
-#define TEST          \
-    ManualSetUpAll(); \
-    JudgeWin();
+#define TEST              \
+    ManualSetUp(1, 2, 1); \
+    PrintBoard();
 
 /*
 Todo:
 
 timer
-saver
 board
 weight Gen
 
@@ -22,6 +21,8 @@ weight Gen
 
 int board[BOUNDRY][BOUNDRY];
 int printboard[BOUNDRY][BOUNDRY];
+
+FILE *log_file;
 
 int PvpMode();
 int PveMode();
@@ -39,11 +40,17 @@ int ManualSetUp();       //手动设置当前棋盘某一位置(调试用)(pvp�
 int ForcedManualSetUp(); //手动设置当前棋盘某一位置(调试用)(无限制修改)
 int _Tester();           //判断胜负时使用的子函数
 int Save();              //保存当前操作到棋谱
-int InitializeSaving();  //初始化保存文件
+int DisplayLog();        //显示棋谱
+
+FILE *InitializeSaving(); //初始化保存文件
 
 int main(int argc, char *argv[])
 {
+
+    //初始化棋盘
     SetUpBoard();
+
+    //mode选择
     int mode_choosed;
     if (argc == 1)
     {
@@ -52,7 +59,7 @@ int main(int argc, char *argv[])
         puts("");
         puts("Run without parameter.");
         puts("Tips: you can also run this program with paramter. ");
-        puts("Please choose game mode. 1:pvp 2:pve 3: pevpe 4:test 0:exit");
+        puts("Please choose game mode. 1:pvp 2:pve 3: pevpe 4:test 5:display log 0:exit");
         scanf("%d", &mode_choosed);
         // fflush(stdin);//windows
         setbuf(stdin, NULL); //For all OSs, clear buf to eat \n
@@ -65,18 +72,30 @@ int main(int argc, char *argv[])
     switch (mode_choosed)
     {
     case 1:
+        log_file = InitializeSaving();
         PvpMode();
         break;
     case 2:
+        log_file = InitializeSaving();
         PveMode();
         break;
     case 3:
+        log_file = InitializeSaving();
         SocketMode();
         break;
     case 4:
+        log_file = InitializeSaving();
         TEST
             BP;
         break;
+    case 5:
+    {
+        char log_name[] = "SunOct290114402016.log";
+        gets(log_name);
+        log_file = fopen(log_name, "r");
+        DisplayLog();
+        break;
+    }
     case 0:
         exit(0);
     default:
@@ -86,6 +105,8 @@ int main(int argc, char *argv[])
         TEST;
         BP;
     }
+    fflush(log_file); //write log.
+    fclose(log_file); //close log.
     puts("Gobang.c finished successfully.");
 }
 
@@ -113,6 +134,7 @@ int PvpMode()
         while (ManualSetUp(a, b, colornow))
             scanf("%d%d", &a, &b);
         ;
+        Save(a, b);
         movecnt++;
         if (colornow == BLACK)
         {
@@ -172,6 +194,7 @@ int PveMode()
         while (ManualSetUp(a, b, colornow))
             scanf("%d%d", &a, &b);
         ;
+        Save(a, b);
         movecnt++;
         if (colornow == BLACK)
         {
@@ -206,6 +229,57 @@ int SetUpBoard()
 int PrintBoard()
 {
     // ┠ ┨┯ ┷┏┓┗ ┛┳⊥﹃﹄┌ ┐└ ┘∟
+    // http://lulinbest.blog.sohu.com/88118628.html
+    int LINE = 103;
+    int VLINE = 104;
+    int CROSS = 105;
+
+    static int display_array[30][30];
+    for (int i = 2; i < 2 + BOUNDRY; i++)
+    {
+        display_array[0][i] = i - 2;
+    }
+
+    for (int i = 2; i < 2 + BOUNDRY; i++)
+    {
+        display_array[i][0] = i - 2;
+    }
+    for (int a = 0; a < BOUNDRY; a++)
+    {
+        for (int b = 0; b < BOUNDRY; b++)
+        {
+            display_array[2 + a][2 + b] = board[a][b];
+        }
+    }
+
+    for (int a = 0; a < 30; a++)
+    {
+        for (int b = 0; b < 30; b++)
+        {
+            switch (display_array[a][b])
+            {
+
+            case BLACK + 100:
+                printf("1");
+                break;
+            case WHITE + 100:
+                printf("2");
+                break;
+            case 0:
+                if (a == 0 || b == 0)
+                {
+                    printf(" 0");
+                    break;
+                }
+                printf(" ");
+                break;
+            default:
+                printf("%d", display_array[a][b]);
+            }
+        }
+        puts("");
+    }
+
     return 0;
 }
 
@@ -640,12 +714,14 @@ int ManualSetUp(int a, int b, int color) //手动设置当前棋盘某一位置(
         if (board[a][b] != 0)
         {
             puts("Wrong input, please input again!");
+            setbuf(stdin, NULL);
             return -1;
         }
         board[a][b] = color;
         return 0;
     }
     puts("Wrong input, please input again!");
+    setbuf(stdin, NULL);
     return -1;
 }
 
@@ -803,8 +879,75 @@ int JudgeWinPlus()
     }
 }
 
-int Save();             //保存当前操作到棋谱
-int InitializeSaving(); //初始化保存文件
+int Save(int a, int b) //保存当前操作到棋谱
+{
+    fprintf(log_file, "%d %d\n", a, b);
+}
+
+int DisplayLog()
+{
+
+    int a;
+    int b;
+    int movecnt = 1;
+    int colornow = BLACK;
+    while (!JudgeWin())
+    {
+        fscanf(log_file, "%d %d", &a, &b);
+        CK(a);
+        CK(b);
+        if (ManualSetUp(a, b, colornow))
+        {
+            puts("Wrong log format.");
+            exit(-1);
+        }
+        // Save(a, b);
+        for (int i = 0; i < 30; i++)
+            puts("");
+        LICENSE;
+        puts("------------------------------------------");
+        puts("This is display mode.");
+        puts("The board now is:");
+        ShowBoardArray();
+        puts("------------------------------------------");
+        printf("This is move %d.\n", movecnt);
+        printf("Turn for the %s side.\n", (colornow == BLACK ? "black" : "white"));
+        // puts("Please input your coordinate, the format is like \"a b\"");
+        // printf("a,b ranges from 0 to %d\n", BOUNDRY - 1);
+
+        movecnt++;
+        if (colornow == BLACK)
+        {
+            colornow = WHITE;
+        }
+        else
+        {
+            colornow = BLACK;
+        }
+        puts("Press any key to continue.");
+        getchar();
+    }
+    printf("Game finished in move %d.\n", movecnt - 1);
+    puts("--------------------------------------");
+    ShowBoardArray();
+    puts("--------------------------------------");
+
+    BP;
+    return 0;
+}
+
+FILE *InitializeSaving() //初始化保存文件
+{
+    //初始化log文件,保存棋谱.
+    time_t time_now;
+    time_now = time(NULL);
+    char *log_name = DelSpaceAddLog(ctime(&time_now));
+    printf("Log file is saved at %s \n", log_name);
+    log_file = fopen(log_name, "a+");
+    // char log_name_str[] = ctime(&time_now);
+    // log_file = fopen(log_name_str, "a");
+    return log_file;
+}
 
 /*
 测试用例 棋盘

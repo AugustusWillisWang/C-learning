@@ -2,6 +2,8 @@
     "files.associations": {
         "lazy.h": "c",
         "stdio.h": "c",
-        "limits": "c"
+        "limits": "c",
+        "*.tcc": "c",
+        "system_error": "c"
     }
 }
