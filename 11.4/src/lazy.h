@@ -42,7 +42,7 @@
 #define BOOM(str) (fprintf(stderr, "Boomed in line%d, because of %s.\n", __LINE__, str), exit(1))
 //错误处理:直接退出
 
-#define SHOWALL(array, type) (puts("------------------------\nShow "#type" array: "#array" :"),SHOW(array,type,LEN(array)))
+#define SHOWALL(array, type) (puts("------------------------\nShow "#type" array:" #array ":"),SHOW(array,type,LEN(array)))
 //显示数组值
 
 #endif

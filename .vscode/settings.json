@@ -4,6 +4,9 @@
         "stdio.h": "c",
         "limits": "c",
         "*.tcc": "c",
-        "system_error": "c"
+        "system_error": "c",
+        "cmath": "c",
+        "type_traits": "c",
+        "utility": "c"
     }
 }
