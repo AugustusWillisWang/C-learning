@@ -1,5 +1,7 @@
 #include "lazy.h"
 #include "charlib.h"
+#include "algo_basic.h"
+
 #define BOUNDRY 19
 #define BLACK 1
 #define WHITE 2
@@ -19,22 +21,25 @@ weight Gen
 
 */
 
-int board[BOUNDRY][BOUNDRY];
-int printboard[BOUNDRY][BOUNDRY];
+int board[BOUNDRY][BOUNDRY];      //棋盘数据
+int printboard[BOUNDRY][BOUNDRY]; //绘图板
+double weight[BOUNDRY][BOUNDRY];  //生成权重,注意权重为double
 
-FILE *log_file;
+int Algo_Choosed = ALGO_BASIC; //默认使用基本算法
 
-int PvpMode();
-int PveMode();
-int SocketMode();     //与其他程序进行无人值守对战用
-int SetUpBoard();     //初始化棋盘
-int PrintBoard();     //显示棋盘
-int ShowBoardArray(); //简单显示棋盘
-int JudgeWin();       //判断胜利,若有一方胜利返回对应的color,否则返回0
-int JudgeWinPlus();   //判断胜利,若有一方胜利返回对应的color,否则返回0,简化后的未测试代码
-int GenWeight();      //产生权重
-int MakeMove();       //电脑落子
-int Abs();
+FILE *log_file; //初始化日志文件指针
+
+int PvpMode();           //人人主程序
+int PveMode();           //人机主程序
+int SocketMode();        //与其他程序进行无人值守对战用
+int SetUpBoard();        //初始化棋盘
+int PrintBoard();        //显示棋盘
+int ShowBoardArray();    //简单显示棋盘
+int JudgeWin();          //判断胜利,若有一方胜利返回对应的color,否则返回0
+int JudgeWinPlus();      //判断胜利,若有一方胜利返回对应的color,否则返回0,简化后的未测试代码
+int GenWeight();         //产生权重
+int MakeMove();          //电脑落子
+int Abs();               //绝对值
 int ManualSetUpAll();    //手动设置当前棋盘(调试用)
 int ManualSetUp();       //手动设置当前棋盘某一位置(调试用)(pvp用)
 int ForcedManualSetUp(); //手动设置当前棋盘某一位置(调试用)(无限制修改)
@@ -90,8 +95,9 @@ int main(int argc, char *argv[])
         break;
     case 5:
     {
-        char log_name[] = "SunOct290114402016.log";
-        gets(log_name);
+        char log_name[30];
+        //= "SunOct290114402016xxxxxxxxxx.log"; //固定log_name长度,请注意不要爆掉了10 31
+        fgets(log_name,30,stdin);
         log_file = fopen(log_name, "r");
         DisplayLog();
         break;
@@ -160,12 +166,15 @@ int PveMode()
     int b;
     int movecnt = 1;
     int colornow = BLACK;
+    int computermove = 0;
 
     for (int i = 0; i < 30; i++)
         puts("");
     LICENSE;
     puts("------------------------------------------");
     puts("This is pve mode.");
+    puts("Please choose the Algo: 0 for Random");
+    scanf("%d", &Algo_Choosed);    
     puts("Please choose your side: 1 for the black and 2 for the white");
     int player;
     scanf("%d", &player);
@@ -174,26 +183,44 @@ int PveMode()
         puts("Wrong input!\nPlease choose your side: 1 for the black and 2 for the white");
         scanf("%d", &player);
     }
+
+    if (player == 1)
+    {
+        computermove = WHITE;
+    }
+    else
+    {
+        computermove = BLACK;
+    }
+
     setbuf(stdin, NULL); //For all OSs, clear buf to eat \n
 
     while (!JudgeWin())
     {
-        for (int i = 0; i < 30; i++)
-            puts("");
-        LICENSE;
-        puts("------------------------------------------");
-        puts("This is pvp mode.");
-        puts("The board now is:");
-        ShowBoardArray();
-        puts("------------------------------------------");
-        printf("This is move %d.\n", movecnt);
-        printf("Turn for the %s side.\n", (colornow == BLACK ? "black" : "white"));
-        puts("Please input your coordinate, the format is like \"a b\"");
-        printf("a,b ranges from 0 to %d\n", BOUNDRY - 1);
-        scanf("%d%d", &a, &b);
-        while (ManualSetUp(a, b, colornow))
+        if (colornow != computermove)
+        {
+            for (int i = 0; i < 30; i++)
+                puts("");
+            LICENSE;
+            puts("------------------------------------------");
+            puts("This is pve mode.");
+            puts("The board now is:");
+            ShowBoardArray();
+            puts("------------------------------------------");
+            printf("This is move %d.\n", movecnt);
+            printf("Turn for the %s side.\n", (colornow == BLACK ? "black" : "white"));
+            puts("Please input your coordinate, the format is like \"a b\"");
+            printf("a,b ranges from 0 to %d\n", BOUNDRY - 1);
             scanf("%d%d", &a, &b);
-        ;
+            while (ManualSetUp(a, b, colornow))
+                scanf("%d%d", &a, &b);
+            ;
+        }
+        else
+        {
+            MakeMove(&a, &b);
+            ManualSetUp(a, b, colornow);
+        }
         Save(a, b);
         movecnt++;
         if (colornow == BLACK)
@@ -673,15 +700,12 @@ int JudgeWin()
     }
 }
 
-int GenWeight()
-{
-    //产生权重
-}
+//此函数被放到具体算法中用static 函数实现
+// int GenWeight()
+// {
+//     //产生权重
+// }
 
-int MakeMove()
-{
-    //电脑落子
-}
 
 int Abs(int input)
 {
@@ -949,6 +973,14 @@ FILE *InitializeSaving() //初始化保存文件
     return log_file;
 }
 
+int MakeMove(int *ap, int *bp)
+{
+    switch (Algo_Choosed)
+    {
+    case ALGO_BASIC:
+        return AlgoBasic(ap, bp);
+    }
+}
 /*
 测试用例 棋盘
 

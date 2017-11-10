@@ -1,12 +1,8 @@
 #include "lazy.h"
 #define STACKSIZE 10
 
-//Homework2:
-/*
-26 13*7 9*-9 3*-
-33.0 6-3/43 67*7%8 4-/+
-*/
-
+//This rpn is different from the class version. It doesnot deal with the spaces between signals and numbers.
+//For a better instance, see the new version in examples.c
 double stack[STACKSIZE];
 char temp[STACKSIZE];
 int posi = 0;
@@ -96,6 +92,7 @@ double atod(char *str)
 double rpn() //PLZ give input completly correct!
 {
     //deal with str;
+    puts("This rpn is different from the class version. \n It doesnot deal with the spaces between signals and numbers. \n For a better instance, see the new version in examples.c \n");
     char b;
     int poptemp;
     int i = 0;
