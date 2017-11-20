@@ -4,7 +4,7 @@
 
 static int GenWeight();
 
-int AlgoBasic(int* ap,int* bp)
+int AlgoBasic(int* ap,int* bp) //Write the position choosed into int* ap,int* bp;
 {
     *ap = rand()%19;
     *bp = rand()%19;

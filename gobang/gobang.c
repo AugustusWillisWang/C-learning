@@ -1,12 +1,15 @@
-#include "lazy.h"
-#include "charlib.h"
-#include "algo_basic.h"
-
 #define BOUNDRY 19
 #define BLACK 1
 #define WHITE 2
+
 #define NORMAL 0
 #define CLEAR 1
+
+#include "lazy.h"
+#include "charlib.h"
+#include "algo_basic.h"
+#include "algo_linear.h"
+
 #define TEST              \
     ManualSetUp(1, 2, 1); \
     PrintBoard();
@@ -979,6 +982,8 @@ int MakeMove(int *ap, int *bp)
     {
     case ALGO_BASIC:
         return AlgoBasic(ap, bp);
+    case ALGO_LINEAR:
+        return AlgoLinear(ap, bp);
     }
 }
 /*
