@@ -1,6 +1,9 @@
 //线性加权算法
+//对矩阵的整体进行查找, 缺点很明显
 
 #define ALGO_LINEAR 1
+
+//这里的权值是随便赋的
 #define WEIGHT_1_LINK 1
 #define WEIGHT_2_LINK 10
 #define WEIGHT_3_LINK 100
@@ -8,14 +11,20 @@
 #define WEIGHT_5_LINK 10000
 
 //Let + be black weight, and - be white weight;
+int ShowWeightArray();
+int Show_ValidArray();
 
+//对矩阵的整体查找
+static int GenValidPosition();
 static double WeightContribute(int incolor, int continuecnt);
 static double LinearGenWeightForShapeNow();
 static double LinearGenweightAt(int a, int b);
 static int LinearGenWeightMartix();
-static int GenValidPosition();
 
-int _ValidPositionForLinearAlgo[BOUNDRY][BOUNDRY];
+// //对每个点的附近进行查找
+// static double PointGenWeightAt(int a, int b);
+
+static int _ValidPositionForLinearAlgo[BOUNDRY][BOUNDRY];
 
 static double _weightnow;
 
@@ -234,6 +243,12 @@ static double LinearGenweightAt(int a, int b)
 
 static int LinearGenWeightMartix()
 {
+    //4连情况
+
+    //3连情况
+
+    //在上一个条件不满足时执行:
+    //落子在有棋子的区域附近, 以提高效果并加快速度
     int BoundLim(int a)
     {
         if (a < 0)
@@ -254,7 +269,7 @@ static int LinearGenWeightMartix()
     {
         for (int b = 0; b < BOUNDRY; b++)
         {
-            if (!board[a][b])
+            if (board[a][b])
             {
                 _ValidPositionForLinearAlgo[BoundLim(a + 1)][BoundLim(b + 1)] = 1;
                 _ValidPositionForLinearAlgo[BoundLim(a + 1)][BoundLim(b)] = 1;
@@ -265,11 +280,16 @@ static int LinearGenWeightMartix()
                 _ValidPositionForLinearAlgo[BoundLim(a - 1)][BoundLim(b + 1)] = 1;
                 _ValidPositionForLinearAlgo[BoundLim(a - 1)][BoundLim(b)] = 1;
                 _ValidPositionForLinearAlgo[BoundLim(a - 1)][BoundLim(b - 1)] = 1;
+                
             }
         }
     }
 
+// makemovenow:
+
+    //在可行的位置产生权重
     _weightnow = LinearGenWeightForShapeNow();
+
     for (int a = 0; a < BOUNDRY; a++)
     {
         for (int b = 0; b < BOUNDRY; b++)
@@ -277,5 +297,29 @@ static int LinearGenWeightMartix()
             if (_ValidPositionForLinearAlgo[a][b])
                 weight[a][b] = LinearGenweightAt(a, b);
         }
+    }
+}
+
+static int ShowWeightArray()
+{
+     for (int a = 0; a < BOUNDRY; a++)
+    {
+        for (int b = 0; b < BOUNDRY; b++)
+        {
+            printf("%lf ", weight[a][b]);
+        }
+        puts("");
+    }
+}
+
+static int Show_ValidArray()
+{
+     for (int a = 0; a < BOUNDRY; a++)
+    {
+        for (int b = 0; b < BOUNDRY; b++)
+        {
+            printf("%d ", _ValidPositionForLinearAlgo[a][b]);
+        }
+        puts("");
     }
 }
