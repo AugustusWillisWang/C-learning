@@ -13,20 +13,23 @@ static double WeightContribute(int incolor, int continuecnt);
 static double LinearGenWeightForShapeNow();
 static double LinearGenweightAt(int a, int b);
 static int LinearGenWeightMartix();
+static int GenValidPosition();
+
+int _ValidPositionForLinearAlgo[BOUNDRY][BOUNDRY];
 
 static double _weightnow;
-
 
 // static int JudgeWinPlus();
 // static int _LinearWeightCnter(int a, int b, int mode); //if mode==CLEAR, set cnt,max,color=0
 
 int AlgoLinear(int *ap, int *bp) //Write the position choosed into int* ap,int* bp;
 {
-    if(fstmove&&colornow==BLACK){
-    *ap = BOUNDRY/2;
-    *bp = BOUNDRY/2;
-    fstmove = 0;
-    return 0;
+    if (fstmove && colornow == BLACK)
+    {
+        *ap = BOUNDRY / 2;
+        *bp = BOUNDRY / 2;
+        fstmove = 0;
+        return 0;
     }
 
     LinearGenWeightMartix();
@@ -96,6 +99,9 @@ static double WeightContribute(int incolor, int continuecnt)
     case 5:
         result = WEIGHT_5_LINK;
         break;
+    default:
+        //more than 5
+        result = WEIGHT_5_LINK;
     }
 
     switch (incolor)
@@ -228,12 +234,48 @@ static double LinearGenweightAt(int a, int b)
 
 static int LinearGenWeightMartix()
 {
+    int BoundLim(int a)
+    {
+        if (a < 0)
+        {
+            return 0;
+        }
+        else if (a >= BOUNDRY)
+        {
+            return BOUNDRY;
+        }
+        else
+        {
+            return a;
+        }
+    }
+    memset(_ValidPositionForLinearAlgo, 0, sizeof(int) * BOUNDRY * BOUNDRY);
+    for (int a = 0; a < BOUNDRY; a++)
+    {
+        for (int b = 0; b < BOUNDRY; b++)
+        {
+            if (!board[a][b])
+            {
+                _ValidPositionForLinearAlgo[BoundLim(a + 1)][BoundLim(b + 1)] = 1;
+                _ValidPositionForLinearAlgo[BoundLim(a + 1)][BoundLim(b)] = 1;
+                _ValidPositionForLinearAlgo[BoundLim(a + 1)][BoundLim(b - 1)] = 1;
+                _ValidPositionForLinearAlgo[BoundLim(a)][BoundLim(b + 1)] = 1;
+                _ValidPositionForLinearAlgo[BoundLim(a)][BoundLim(b)] = 1;
+                _ValidPositionForLinearAlgo[BoundLim(a)][BoundLim(b - 1)] = 1;
+                _ValidPositionForLinearAlgo[BoundLim(a - 1)][BoundLim(b + 1)] = 1;
+                _ValidPositionForLinearAlgo[BoundLim(a - 1)][BoundLim(b)] = 1;
+                _ValidPositionForLinearAlgo[BoundLim(a - 1)][BoundLim(b - 1)] = 1;
+            }
+        }
+    }
+
     _weightnow = LinearGenWeightForShapeNow();
     for (int a = 0; a < BOUNDRY; a++)
     {
         for (int b = 0; b < BOUNDRY; b++)
         {
-            weight[a][b] = LinearGenweightAt(a, b);
+            if (_ValidPositionForLinearAlgo[a][b])
+                weight[a][b] = LinearGenweightAt(a, b);
         }
     }
 }
