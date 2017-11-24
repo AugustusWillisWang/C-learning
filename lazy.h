@@ -8,6 +8,7 @@
 
 //大写宏
 #ifndef _AWSHEAD
+//#if !defined(_AWSHEAD)
     #define _AWSHEAD
 
 #define GET(x) scanf("%d", &x)

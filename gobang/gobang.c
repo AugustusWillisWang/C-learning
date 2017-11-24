@@ -7,6 +7,14 @@
 
 #include "lazy.h"
 #include "charlib.h"
+
+//global vars.
+int colornow;
+int fstmove = 1;
+int board[BOUNDRY][BOUNDRY];      //棋盘数据
+int printboard[BOUNDRY][BOUNDRY]; //绘图板
+double weight[BOUNDRY][BOUNDRY];  //权重变化,注意权重为double
+
 #include "algo_basic.h"
 #include "algo_linear.h"
 
@@ -20,13 +28,7 @@ Todo:
 timer
 board
 weight Gen
-
-
 */
-
-int board[BOUNDRY][BOUNDRY];      //棋盘数据
-int printboard[BOUNDRY][BOUNDRY]; //绘图板
-double weight[BOUNDRY][BOUNDRY];  //生成权重,注意权重为double
 
 int Algo_Choosed = ALGO_BASIC; //默认使用基本算法
 
@@ -49,6 +51,7 @@ int ForcedManualSetUp(); //手动设置当前棋盘某一位置(调试用)(无�
 int _Tester();           //判断胜负时使用的子函数
 int Save();              //保存当前操作到棋谱
 int DisplayLog();        //显示棋谱
+
 
 FILE *InitializeSaving(); //初始化保存文件
 
@@ -124,7 +127,7 @@ int PvpMode()
     int a;
     int b;
     int movecnt = 1;
-    int colornow = BLACK;
+    colornow = BLACK;
     while (!JudgeWin())
     {
         for (int i = 0; i < 30; i++)
@@ -168,15 +171,16 @@ int PveMode()
     int a;
     int b;
     int movecnt = 1;
-    int colornow = BLACK;
     int computermove = 0;
+    
+    colornow = BLACK;
 
     for (int i = 0; i < 30; i++)
         puts("");
     LICENSE;
     puts("------------------------------------------");
     puts("This is pve mode.");
-    puts("Please choose the Algo: 0 for Random");
+    puts("Please choose the Algo: 0 for Random, 1 for ALGO_LINEAR, 2 for ALGO_ZB");
     scanf("%d", &Algo_Choosed);    
     puts("Please choose your side: 1 for the black and 2 for the white");
     int player;
@@ -332,7 +336,7 @@ int ShowBoardArray()
 int JudgeWin()
 {
     //判断胜利,应该是最高效的算法了
-    //第一次写的有点丑
+    //这是第一次写的有点zz.......
     int color = 0;
     int cnt = 0;
     int max = 0;
@@ -917,7 +921,7 @@ int DisplayLog()
     int a;
     int b;
     int movecnt = 1;
-    int colornow = BLACK;
+    colornow = BLACK;
     while (!JudgeWin())
     {
         fscanf(log_file, "%d %d", &a, &b);
