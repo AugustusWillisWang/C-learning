@@ -1,4 +1,4 @@
-#define BOUNDRY 19
+#define BOUNDRY 15 //19
 #define BLACK 1
 #define WHITE 2
 
@@ -17,6 +17,7 @@ double weight[BOUNDRY][BOUNDRY];  //权重变化,注意权重为double
 
 #include "algo_basic.h"
 #include "algo_linear.h"
+#include "printboard.h"
 
 #define TEST              \
     ManualSetUp(1, 2, 1); \
@@ -35,13 +36,13 @@ int Algo_Choosed = ALGO_BASIC; //默认使用基本算法
 
 FILE *log_file; //初始化日志文件指针
 
-int PvpMode();           //人人主程序
-int PveMode();           //人机主程序
-int SocketMode();        //与其他程序进行无人值守对战用
-int SetUpBoard();        //初始化棋盘
-int PrintBoard();        //显示棋盘
-int ShowBoardArray();    //简单显示棋盘
-int JudgeWin();          //判断胜利,若有一方胜利返回对应的color,否则返回0
+int PvpMode();        //人人主程序
+int PveMode();        //人机主程序
+int SocketMode();     //与其他程序进行无人值守对战用
+int SetUpBoard();     //初始化棋盘
+int PrintBoard();     //显示棋盘
+int ShowBoardArray(); //简单显示棋盘
+int JudgeWin();       //判断胜利,若有一方胜利返回对应的color,否则返回0
 // int JudgeWinOriginal();  //判断胜利,若有一方胜利返回对应的color,否则返回0,第一次写的垃圾代码
 // int JudgeWinPlus();      //判断胜利,若有一方胜利返回对应的color,否则返回0,简化后的未测试代码
 int GenWeight();         //产生权重
@@ -53,7 +54,6 @@ int ForcedManualSetUp(); //手动设置当前棋盘某一位置(调试用)(无�
 int _Tester();           //判断胜负时使用的子函数
 int Save();              //保存当前操作到棋谱
 int DisplayLog();        //显示棋谱
-
 
 FILE *InitializeSaving(); //初始化保存文件
 
@@ -105,7 +105,7 @@ int main(int argc, char *argv[])
     {
         char log_name[30];
         //= "SunOct290114402016xxxxxxxxxx.log"; //固定log_name长度,请注意不要爆掉了10 31
-        fgets(log_name,30,stdin);
+        fgets(log_name, 30, stdin);
         log_file = fopen(log_name, "r");
         DisplayLog();
         break;
@@ -132,21 +132,25 @@ int PvpMode()
     colornow = BLACK;
     while (!JudgeWin())
     {
-        for (int i = 0; i < 30; i++)
-            puts("");
+        clearscreen();
         LICENSE;
         puts("------------------------------------------");
         puts("This is pvp mode.");
         puts("The board now is:");
-        ShowBoardArray();
+        PrintBoard();
+        // ShowBoardArray();
         puts("------------------------------------------");
         printf("This is move %d.\n", movecnt);
         printf("Turn for the %s side.\n", (colornow == BLACK ? "black" : "white"));
-        puts("Please input your coordinate, the format is like \"a b\"");
+        puts("Please input your coordinate, the format is like \"10 A\"");
         printf("a,b ranges from 0 to %d\n", BOUNDRY - 1);
-        scanf("%d%d", &a, &b);
+        // scanf("%d%d", &a, &b);
+        getinput(&a, &b);
+
         while (ManualSetUp(a, b, colornow))
-            scanf("%d%d", &a, &b);
+            // scanf("%d%d", &a, &b);
+        getinput(&a, &b);
+            
         ;
         Save(a, b);
         movecnt++;
@@ -161,7 +165,8 @@ int PvpMode()
     }
     printf("Game finished in move %d.\n", movecnt);
     puts("--------------------------------------");
-    ShowBoardArray();
+    // ShowBoardArray();
+    PrintBoard();
     puts("--------------------------------------");
 
     BP;
@@ -174,16 +179,15 @@ int PveMode()
     int b;
     int movecnt = 1;
     int computermove = 0;
-    
+
     colornow = BLACK;
 
-    for (int i = 0; i < 30; i++)
-        puts("");
+    clearscreen();
     LICENSE;
     puts("------------------------------------------");
     puts("This is pve mode.");
     puts("Please choose the Algo: 0 for Random, 1 for ALGO_LINEAR, 2 for ALGO_ZB");
-    scanf("%d", &Algo_Choosed);    
+    scanf("%d", &Algo_Choosed);
     puts("Please choose your side: 1 for the black and 2 for the white");
     int player;
     scanf("%d", &player);
@@ -208,21 +212,26 @@ int PveMode()
     {
         if (colornow != computermove)
         {
-            for (int i = 0; i < 30; i++)
-                puts("");
+            clearscreen();
             LICENSE;
             puts("------------------------------------------");
             puts("This is pve mode.");
             puts("The board now is:");
-            ShowBoardArray();
+            // ShowBoardArray();
+            PrintBoard();
+
             puts("------------------------------------------");
             printf("This is move %d.\n", movecnt);
             printf("Turn for the %s side.\n", (colornow == BLACK ? "black" : "white"));
-            puts("Please input your coordinate, the format is like \"a b\"");
+            puts("Please input your coordinate, the format is like \"10 A\"");
             printf("a,b ranges from 0 to %d\n", BOUNDRY - 1);
-            scanf("%d%d", &a, &b);
+            // scanf("%d%d", &a, &b);
+        getinput(&a, &b);
+            
             while (ManualSetUp(a, b, colornow))
-                scanf("%d%d", &a, &b);
+                // scanf("%d%d", &a, &b);
+        getinput(&a, &b);
+                
             ;
         }
         else
@@ -243,7 +252,9 @@ int PveMode()
     }
     printf("Game finished in move %d.\n", movecnt);
     puts("--------------------------------------");
-    ShowBoardArray();
+    // ShowBoardArray();
+    PrintBoard();
+
     puts("--------------------------------------");
 
     BP;
@@ -262,7 +273,7 @@ int SetUpBoard()
     return 0;
 }
 
-int PrintBoard()
+int PrintBoard_Obsoleted()
 {
     // ┠ ┨┯ ┷┏┓┗ ┛┳⊥﹃﹄┌ ┐└ ┘∟
     // http://lulinbest.blog.sohu.com/88118628.html
@@ -335,7 +346,6 @@ int ShowBoardArray()
     return 0;
 }
 
-
 int JudgeWin()
 {
     // double weight_for_shape_now = 0.0;
@@ -352,18 +362,18 @@ int JudgeWin()
             }
             else
             {
-                if(incolor&&(continuecnt>=5)){
-                    
-                if (incolor == WHITE)
+                if (incolor && (continuecnt >= 5))
                 {
-                    printf("White wins!\n");
-                }
-                else if (incolor == BLACK)
-                {
-                    printf("Black wins!\n");
-                }
-                return incolor;
-            
+
+                    if (incolor == WHITE)
+                    {
+                        printf("White wins!\n");
+                    }
+                    else if (incolor == BLACK)
+                    {
+                        printf("Black wins!\n");
+                    }
+                    return incolor;
                 }
                 // weight_for_shape_now += WeightContribute(incolor, continuecnt);
                 continuecnt = 1;
@@ -388,18 +398,18 @@ int JudgeWin()
             }
             else
             {
-                if(incolor&&(continuecnt>=5)){
-                    
-                if (incolor == WHITE)
+                if (incolor && (continuecnt >= 5))
                 {
-                    printf("White wins!\n");
-                }
-                else if (incolor == BLACK)
-                {
-                    printf("Black wins!\n");
-                }
-                return incolor;
-            
+
+                    if (incolor == WHITE)
+                    {
+                        printf("White wins!\n");
+                    }
+                    else if (incolor == BLACK)
+                    {
+                        printf("Black wins!\n");
+                    }
+                    return incolor;
                 }
                 // weight_for_shape_now += WeightContribute(incolor, continuecnt);
                 continuecnt = 1;
@@ -427,19 +437,19 @@ int JudgeWin()
                 }
                 else
                 {
-                    if(incolor&&(continuecnt>=5)){
-                    
-                if (incolor == WHITE)
-                {
-                    printf("White wins!\n");
-                }
-                else if (incolor == BLACK)
-                {
-                    printf("Black wins!\n");
-                }
-                return incolor;
-            
-                }
+                    if (incolor && (continuecnt >= 5))
+                    {
+
+                        if (incolor == WHITE)
+                        {
+                            printf("White wins!\n");
+                        }
+                        else if (incolor == BLACK)
+                        {
+                            printf("Black wins!\n");
+                        }
+                        return incolor;
+                    }
                     // weight_for_shape_now += WeightContribute(incolor, continuecnt);
                     continuecnt = 1;
                     incolor = board[a][b];
@@ -467,19 +477,19 @@ int JudgeWin()
                 }
                 else
                 {
-                    if(incolor&&(continuecnt>=5)){
-                    
-                if (incolor == WHITE)
-                {
-                    printf("White wins!\n");
-                }
-                else if (incolor == BLACK)
-                {
-                    printf("Black wins!\n");
-                }
-                return incolor;
-            
-                }
+                    if (incolor && (continuecnt >= 5))
+                    {
+
+                        if (incolor == WHITE)
+                        {
+                            printf("White wins!\n");
+                        }
+                        else if (incolor == BLACK)
+                        {
+                            printf("Black wins!\n");
+                        }
+                        return incolor;
+                    }
                     // weight_for_shape_now += WeightContribute(incolor, continuecnt);
                     continuecnt = 1;
                     incolor = board[a][b];
@@ -515,10 +525,12 @@ int ManualSetUpAll() //手动设置当前棋盘(调试用)
     setbuf(stdin, NULL); //For all OSs, clear buf to eat \n
     puts("Setup the board manually to:");
     ShowBoardArray();
+    PrintBoard();
+
     return 0;
 }
 
-int ManualSetUp(int a, int b, int color) //手动设置当前棋盘某一位置(调试用)
+int ManualSetUp(int a, int b, int color) //设置当前棋盘某一位置(程序用)
 {
     if (a >= 0 && a < BOUNDRY && b >= 0 && b < BOUNDRY && (color == 0 || color == BLACK || color == WHITE))
     {
@@ -529,6 +541,8 @@ int ManualSetUp(int a, int b, int color) //手动设置当前棋盘某一位置(
             return -1;
         }
         board[a][b] = color;
+        _lastposia = a;
+        _lastposib = b;
         return 0;
     }
     puts("Wrong input, please input again!");
@@ -570,13 +584,16 @@ int DisplayLog()
             exit(-1);
         }
         // Save(a, b);
-        for (int i = 0; i < 30; i++)
-            puts("");
+
+        clearscreen();
+
         LICENSE;
         puts("------------------------------------------");
         puts("This is display mode.");
         puts("The board now is:");
-        ShowBoardArray();
+        // ShowBoardArray();
+        PrintBoard();
+
         puts("------------------------------------------");
         printf("This is move %d.\n", movecnt);
         printf("Turn for the %s side.\n", (colornow == BLACK ? "black" : "white"));
@@ -597,7 +614,9 @@ int DisplayLog()
     }
     printf("Game finished in move %d.\n", movecnt - 1);
     puts("--------------------------------------");
-    ShowBoardArray();
+    // ShowBoardArray();
+    PrintBoard();
+
     puts("--------------------------------------");
 
     BP;

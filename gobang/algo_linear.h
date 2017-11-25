@@ -11,8 +11,8 @@
 #define WEIGHT_5_LINK 10000
 
 //Let + be black weight, and - be white weight;
-int ShowWeightArray();
-int Show_ValidArray();
+static int ShowWeightArray();
+static int Show_ValidArray();
 
 //对矩阵的整体查找
 static int GenValidPosition();
