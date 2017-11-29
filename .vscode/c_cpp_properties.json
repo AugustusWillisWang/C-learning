@@ -1,4 +1,5 @@
 {
+    '_comment':"lalala"
     "configurations": [
         {
             "name": "Mac",
@@ -80,4 +81,3 @@
     "version": 3
 }
 
-/lalala/
