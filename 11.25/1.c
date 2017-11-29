@@ -103,3 +103,4 @@ int main()
     SHOWALL(test, "char");
     CK(strlen(temp));
 }
+请收下我的膝盖
