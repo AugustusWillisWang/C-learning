@@ -100,14 +100,14 @@ for (int a = 0; a < BOUNDRY; a++)
 int getinput(int* a, int* b)
 {
     int ra;
-    int rb;
+    char rb;
     scanf("%d %c", &ra, &rb);
     // 15 B -> 0 1
     // CK(rb);
-    // CK(15 - ra);
-    // CK(rb - 'A');
+    CK(15 - ra);
+    CK((int)(rb - 'A'));
     *a = 15 - ra;
 
-    *b = rb-'A';
+    *b = (int)(rb-'A');
 
 }

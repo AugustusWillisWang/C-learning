@@ -11,15 +11,15 @@
 #define WEIGHT_5_LINK 10000
 
 //Let + be black weight, and - be white weight;
-static int ShowWeightArray();
-static int Show_ValidArray();
+static int ShowWeightArray_Algo1();
+static int Show_ValidArray_Algo1();
 
 //对矩阵的整体查找
-static int GenValidPosition();
-static double WeightContribute(int incolor, int continuecnt);
-static double LinearGenWeightForShapeNow();
-static double LinearGenweightAt(int a, int b);
-static int LinearGenWeightMartix();
+static int GenValidPosition_Algo1();
+static double WeightContribute_Algo1(int incolor, int continuecnt);
+static double LinearGenWeightForShapeNow_Algo1();
+static double LinearGenweightAt_Algo1(int a, int b);
+static int LinearGenWeightMartix_Algo1();
 
 // //对每个点的附近进行查找
 // static double PointGenWeightAt(int a, int b);
@@ -41,7 +41,7 @@ int AlgoLinear(int *ap, int *bp) //Write the position choosed into int* ap,int* 
         return 0;
     }
 
-    LinearGenWeightMartix();
+    LinearGenWeightMartix_Algo1();
     // SHOWALL(weight, "double");
     int a_choosed = 0, b_choosed = 0;
     if (colornow == BLACK)
@@ -85,7 +85,7 @@ int AlgoLinear(int *ap, int *bp) //Write the position choosed into int* ap,int* 
 }
 //colornow is known;
 
-static double WeightContribute(int incolor, int continuecnt)
+static double WeightContribute_Algo1(int incolor, int continuecnt)
 {
     double result = 0.0;
     switch (continuecnt)
@@ -124,7 +124,7 @@ static double WeightContribute(int incolor, int continuecnt)
     }
 }
 
-static double LinearGenWeightForShapeNow()
+static double LinearGenWeightForShapeNow_Algo1()
 {
     double weight_for_shape_now = 0.0;
     //line
@@ -140,12 +140,12 @@ static double LinearGenWeightForShapeNow()
             }
             else
             {
-                weight_for_shape_now += WeightContribute(incolor, continuecnt);
+                weight_for_shape_now += WeightContribute_Algo1(incolor, continuecnt);
                 continuecnt = 1;
                 incolor = board[a][b];
             }
         }
-        weight_for_shape_now += WeightContribute(incolor, continuecnt);
+        weight_for_shape_now += WeightContribute_Algo1(incolor, continuecnt);
         incolor = 0;
         continuecnt = 0;
     }
@@ -163,12 +163,12 @@ static double LinearGenWeightForShapeNow()
             }
             else
             {
-                weight_for_shape_now += WeightContribute(incolor, continuecnt);
+                weight_for_shape_now += WeightContribute_Algo1(incolor, continuecnt);
                 continuecnt = 1;
                 incolor = board[a][b];
             }
         }
-        weight_for_shape_now += WeightContribute(incolor, continuecnt);
+        weight_for_shape_now += WeightContribute_Algo1(incolor, continuecnt);
         incolor = 0;
         continuecnt = 0;
     }
@@ -189,13 +189,13 @@ static double LinearGenWeightForShapeNow()
                 }
                 else
                 {
-                    weight_for_shape_now += WeightContribute(incolor, continuecnt);
+                    weight_for_shape_now += WeightContribute_Algo1(incolor, continuecnt);
                     continuecnt = 1;
                     incolor = board[a][b];
                 }
             }
         }
-        weight_for_shape_now += WeightContribute(incolor, continuecnt);
+        weight_for_shape_now += WeightContribute_Algo1(incolor, continuecnt);
         incolor = 0;
         continuecnt = 0;
     }
@@ -216,32 +216,32 @@ static double LinearGenWeightForShapeNow()
                 }
                 else
                 {
-                    weight_for_shape_now += WeightContribute(incolor, continuecnt);
+                    weight_for_shape_now += WeightContribute_Algo1(incolor, continuecnt);
                     continuecnt = 1;
                     incolor = board[a][b];
                 }
             }
         }
-        weight_for_shape_now += WeightContribute(incolor, continuecnt);
+        weight_for_shape_now += WeightContribute_Algo1(incolor, continuecnt);
         incolor = 0;
         continuecnt = 0;
     }
     return weight_for_shape_now;
 }
 
-static double LinearGenweightAt(int a, int b)
+static double LinearGenweightAt_Algo1(int a, int b)
 {
     if (board[a][b]) //该位置无法落子
     {
         return 0;
     }
     board[a][b] = colornow;
-    double change = LinearGenWeightForShapeNow() - _weightnow;
+    double change = LinearGenWeightForShapeNow_Algo1() - _weightnow;
     board[a][b] = 0;
     return change;
 }
 
-static int LinearGenWeightMartix()
+static int LinearGenWeightMartix_Algo1()
 {
     //4连情况
 
@@ -288,19 +288,19 @@ static int LinearGenWeightMartix()
 // makemovenow:
 
     //在可行的位置产生权重
-    _weightnow = LinearGenWeightForShapeNow();
+    _weightnow = LinearGenWeightForShapeNow_Algo1();
 
     for (int a = 0; a < BOUNDRY; a++)
     {
         for (int b = 0; b < BOUNDRY; b++)
         {
             if (_ValidPositionForLinearAlgo[a][b])
-                weight[a][b] = LinearGenweightAt(a, b);
+                weight[a][b] = LinearGenweightAt_Algo1(a, b);
         }
     }
 }
 
-static int ShowWeightArray()
+static int ShowWeightArray_Algo1()
 {
      for (int a = 0; a < BOUNDRY; a++)
     {
@@ -312,7 +312,7 @@ static int ShowWeightArray()
     }
 }
 
-static int Show_ValidArray()
+static int Show_ValidArray_Algo1()
 {
      for (int a = 0; a < BOUNDRY; a++)
     {

@@ -17,6 +17,7 @@ double weight[BOUNDRY][BOUNDRY];  //权重变化,注意权重为double
 
 #include "algo_basic.h"
 #include "algo_linear.h"
+#include "algo_point.h"
 #include "printboard.h"
 
 #define TEST              \
@@ -186,7 +187,7 @@ int PveMode()
     LICENSE;
     puts("------------------------------------------");
     puts("This is pve mode.");
-    puts("Please choose the Algo: 0 for Random, 1 for ALGO_LINEAR, 2 for ALGO_ZB");
+    puts("Please choose the Algo: 0 for Random, 1 for ALGO_LINEAR, 2 for ALGO_POINT");
     scanf("%d", &Algo_Choosed);
     puts("Please choose your side: 1 for the black and 2 for the white");
     int player;
@@ -644,5 +645,7 @@ int MakeMove(int *ap, int *bp)
         return AlgoBasic(ap, bp);
     case ALGO_LINEAR:
         return AlgoLinear(ap, bp);
+    case ALGO_POINT:
+        return AlgoPoint(ap, bp);
     }
 }
