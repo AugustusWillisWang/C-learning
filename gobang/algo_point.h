@@ -5,15 +5,14 @@
 
 //这里的权值是随便赋的
 #define WEIGHT_1_2SIDE 20.0
-#define WEIGHT_2_2SIDE (500.0/2)
-#define WEIGHT_3_2SIDE (100000.0/3)
-#define WEIGHT_4_2SIDE (200000.0/4)
-
+#define WEIGHT_2_2SIDE (500.0 / 2)
+#define WEIGHT_3_2SIDE (100000.0 / 3)
+#define WEIGHT_4_2SIDE (200000.0 / 4)
 
 #define WEIGHT_1_1SIDE 10.0
-#define WEIGHT_2_1SIDE (100.0/2)
-#define WEIGHT_3_1SIDE (50000.0/3)
-#define WEIGHT_4_1SIDE (150000.0/4)
+#define WEIGHT_2_1SIDE (100.0 / 2)
+#define WEIGHT_3_1SIDE (50000.0 / 3)
+#define WEIGHT_4_1SIDE (150000.0 / 4)
 
 #define WEIGHT_5_WIN 10000000000.0
 
@@ -28,6 +27,7 @@ double PointGenWeightForShapeNow_Algo2();
 double PointGenWeightAt_Algo2(int a, int b); //Get the weight change if making move at a,b.
 int PointGenWeightMartix_Algo2();
 
+int ClearWeightMartix();
 //--------------------------------------------
 
 int SimpleSituationCheck(); //Check 4-1 4-2 3-2 in order. If such situation exists, constrain avaliable position to such areas.
@@ -36,7 +36,6 @@ int GenNaiveConstrain_Algo2();
 int PointTestNaiveSituationForShapeNow_Algo2();
 
 int _algo2_havenot_clear_array = 1;
-
 
 //------------------------------------------
 
@@ -108,9 +107,14 @@ int AlgoPoint(int *ap, int *bp) //Write the position choosed into int* ap,int* b
             }
         }
     }
-
+    CK(a_choosed);
+    CK(b_choosed);
+    ShowWeightArray_Algo2();
+    BP;
     *ap = a_choosed;
     *bp = b_choosed;
+
+    ClearWeightMartix();
 
     return 0;
 }
@@ -148,11 +152,12 @@ double WeightContribute_Algo2()
         break;
     }
     position = 4;
-    while ( _Testline[++position] == colorinmiddle) //Highlight!
-        {cnt++;
-        if(8==position)
+    while (_Testline[++position] == colorinmiddle) //Highlight!
+    {
+        cnt++;
+        if (8 == position)
             break;
-        }
+    }
     switch (_Testline[position])
     {
     case 0:
@@ -184,34 +189,49 @@ double WeightContribute_Algo2()
     switch (cnt)
     {
     case 1:
-        switch(leftblocked+rightblocked){
-            case 0: return (colornow == BLACK ? 1 : -1) * WEIGHT_1_2SIDE;
-            case 1: return (colornow == BLACK ? 1 : -1) * WEIGHT_1_1SIDE;
-            case 2: return (colornow == BLACK ? 1 : -1) * 0;
-        }
+        switch (leftblocked + rightblocked)
+        {
+        case 0:
+            return (colornow == BLACK ? 1 : -1) * WEIGHT_1_2SIDE;
+        case 1:
+            return (colornow == BLACK ? 1 : -1) * WEIGHT_1_1SIDE;
         case 2:
-        switch(leftblocked+rightblocked){
-            case 0: return (colornow == BLACK ? 1 : -1) * WEIGHT_2_2SIDE;
-            case 1: return (colornow == BLACK ? 1 : -1) * WEIGHT_2_1SIDE;
-            case 2: return (colornow == BLACK ? 1 : -1) * 0;
+            return (colornow == BLACK ? 1 : -1) * 0;
         }
-        case 3:
-        switch(leftblocked+rightblocked){ 
-            case 0: return (colornow == BLACK ? 1 : -1) * WEIGHT_3_2SIDE;
-            case 1: return (colornow == BLACK ? 1 : -1) * WEIGHT_3_1SIDE;
-            case 2: return (colornow == BLACK ? 1 : -1) * 0;
+    case 2:
+        switch (leftblocked + rightblocked)
+        {
+        case 0:
+            return (colornow == BLACK ? 1 : -1) * WEIGHT_2_2SIDE;
+        case 1:
+            return (colornow == BLACK ? 1 : -1) * WEIGHT_2_1SIDE;
+        case 2:
+            return (colornow == BLACK ? 1 : -1) * 0;
         }
-        case 4:
-        switch(leftblocked+rightblocked){
-            case 0: return (colornow == BLACK ? 1 : -1) * WEIGHT_4_2SIDE;
-            case 1: return (colornow == BLACK ? 1 : -1) * WEIGHT_4_1SIDE;
-            case 2: return (colornow == BLACK ? 1 : -1) * 0;
+    case 3:
+        switch (leftblocked + rightblocked)
+        {
+        case 0:
+            return (colornow == BLACK ? 1 : -1) * WEIGHT_3_2SIDE;
+        case 1:
+            return (colornow == BLACK ? 1 : -1) * WEIGHT_3_1SIDE;
+        case 2:
+            return (colornow == BLACK ? 1 : -1) * 0;
         }
-        case 5:
-            return (colornow == BLACK ? 1 : -1) * WEIGHT_5_WIN;
-
+    case 4:
+        switch (leftblocked + rightblocked)
+        {
+        case 0:
+            return (colornow == BLACK ? 1 : -1) * WEIGHT_4_2SIDE;
+        case 1:
+            return (colornow == BLACK ? 1 : -1) * WEIGHT_4_1SIDE;
+        case 2:
+            return (colornow == BLACK ? 1 : -1) * 0;
         }
-return 0;
+    case 5:
+        return (colornow == BLACK ? 1 : -1) * WEIGHT_5_WIN;
+    }
+    return 0;
 }
 
 double PointGenWeightForShapeNow_Algo2()
@@ -226,27 +246,23 @@ double PointGenWeightForShapeNow_Algo2()
                 if (aget < BOUNDRY && aget >= 0 && bget >= 0 && bget < BOUNDRY)
                 {
                     _Testline[i] = board[aget][bget];
-                    
                 }
                 else
                 {
                     _Testline[i] = EDGE;
-                    
                 }
             }
-            
+
             weight_for_shape_now += WeightContribute_Algo2();
             for (int bget = b - 4, aget = a, i = 0; bget <= b + 4; bget++, i++)
             {
                 if (aget < BOUNDRY && aget >= 0 && bget >= 0 && bget < BOUNDRY)
                 {
                     _Testline[i] = board[aget][bget];
-                    
                 }
                 else
                 {
                     _Testline[i] = EDGE;
-                    
                 }
             }
             weight_for_shape_now += WeightContribute_Algo2();
@@ -256,12 +272,10 @@ double PointGenWeightForShapeNow_Algo2()
                 if (aget < BOUNDRY && aget >= 0 && bget >= 0 && bget < BOUNDRY)
                 {
                     _Testline[i] = board[aget][bget];
-                    
                 }
                 else
                 {
                     _Testline[i] = EDGE;
-                    
                 }
             }
             weight_for_shape_now += WeightContribute_Algo2();
@@ -271,12 +285,10 @@ double PointGenWeightForShapeNow_Algo2()
                 if (aget < BOUNDRY && aget >= 0 && bget >= 0 && bget < BOUNDRY)
                 {
                     _Testline[i] = board[aget][bget];
-                    
                 }
                 else
                 {
                     _Testline[i] = EDGE;
-                    
                 }
             }
             weight_for_shape_now += WeightContribute_Algo2();
@@ -292,19 +304,15 @@ double PointGenWeightAt_Algo2(int a, int b)
         return 0;
     }
     board[a][b] = colornow;
-    double change = PointGenWeightForShapeNow_Algo2() - _weightnow;
-    printf("change:%lf\n", change);
+    double change = PointGenWeightForShapeNow_Algo2();
+    // printf("change:%lf\n", change);
     board[a][b] = 0;
     return change;
 }
 
 int PointGenWeightMartix_Algo2()
 {
-    //4连情况
 
-    //3连情况
-
-    //在上一个条件不满足时执行:
     //落子在有棋子的区域附近, 以提高效果并加快速度
     int BoundLim(int a)
     {
@@ -345,7 +353,7 @@ int PointGenWeightMartix_Algo2()
 
     SimpleSituationCheck();
     //在可行的位置产生权重
-    _weightnow = PointGenWeightForShapeNow_Algo2();
+    // _weightnow = PointGenWeightForShapeNow_Algo2();
 
     for (int a = 0; a < BOUNDRY; a++)
     {
@@ -364,7 +372,7 @@ int ShowWeightArray_Algo2()
     {
         for (int b = 0; b < BOUNDRY; b++)
         {
-            printf("%lf ", weight[a][b]);
+            printf("%.0lf ", weight[a][b]);
         }
         puts("");
     }
@@ -388,23 +396,22 @@ int SimpleSituationCheck() //Check 4-1 4-2 3-2 in order. If such situation exist
     BP;
 
     PointTestNaiveSituationForShapeNow_Algo2(3, 2);
-   Show_ValidArray_Algo2();    
+    Show_ValidArray_Algo2();
     BP;
 
     PointTestNaiveSituationForShapeNow_Algo2(4, 2);
-    Show_ValidArray_Algo2();    
+    Show_ValidArray_Algo2();
     BP;
 
     PointTestNaiveSituationForShapeNow_Algo2(4, 1);
     Show_ValidArray_Algo2();
     BP;
-    
 }
 
 int PointTestNaiveSituationForShapeNow_Algo2(int cntneeded, int spaceneeded)
 {
     _algo2_havenot_clear_array = 1;
-    
+
     //line
     int incolor = 0;
     int continuecnt = 0;
@@ -425,18 +432,17 @@ int PointTestNaiveSituationForShapeNow_Algo2(int cntneeded, int spaceneeded)
             else
             {
                 //deal
-        GenNaiveConstrain_Algo2(cntneeded, spaceneeded, start, end, continuecnt, &startposition, &endposition,incolor);
-               continuecnt = 1;
-                incolor = board[a][b];
                 end = board[a][b];
                 endposition[0] = a;
                 endposition[1] = b;
+                GenNaiveConstrain_Algo2(cntneeded, spaceneeded, start, end, continuecnt, &startposition, &endposition, incolor);
+                incolor = board[a][b];
+                continuecnt = 1;
                 if ((a) >= 0 && (a) < BOUNDRY && (b - 1) >= 0 && (b - 1) < BOUNDRY)
                 {
-                    start = board[a][b-1];
+                    start = board[a][b - 1];
                     startposition[0] = a;
-                    startposition[1] = b-1;
-
+                    startposition[1] = b - 1;
                 }
                 else
                 {
@@ -448,8 +454,8 @@ int PointTestNaiveSituationForShapeNow_Algo2(int cntneeded, int spaceneeded)
         }
         end = EDGE;
         //deal;
-        GenNaiveConstrain_Algo2(cntneeded, spaceneeded, start, end, continuecnt, &startposition, &endposition,incolor);
-      
+        GenNaiveConstrain_Algo2(cntneeded, spaceneeded, start, end, continuecnt, &startposition, &endposition, incolor);
+
         incolor = 0;
         continuecnt = 0;
     }
@@ -471,19 +477,21 @@ int PointTestNaiveSituationForShapeNow_Algo2(int cntneeded, int spaceneeded)
             {
 
                 //deal
-        GenNaiveConstrain_Algo2(cntneeded, spaceneeded, start, end, continuecnt, &startposition, &endposition,incolor);
 
-                continuecnt = 1;
-                incolor = board[a][b];
                 end = board[a][b];
                 endposition[0] = a;
                 endposition[1] = b;
+                GenNaiveConstrain_Algo2(cntneeded, spaceneeded, start, end, continuecnt, &startposition, &endposition, incolor);
+                continuecnt = 1;
+                incolor = board[a][b];
                 if ((a - 1) >= 0 && (a - 1) < BOUNDRY && (b) >= 0 && (b) < BOUNDRY)
                 {
-                    start = board[a-1][b];
-                    startposition[0] = a-1;
+                    start = board[a - 1][b];
+                    startposition[0] = a - 1;
                     startposition[1] = b;
-                }else{
+                }
+                else
+                {
                     start = EDGE;
                     startposition[0] = -1;
                     startposition[1] = -1;
@@ -492,8 +500,7 @@ int PointTestNaiveSituationForShapeNow_Algo2(int cntneeded, int spaceneeded)
         }
         end = EDGE;
         //deal;
-        GenNaiveConstrain_Algo2(cntneeded, spaceneeded, start, end, continuecnt, &startposition, &endposition,incolor);
-
+        GenNaiveConstrain_Algo2(cntneeded, spaceneeded, start, end, continuecnt, &startposition, &endposition, incolor);
 
         incolor = 0;
         continuecnt = 0;
@@ -517,33 +524,35 @@ int PointTestNaiveSituationForShapeNow_Algo2(int cntneeded, int spaceneeded)
                 }
                 else
                 {
-                //deal
-        GenNaiveConstrain_Algo2(cntneeded, spaceneeded, start, end, continuecnt, &startposition, &endposition,incolor);
+                    //deal
 
-                continuecnt = 1;
-                incolor = board[a][b];
-                end = board[a][b];
-                endposition[0] = a;
-                endposition[1] = b;
-                if ((a + 1) >= 0 && (a + 1) < BOUNDRY && (b - 1) >= 0 && (b - 1) < BOUNDRY)
-                {
-                    start = board[a+1][b-1];
-                    startposition[0] = a+1;
-                    startposition[1] = b-1;                    
-                }else{
-                    start = EDGE;
-                    startposition[0] = -1;
-                    startposition[1] = -1;
+                    end = board[a][b];
+                    endposition[0] = a;
+                    endposition[1] = b;
+                    GenNaiveConstrain_Algo2(cntneeded, spaceneeded, start, end, continuecnt, &startposition, &endposition, incolor);
+                    continuecnt = 1;
+                    incolor = board[a][b];
+                    if ((a - 1) >= 0 && (a - 1) < BOUNDRY && (b + 1) >= 0 && (b + 1) < BOUNDRY)
+                    {
+                        start = board[a - 1][b + 1];
+                        startposition[0] = a - 1;
+                        startposition[1] = b + 1;
+                    }
+                    else
+                    {
+                        start = EDGE;
+                        startposition[0] = -1;
+                        startposition[1] = -1;
+                    }
                 }
             }
         }
-        end = EDGE;
-        //deal;
-        GenNaiveConstrain_Algo2(cntneeded, spaceneeded, start, end, continuecnt, &startposition, &endposition,incolor);
+            end = EDGE;
+            //deal;
+            GenNaiveConstrain_Algo2(cntneeded, spaceneeded, start, end, continuecnt, &startposition, &endposition, incolor);
 
-        incolor = 0;
-        continuecnt = 0;
-    }
+            incolor = 0;
+            continuecnt = 0;
     }
 
     //dig1
@@ -564,60 +573,70 @@ int PointTestNaiveSituationForShapeNow_Algo2(int cntneeded, int spaceneeded)
                 }
                 else
                 {
-                //deal
-                GenNaiveConstrain_Algo2(cntneeded, spaceneeded, start, end, continuecnt, &startposition, &endposition,incolor);
-                continuecnt = 1;
-                incolor = board[a][b];
-                end = board[a][b];
-                endposition[0] = a;
-                endposition[1] = b;
-                if ((a - 1) >= 0 && (a - 1) < BOUNDRY && (b - 1) >= 0 && (b - 1) < BOUNDRY)
-                {
-                    start = board[a-1][b-1];
-                    startposition[0] = a-1;
-                    startposition[1] = b-1;                    
-                }else{
-                    start = EDGE;
-                    startposition[0] = -1;
-                    startposition[1] = -1;
+                    //deal
+                    end = board[a][b];
+                    endposition[0] = a;
+                    endposition[1] = b;
+                    GenNaiveConstrain_Algo2(cntneeded, spaceneeded, start, end, continuecnt, &startposition, &endposition, incolor);
+                    continuecnt = 1;
+                    incolor = board[a][b];
+                    if ((a - 1) >= 0 && (a - 1) < BOUNDRY && (b - 1) >= 0 && (b - 1) < BOUNDRY)
+                    {
+                        start = board[a - 1][b - 1];
+                        startposition[0] = a - 1;
+                        startposition[1] = b - 1;
+                    }
+                    else
+                    {
+                        start = EDGE;
+                        startposition[0] = -1;
+                        startposition[1] = -1;
+                    }
                 }
             }
         }
-        end = EDGE;
-        //deal;
-        GenNaiveConstrain_Algo2(cntneeded, spaceneeded, start, end, continuecnt, &startposition, &endposition,incolor);
+            end = EDGE;
+            //deal;
+            GenNaiveConstrain_Algo2(cntneeded, spaceneeded, start, end, continuecnt, &startposition, &endposition, incolor);
 
-
-        incolor = 0;
-        continuecnt = 0;
+            incolor = 0;
+            continuecnt = 0;
     }
-}
     return 0;
-    }
+}
 
-int GenNaiveConstrain_Algo2(int cntneeded, int spaceneeded,int start,int end,int continuecnt,int* startposition,int* endposition,int incolor)
+int GenNaiveConstrain_Algo2(int cntneeded, int spaceneeded, int start, int end, int continuecnt, int *startposition, int *endposition, int incolor)
 {
-    if(incolor==0)
+    if (incolor == 0)
         return 0;
     // startposition[0]
-    {
-        CK(start), CK(end), CK(continuecnt),CK(incolor),CK(startposition[0]);
-        CK(startposition[1]);
-        CK(endposition[0]);
-        CK(endposition[1]);
-        puts("---");
-    }
+    // {
+    //     CK(start), CK(end), CK(continuecnt), CK(incolor), CK(startposition[0]);
+    //     CK(startposition[1]);
+    //     CK(endposition[0]);
+    //     CK(endposition[1]);
+    //     printf("\n");
+    //     puts("---");
+    // }
     int space = (start == 0) + (end == 0);
-    if (continuecnt==cntneeded&&space==spaceneeded){
-        if(_algo2_havenot_clear_array){
+    if (continuecnt == cntneeded && space == spaceneeded)
+    {
+        if (_algo2_havenot_clear_array)
+        {
             _algo2_havenot_clear_array = 0;
             memset(_ValidPositionForPointAlgo, 0, sizeof(int) * BOUNDRY * BOUNDRY);
-            BP;
         }
-        _ValidPositionForPointAlgo[startposition[0]][startposition[1]] = 1;
-        _ValidPositionForPointAlgo[endposition[0]][endposition[1]] = 1;
+        if (startposition[0] != -1 && startposition[1] != -1)
+            _ValidPositionForPointAlgo[startposition[0]][startposition[1]] = 1;
+        if (endposition[0] != -1 && endposition[1] != -1)
+            _ValidPositionForPointAlgo[endposition[0]][endposition[1]] = 1;
         BP;
     }
+}
+
+int ClearWeightMartix()
+{
+    memset(weight, 0, sizeof(double) * BOUNDRY * BOUNDRY);
 }
 
 // int GenNaiveConstrain_Algo2(int a,int b,int lima,int lim b,)
@@ -710,27 +729,27 @@ int GenNaiveConstrain_Algo2(int cntneeded, int spaceneeded,int start,int end,int
 //                 if (aget < BOUNDRY && aget >= 0 && bget >= 0 && bget < BOUNDRY)
 //                 {
 //                     _Testline[i] = board[aget][bget];
-                    
+
 //                 }
 //                 else
 //                 {
 //                     _Testline[i] = EDGE;
-                    
+
 //                 }
 //             }
-            
+
 //         GenNaiveConstrain_Algo2(a,b);
 //             for (int bget = b - 4, aget = a, i = 0; bget <= b + 4; bget++, i++)
 //             {
 //                 if (aget < BOUNDRY && aget >= 0 && bget >= 0 && bget < BOUNDRY)
 //                 {
 //                     _Testline[i] = board[aget][bget];
-                    
+
 //                 }
 //                 else
 //                 {
 //                     _Testline[i] = EDGE;
-                    
+
 //                 }
 //             }
 // GenNaiveConstrain_Algo2(a,b);
@@ -740,12 +759,12 @@ int GenNaiveConstrain_Algo2(int cntneeded, int spaceneeded,int start,int end,int
 //                 if (aget < BOUNDRY && aget >= 0 && bget >= 0 && bget < BOUNDRY)
 //                 {
 //                     _Testline[i] = board[aget][bget];
-                    
+
 //                 }
 //                 else
 //                 {
 //                     _Testline[i] = EDGE;
-                    
+
 //                 }
 //             }
 // GenNaiveConstrain_Algo2(a,b);
@@ -755,12 +774,12 @@ int GenNaiveConstrain_Algo2(int cntneeded, int spaceneeded,int start,int end,int
 //                 if (aget < BOUNDRY && aget >= 0 && bget >= 0 && bget < BOUNDRY)
 //                 {
 //                     _Testline[i] = board[aget][bget];
-                    
+
 //                 }
 //                 else
 //                 {
 //                     _Testline[i] = EDGE;
-                    
+
 //                 }
 //             }
 // GenNaiveConstrain_Algo2(a,b);

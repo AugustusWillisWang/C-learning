@@ -9,8 +9,8 @@
 
 
 int clearscreen(){
-    system("cls");
-    system("clear");
+    // system("cls");
+    // system("clear");
 }
 
 //棋盘使用的是GBK编码，每一个中文字符占用2个字节。
@@ -90,9 +90,10 @@ int PrintBoard()
 }
 for (int a = 0; a < BOUNDRY; a++)
 {
-    printf("%s %d\n",display_board_array[a],15-a);
+    printf("%s %d\n",display_board_array[a],BOUNDRY-a);
     }
     printf("ABCDEFGHIJKLMNO\n");
+    ShowBoardArray();
     
 }
 
@@ -104,9 +105,9 @@ int getinput(int* a, int* b)
     scanf("%d %c", &ra, &rb);
     // 15 B -> 0 1
     // CK(rb);
-    CK(15 - ra);
+    CK(BOUNDRY - ra);
     CK((int)(rb - 'A'));
-    *a = 15 - ra;
+    *a = BOUNDRY - ra;
 
     *b = (int)(rb-'A');
 
