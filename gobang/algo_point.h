@@ -4,28 +4,29 @@
 #define EDGE 3
 
 //这里的权值是随便赋的
-#define WEIGHT_1_2SIDE 2
-#define WEIGHT_2_2SIDE 20
-#define WEIGHT_3_2SIDE 200
-#define WEIGHT_4_2SIDE 2000
-#define WEIGHT_5_2SIDE 20000
+#define WEIGHT_1_2SIDE 2.0
+#define WEIGHT_2_2SIDE 20.0
+#define WEIGHT_3_2SIDE 200.0
+#define WEIGHT_4_2SIDE 2000.0
 
-#define WEIGHT_1_1SIDE 1
-#define WEIGHT_2_1SIDE 10
-#define WEIGHT_3_1SIDE 100
-#define WEIGHT_4_1SIDE 1000
-#define WEIGHT_5_1SIDE 10000
+
+#define WEIGHT_1_1SIDE 1.0
+#define WEIGHT_2_1SIDE 10.0
+#define WEIGHT_3_1SIDE 100.0
+#define WEIGHT_4_1SIDE 1000.0
+
+#define WEIGHT_5_WIN 10000.0
 
 //Let + be black weight, and - be white weight;
-static int ShowWeightArray_Algo2();
-static int Show_ValidArray_Algo2();
+int ShowWeightArray_Algo2();
+int Show_ValidArray_Algo2();
 
 //对矩阵的整体查找
-static int GenValidPosition_Algo2();    //Calc only near the exist point.
-static double WeightContribute_Algo2(); //Gen weight for a single line in _Testline[9]
-static double PointGenWeightForShapeNow_Algo2();
-static double PointGenweightAt_Algo2(int a, int b); //Get the weight change if making move at a,b.
-static int PointGenWeightMartix_Algo2();
+int GenValidPosition_Algo2();    //Calc only near the exist point.
+double WeightContribute_Algo2(); //Gen weight for a single line in _Testline[9]
+double PointGenWeightForShapeNow_Algo2();
+double PointGenWeightAt_Algo2(int a, int b); //Get the weight change if making move at a,b.
+int PointGenWeightMartix_Algo2();
 
 int Inverse(int color)
 {
@@ -40,14 +41,14 @@ int Inverse(int color)
     }
 }
 
-static int _ValidPositionForPointAlgo[BOUNDRY][BOUNDRY];
-static int _TestedPositionForPointAlgo[BOUNDRY][BOUNDRY];
-static int _Testline[9]; //Get 9 elements out to check the weight.
+int _ValidPositionForPointAlgo[BOUNDRY][BOUNDRY];
+int _TestedPositionForPointAlgo[BOUNDRY][BOUNDRY];
+int _Testline[9]; //Get 9 elements out to check the weight.
 
-static double _weightnow;
+double _weightnow;
 
-// static int JudgeWinPlus();
-// static int _LinearWeightCnter(int a, int b, int mode); //if mode==CLEAR, set cnt,max,color=0
+//  int JudgeWinPlus();
+//  int _LinearWeightCnter(int a, int b, int mode); //if mode==CLEAR, set cnt,max,color=0
 
 int AlgoPoint(int *ap, int *bp) //Write the position choosed into int* ap,int* bp;
 {
@@ -61,6 +62,7 @@ int AlgoPoint(int *ap, int *bp) //Write the position choosed into int* ap,int* b
 
     PointGenWeightMartix_Algo2();
     // SHOWALL(weight, "double");
+
     int a_choosed = 0, b_choosed = 0;
     if (colornow == BLACK)
     {
@@ -96,6 +98,7 @@ int AlgoPoint(int *ap, int *bp) //Write the position choosed into int* ap,int* b
     }
     CK(a_choosed);
     CK(b_choosed);
+    BP;
     *ap = a_choosed;
     *bp = b_choosed;
 
@@ -103,23 +106,26 @@ int AlgoPoint(int *ap, int *bp) //Write the position choosed into int* ap,int* b
 }
 //colornow is known;
 
-static double WeightContribute_Algo2()
+double WeightContribute_Algo2()
 //Deal with the 1-d 9 element array, return the weight generated.
 //At the same time, mark the point tested.(Obsoleted)
 {
-    // static int _Testline[9];//Get 9 elements out to check the weight.
+    //  int _Testline[9];//Get 9 elements out to check the weight.
     int leftblocked = 0;
     int rightblocked = 0;
     int cnt = 0;
-    int position = 5; //The middle of the 9 positions.
-
+    int position = 4; //The middle of the 9 positions.
     //Get the weight of this position.
     if (_Testline[position] == 0)
         return 0;
-
+    cnt++;
     int colorinmiddle = _Testline[position];
-    while (position >= 0 && _Testline[--position] == colorinmiddle) //Highlight!
+    while (_Testline[--position] == colorinmiddle) //Highlight!
+    {
         cnt++;
+        if (0 == position)
+            break;
+    }
     switch (_Testline[position])
     {
 
@@ -131,9 +137,12 @@ static double WeightContribute_Algo2()
         leftblocked = 1;
         break;
     }
-    position = 5;
-    while (position < 9 && _Testline[--position] == colorinmiddle) //Highlight!
-        cnt++;
+    position = 4;
+    while ( _Testline[++position] == colorinmiddle) //Highlight!
+        {cnt++;
+        if(8==position)
+            break;
+        }
     switch (_Testline[position])
     {
     case 0:
@@ -147,20 +156,57 @@ static double WeightContribute_Algo2()
 
     //If 5 link is impossible to achieve, then return 0;
     int linkmax = 1;
-    position = 5;
-    while(position>=0&&_Testline[--position]!=Inverse(colorinmiddle)&&_Testline[position]!=EDGE){
+    position = 4;
+    while (position >= 0 && _Testline[--position] != Inverse(colorinmiddle) && _Testline[position] != EDGE)
+    {
         linkmax++;
     }
-    position = 5;
-    while(position<9&&_Testline[++position]!=Inverse(colorinmiddle)&&_Testline[position]!=EDGE){
+    position = 4;
+    while (position < 9 && _Testline[++position] != Inverse(colorinmiddle) && _Testline[position] != EDGE)
+    {
         linkmax++;
     }
-    if(linkmax<5)return 0;
+    if (linkmax < 5)
+        return 0;
 
     //Return weight according to cnt, l,r,blocked;
+    CK(cnt);
+    CK(leftblocked);
+    CK(rightblocked);
+    switch (cnt)
+    {
+    case 1:
+        switch(leftblocked+rightblocked){
+            case 0: return (colornow == BLACK ? 1 : -1) * WEIGHT_1_2SIDE;
+            case 1: return (colornow == BLACK ? 1 : -1) * WEIGHT_1_1SIDE;
+            case 2: return (colornow == BLACK ? 1 : -1) * 0;
+        }
+        case 2:
+        switch(leftblocked+rightblocked){
+            case 0: return (colornow == BLACK ? 1 : -1) * WEIGHT_2_2SIDE;
+            case 1: return (colornow == BLACK ? 1 : -1) * WEIGHT_2_1SIDE;
+            case 2: return (colornow == BLACK ? 1 : -1) * 0;
+        }
+        case 3:
+        switch(leftblocked+rightblocked){ 
+            case 0: return (colornow == BLACK ? 1 : -1) * WEIGHT_3_2SIDE;
+            case 1: return (colornow == BLACK ? 1 : -1) * WEIGHT_3_1SIDE;
+            case 2: return (colornow == BLACK ? 1 : -1) * 0;
+        }
+        case 4:
+        switch(leftblocked+rightblocked){
+            case 0: return (colornow == BLACK ? 1 : -1) * WEIGHT_4_2SIDE;
+            case 1: return (colornow == BLACK ? 1 : -1) * WEIGHT_4_1SIDE;
+            case 2: return (colornow == BLACK ? 1 : -1) * 0;
+        }
+        case 5:
+            return (colornow == BLACK ? 1 : -1) * WEIGHT_5_WIN;
+
+        }
+return 0;
 }
 
-static double PointGenWeightForShapeNow_Algo2()
+double PointGenWeightForShapeNow_Algo2()
 {
     double weight_for_shape_now = 0.0;
     for (int a = 0; a < BOUNDRY; a++)
@@ -171,23 +217,34 @@ static double PointGenWeightForShapeNow_Algo2()
             {
                 if (aget < BOUNDRY && aget >= 0 && bget >= 0 && bget < BOUNDRY)
                 {
-                    _Testline[i] = EDGE;
+                    _Testline[i] = board[aget][bget];
+                    
                 }
                 else
                 {
-                    _Testline[i] = board[aget][bget];
+                    _Testline[i] = EDGE;
+                    
                 }
+            }
+            
+            if(board[a][b]!=0){
+                BP;
+            double temp=WeightContribute_Algo2();
+            SHOWALL(_Testline, "int");
+            printf("temp==%lf\n", temp);
             }
             weight_for_shape_now += WeightContribute_Algo2();
             for (int bget = b - 4, aget = a, i = 0; bget <= b + 4; bget++, i++)
             {
                 if (aget < BOUNDRY && aget >= 0 && bget >= 0 && bget < BOUNDRY)
                 {
-                    _Testline[i] = EDGE;
+                    _Testline[i] = board[aget][bget];
+                    
                 }
                 else
                 {
-                    _Testline[i] = board[aget][bget];
+                    _Testline[i] = EDGE;
+                    
                 }
             }
             weight_for_shape_now += WeightContribute_Algo2();
@@ -196,11 +253,13 @@ static double PointGenWeightForShapeNow_Algo2()
             {
                 if (aget < BOUNDRY && aget >= 0 && bget >= 0 && bget < BOUNDRY)
                 {
-                    _Testline[i] = EDGE;
+                    _Testline[i] = board[aget][bget];
+                    
                 }
                 else
                 {
-                    _Testline[i] = board[aget][bget];
+                    _Testline[i] = EDGE;
+                    
                 }
             }
             weight_for_shape_now += WeightContribute_Algo2();
@@ -209,11 +268,13 @@ static double PointGenWeightForShapeNow_Algo2()
             {
                 if (aget < BOUNDRY && aget >= 0 && bget >= 0 && bget < BOUNDRY)
                 {
-                    _Testline[i] = EDGE;
+                    _Testline[i] = board[aget][bget];
+                    
                 }
                 else
                 {
-                    _Testline[i] = board[aget][bget];
+                    _Testline[i] = EDGE;
+                    
                 }
             }
             weight_for_shape_now += WeightContribute_Algo2();
@@ -222,7 +283,7 @@ static double PointGenWeightForShapeNow_Algo2()
     return weight_for_shape_now;
 }
 
-static double PointGenweightAt_Algo2(int a, int b)
+double PointGenWeightAt_Algo2(int a, int b)
 {
     if (board[a][b]) //该位置无法落子
     {
@@ -230,11 +291,12 @@ static double PointGenweightAt_Algo2(int a, int b)
     }
     board[a][b] = colornow;
     double change = PointGenWeightForShapeNow_Algo2() - _weightnow;
+    printf("change:%lf\n", change);
     board[a][b] = 0;
     return change;
 }
 
-static int PointGenWeightMartix_Algo2()
+int PointGenWeightMartix_Algo2()
 {
     //4连情况
 
@@ -287,12 +349,13 @@ static int PointGenWeightMartix_Algo2()
         for (int b = 0; b < BOUNDRY; b++)
         {
             if (_ValidPositionForPointAlgo[a][b])
-                weight[a][b] = PointGenweightAt_Algo2(a, b);
+                weight[a][b] = PointGenWeightAt_Algo2(a, b);
+            // CK(weight[a][b]);
         }
     }
 }
 
-static int ShowWeightArray_Algo2()
+int ShowWeightArray_Algo2()
 {
     for (int a = 0; a < BOUNDRY; a++)
     {
@@ -304,7 +367,7 @@ static int ShowWeightArray_Algo2()
     }
 }
 
-static int Show_ValidArray_Algo2()
+int Show_ValidArray_Algo2()
 {
     for (int a = 0; a < BOUNDRY; a++)
     {

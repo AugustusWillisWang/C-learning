@@ -11,25 +11,25 @@
 #define WEIGHT_5_LINK 10000
 
 //Let + be black weight, and - be white weight;
-static int ShowWeightArray_Algo1();
-static int Show_ValidArray_Algo1();
+ int ShowWeightArray_Algo1();
+ int Show_ValidArray_Algo1();
 
 //对矩阵的整体查找
-static int GenValidPosition_Algo1();
-static double WeightContribute_Algo1(int incolor, int continuecnt);
-static double LinearGenWeightForShapeNow_Algo1();
-static double LinearGenweightAt_Algo1(int a, int b);
-static int LinearGenWeightMartix_Algo1();
+ int GenValidPosition_Algo1();
+ double WeightContribute_Algo1(int incolor, int continuecnt);
+ double LinearGenWeightForShapeNow_Algo1();
+ double LinearGenweightAt_Algo1(int a, int b);
+ int LinearGenWeightMartix_Algo1();
 
 // //对每个点的附近进行查找
-// static double PointGenWeightAt(int a, int b);
+//  double PointGenWeightAt(int a, int b);
 
-static int _ValidPositionForLinearAlgo[BOUNDRY][BOUNDRY];
+ int _ValidPositionForLinearAlgo[BOUNDRY][BOUNDRY];
 
-static double _weightnow;
+ double _weightnow;
 
-// static int JudgeWinPlus();
-// static int _LinearWeightCnter(int a, int b, int mode); //if mode==CLEAR, set cnt,max,color=0
+//  int JudgeWinPlus();
+//  int _LinearWeightCnter(int a, int b, int mode); //if mode==CLEAR, set cnt,max,color=0
 
 int AlgoLinear(int *ap, int *bp) //Write the position choosed into int* ap,int* bp;
 {
@@ -85,7 +85,7 @@ int AlgoLinear(int *ap, int *bp) //Write the position choosed into int* ap,int* 
 }
 //colornow is known;
 
-static double WeightContribute_Algo1(int incolor, int continuecnt)
+ double WeightContribute_Algo1(int incolor, int continuecnt)
 {
     double result = 0.0;
     switch (continuecnt)
@@ -124,7 +124,7 @@ static double WeightContribute_Algo1(int incolor, int continuecnt)
     }
 }
 
-static double LinearGenWeightForShapeNow_Algo1()
+ double LinearGenWeightForShapeNow_Algo1()
 {
     double weight_for_shape_now = 0.0;
     //line
@@ -229,7 +229,7 @@ static double LinearGenWeightForShapeNow_Algo1()
     return weight_for_shape_now;
 }
 
-static double LinearGenweightAt_Algo1(int a, int b)
+ double LinearGenweightAt_Algo1(int a, int b)
 {
     if (board[a][b]) //该位置无法落子
     {
@@ -241,7 +241,7 @@ static double LinearGenweightAt_Algo1(int a, int b)
     return change;
 }
 
-static int LinearGenWeightMartix_Algo1()
+ int LinearGenWeightMartix_Algo1()
 {
     //4连情况
 
@@ -300,7 +300,7 @@ static int LinearGenWeightMartix_Algo1()
     }
 }
 
-static int ShowWeightArray_Algo1()
+ int ShowWeightArray_Algo1()
 {
      for (int a = 0; a < BOUNDRY; a++)
     {
@@ -312,7 +312,7 @@ static int ShowWeightArray_Algo1()
     }
 }
 
-static int Show_ValidArray_Algo1()
+ int Show_ValidArray_Algo1()
 {
      for (int a = 0; a < BOUNDRY; a++)
     {
