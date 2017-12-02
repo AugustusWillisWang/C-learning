@@ -8,6 +8,7 @@
         "cmath": "c",
         "type_traits": "c",
         "utility": "c",
-        "printboard.h": "c"
+        "printboard.h": "c",
+        "initializer_list": "cpp"
     }
 }
