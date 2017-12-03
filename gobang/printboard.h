@@ -93,7 +93,7 @@ for (int a = 0; a < BOUNDRY; a++)
     printf("%s %d\n",display_board_array[a],BOUNDRY-a);
     }
     printf("ABCDEFGHIJKLMNO\n");
-    ShowBoardArray();
+    // ShowBoardArray();
     
 }
 

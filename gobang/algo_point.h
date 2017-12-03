@@ -392,20 +392,20 @@ int Show_ValidArray_Algo2()
 
 int SimpleSituationCheck() //Check 4-1 4-2 3-2 in order. If such situation exists, constrain avaliable position to such areas.
 {
-    Show_ValidArray_Algo2();
-    BP;
+    // Show_ValidArray_Algo2();
+    // BP;
 
     PointTestNaiveSituationForShapeNow_Algo2(3, 2);
-    Show_ValidArray_Algo2();
-    BP;
+    // Show_ValidArray_Algo2();
+    // BP;
 
     PointTestNaiveSituationForShapeNow_Algo2(4, 2);
-    Show_ValidArray_Algo2();
-    BP;
+    // Show_ValidArray_Algo2();
+    // BP;
 
     PointTestNaiveSituationForShapeNow_Algo2(4, 1);
-    Show_ValidArray_Algo2();
-    BP;
+    // Show_ValidArray_Algo2();
+    // BP;
 }
 
 int PointTestNaiveSituationForShapeNow_Algo2(int cntneeded, int spaceneeded)

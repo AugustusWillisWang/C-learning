@@ -10,5 +10,6 @@
         "utility": "c",
         "printboard.h": "c",
         "initializer_list": "cpp"
-    }
+    },
+    "C_Cpp.errorSquiggles": "Enabled"
 }

@@ -18,6 +18,7 @@ double weight[BOUNDRY][BOUNDRY];  //权重变化,注意权重为double
 #include "algo_basic.h"
 #include "algo_linear.h"
 #include "algo_point.h"
+#include "algo_final.h"
 #include "printboard.h"
 
 #define TEST              \
@@ -647,5 +648,7 @@ int MakeMove(int *ap, int *bp)
         return AlgoLinear(ap, bp);
     case ALGO_POINT:
         return AlgoPoint(ap, bp);
+    case ALGO_FINAL:
+        return AlgoFinal(ap, bp);
     }
 }
