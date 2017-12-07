@@ -39,18 +39,18 @@ int _algo2_havenot_clear_array = 1;
 
 //------------------------------------------
 
-int Inverse(int color)
-{
-    switch (color)
-    {
-    case WHITE:
-        return BLACK;
-    case BLACK:
-        return WHITE;
-    default:
-        return 0;
-    }
-}
+// int Inverse(int color)
+// {
+//     switch (color)
+//     {
+//     case WHITE:
+//         return BLACK;
+//     case BLACK:
+//         return WHITE;
+//     default:
+//         return 0;
+//     }
+// }
 
 int _ValidPositionForPointAlgo[BOUNDRY][BOUNDRY];
 int _TestedPositionForPointAlgo[BOUNDRY][BOUNDRY];
@@ -314,21 +314,23 @@ int PointGenWeightMartix_Algo2()
 {
 
     //落子在有棋子的区域附近, 以提高效果并加快速度
-    int BoundLim(int a)
-    {
-        if (a < 0)
-        {
-            return 0;
-        }
-        else if (a >= BOUNDRY)
-        {
-            return BOUNDRY;
-        }
-        else
-        {
-            return a;
-        }
-    }
+    // int BoundLim(int a)
+    // {
+    //     if (a < 0)
+    //     {
+    //         return 0;
+    //     }
+    //     else if (a >= BOUNDRY)
+    //     {
+    //         return BOUNDRY;
+    //     }
+    //     else
+    //     {
+    //         return a;
+    //     }
+    // }
+    //Defined at support.h
+
     memset(_ValidPositionForPointAlgo, 0, sizeof(int) * BOUNDRY * BOUNDRY);
     for (int a = 0; a < BOUNDRY; a++)
     {
@@ -547,12 +549,12 @@ int PointTestNaiveSituationForShapeNow_Algo2(int cntneeded, int spaceneeded)
                 }
             }
         }
-            end = EDGE;
-            //deal;
-            GenNaiveConstrain_Algo2(cntneeded, spaceneeded, start, end, continuecnt, &startposition, &endposition, incolor);
+        end = EDGE;
+        //deal;
+        GenNaiveConstrain_Algo2(cntneeded, spaceneeded, start, end, continuecnt, &startposition, &endposition, incolor);
 
-            incolor = 0;
-            continuecnt = 0;
+        incolor = 0;
+        continuecnt = 0;
     }
 
     //dig1
@@ -595,12 +597,12 @@ int PointTestNaiveSituationForShapeNow_Algo2(int cntneeded, int spaceneeded)
                 }
             }
         }
-            end = EDGE;
-            //deal;
-            GenNaiveConstrain_Algo2(cntneeded, spaceneeded, start, end, continuecnt, &startposition, &endposition, incolor);
+        end = EDGE;
+        //deal;
+        GenNaiveConstrain_Algo2(cntneeded, spaceneeded, start, end, continuecnt, &startposition, &endposition, incolor);
 
-            incolor = 0;
-            continuecnt = 0;
+        incolor = 0;
+        continuecnt = 0;
     }
     return 0;
 }
