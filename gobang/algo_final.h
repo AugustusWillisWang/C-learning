@@ -3,6 +3,9 @@
 //ALGO_MINMAX
 #define ALGO_FINAL 3
 #define EDGE 3
+#define LEVEL 1
+
+#include "zobrist.h"
 
 //这里的权值是随便赋的
 #define W1_2 2
@@ -59,6 +62,12 @@ int bget;
 
 int AlgoFinal(int *ap, int *bp) //Write the position choosed into int* ap,int* bp;
 {
+    if (_ndefZobchain)
+    {
+        Setupzob();
+        _ndefZobchain = 0;
+    }
+
     if (fstmove && colornow == BLACK)
     {
         *ap = BOUNDRY / 2;
@@ -70,7 +79,7 @@ int AlgoFinal(int *ap, int *bp) //Write the position choosed into int* ap,int* b
     // SHOWALL(weight, "double");
 
     int a_choosed = 0, b_choosed = 0;
-    Minmax(colornow, 4, INF, NINF);
+    Minmax(colornow, LEVEL, INF, NINF);
     a_choosed = aget;
     b_choosed = bget;
     CK(a_choosed);
@@ -592,7 +601,125 @@ int GetAroundPosition(int (*_ValidPosition)[BOUNDRY])
     }
 }
 
+double MinmaxOrigin(int color, int step, double max, double min);
+int NEqualDouble(double a, double b);
+
 double Minmax(int color, int step, double max, double min)
+{
+    int temp;
+    int _aget, _bget;
+    if (temp = _JudgeWin())
+    {
+        if (temp == BLACK)
+            return W5;
+        else
+            return W5 * (-1);
+    }
+    if (step == 0)
+    {
+        // int _weight[BOUNDRY][BOUNDRY];
+
+        return PointGenWeightForShapeNow_Algo3();
+        // PointGenWeightMartix_Algo3(_weight);
+        // if (color == BLACK)
+        // return MaxWeight(_weight);
+        // if (color == WHITE)
+        // return MinWeight(_weight);
+    }
+    else
+    {
+        // int _weight[BOUNDRY][BOUNDRY];
+        double _weight;
+        int _ValidPosition[BOUNDRY][BOUNDRY];
+        memset(_ValidPosition, 0, sizeof(int) * BOUNDRY * BOUNDRY);
+        // memset(_weight, 0, sizeof(int) * BOUNDRY * BOUNDRY);
+
+        GetAroundPosition(_ValidPosition);
+        SimpleSituationCheck_Algo3(_ValidPosition);
+        // double maxget = max;
+        // double minget = min;
+        for (int a = 0; a < BOUNDRY; a++)
+        {
+            for (int b = 0; b < BOUNDRY; b++)
+            {
+                if (_ValidPosition[a][b] && board[a][b] == 0)
+                {
+                        double *_zobnewweight = 0;
+                        double **_zobnewweightp =&_zobnewweight;
+                    if (color == BLACK)
+                    {
+                        board[a][b] = color;
+                        _weight = FindinZobChain(_zobnewweightp);
+                        if (_zobnewweight != 0)
+                        {
+
+                            // _weight = newweight()
+                            _weight = Minmax(Inverse(color), step - 1, max, min);
+                            *_zobnewweight = _weight;
+                            if(NEqualDouble(_weight, MinmaxOrigin(Inverse(color), step - 1, max, min)))BP;
+                            
+                            // _zobnewweight = 0;                            
+                        }
+                        else
+                        {
+                            //pass
+                        }
+                        board[a][b] = 0;
+                        if (_weight > min)
+                        {
+                            min = _weight;
+                            _aget = a;
+                            _bget = b;
+                        }
+                        if (min > max)
+                            goto cut;
+                    }
+
+                    if (color == WHITE)
+                    {
+                        board[a][b] = color;
+                        _weight = FindinZobChain(_zobnewweightp);
+                        if (_zobnewweight != 0)
+                        {
+                            // _weight = newweight()
+                            _weight = Minmax(Inverse(color), step - 1, max, min);
+                            *_zobnewweight = _weight;
+                            if(NEqualDouble(_weight, MinmaxOrigin(Inverse(color), step - 1, max, min)))BP;
+                            
+                            // _zobnewweight = 0;
+                        }
+                        else
+                        {
+                            //pass
+                        }
+                        // _weight = Minmax(Inverse(color), step - 1, max, min);
+                        board[a][b] = 0;
+                        if (_weight < max)
+                        {
+                            max = _weight;
+                            _aget = a;
+                            _bget = b;
+                            if (max < min)
+                                goto cut;
+                        }
+                    }
+                }
+            }
+        }
+    }
+cut:
+    aget = _aget;
+    bget = _bget;
+    if (color == BLACK)
+        return min;
+    // return MaxWeight(_weight);
+    if (color == WHITE)
+        return max;
+    // return MinWeight(_weight);
+}
+
+
+double MinmaxOrigin(int color, int step, double max, double min)
 {
     int temp;
     int _aget, _bget;
@@ -674,4 +801,11 @@ cut:
     if (color == WHITE)
         return max;
     // return MinWeight(_weight);
+}
+
+int NEqualDouble(double a,double b)
+{
+    if (a < b + 1&&a>b-1)
+        return 0;
+    return 1;
 }
