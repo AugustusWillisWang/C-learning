@@ -45,7 +45,6 @@ int PveMode();        //人机主程序
 int SocketMode();     //与其他程序进行无人值守对战用
 int SetUpBoard();     //初始化棋盘
 int PrintBoard();     //显示棋盘
-int ShowBoardArray(); //简单显示棋盘
 int JudgeWin();       //判断胜利,若有一方胜利返回对应的color,否则返回0
 // int JudgeWinOriginal();  //判断胜利,若有一方胜利返回对应的color,否则返回0,第一次写的垃圾代码
 // int JudgeWinPlus();      //判断胜利,若有一方胜利返回对应的color,否则返回0,简化后的未测试代码
@@ -153,8 +152,8 @@ int PvpMode()
 
         while (ManualSetUp(a, b, colornow))
             // scanf("%d%d", &a, &b);
-        getinput(&a, &b);
-            
+            getinput(&a, &b);
+
         ;
         Save(a, b);
         movecnt++;
@@ -230,12 +229,12 @@ int PveMode()
             puts("Please input your coordinate, the format is like \"10 A\"");
             printf("a,b ranges from 0 to %d\n", BOUNDRY - 1);
             // scanf("%d%d", &a, &b);
-        getinput(&a, &b);
-            
+            getinput(&a, &b);
+
             while (ManualSetUp(a, b, colornow))
                 // scanf("%d%d", &a, &b);
-        getinput(&a, &b);
-                
+                getinput(&a, &b);
+
             ;
         }
         else
@@ -334,21 +333,6 @@ int PrintBoard_Obsoleted()
     return 0;
 }
 
-int ShowBoardArray()
-{
-    for (int a = 0; a < BOUNDRY; a++)
-    {
-        for (int b = 0; b < BOUNDRY; b++)
-        {
-            printf("%d ", board[a][b]);
-        }
-        printf("\n");
-    }
-    printf("\n");
-    // CP;
-    // printf("-----------------------------------------------------\n");
-    return 0;
-}
 
 
 int ManualSetUpAll() //手动设置当前棋盘(调试用)
@@ -478,13 +462,25 @@ int MakeMove(int *ap, int *bp)
 {
     switch (Algo_Choosed)
     {
+
+#ifdef ALGO_BASIC
+
     case ALGO_BASIC:
         return AlgoBasic(ap, bp);
+#endif
+#ifdef ALGO_LINEAR
+
     case ALGO_LINEAR:
         return AlgoLinear(ap, bp);
+#endif
+#ifdef ALGO_POINT
+
     case ALGO_POINT:
         return AlgoPoint(ap, bp);
+#endif
+#ifdef ALGO_FINAL
     case ALGO_FINAL:
         return AlgoFinal(ap, bp);
+#endif
     }
 }

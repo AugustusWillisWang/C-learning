@@ -3,7 +3,7 @@
 //ALGO_MINMAX
 #define ALGO_FINAL 3
 #define EDGE 3
-#define LEVEL 1
+#define LEVEL 5
 
 #include "zobrist.h"
 
@@ -455,7 +455,7 @@ int PointTestNaiveSituationForShapeNow_Algo3(int cntneeded, int spaceneeded, int
         }
         end = EDGE;
         //deal;
-        GenNaiveConstrain_Algo3(cntneeded, spaceneeded, start, end, continuecnt, &startposition, &endposition, incolor);
+        GenNaiveConstrain_Algo3(cntneeded, spaceneeded, start, end, continuecnt, &startposition, &endposition, incolor, _ValidPosition);
 
         incolor = 0;
         continuecnt = 0;
@@ -644,27 +644,41 @@ double Minmax(int color, int step, double max, double min)
             {
                 if (_ValidPosition[a][b] && board[a][b] == 0)
                 {
-                        double *_zobnewweight = 0;
-                        double **_zobnewweightp =&_zobnewweight;
+                    // double *_zobnewweight = 0;
+                    // double **_zobnewweightp = &_zobnewweight;
+                    // double ___soc = 0;
+                    double *__soc = 0;
+                    double **_socket = &__soc;
                     if (color == BLACK)
                     {
                         board[a][b] = color;
-                        _weight = FindinZobChain(_zobnewweightp);
-                        if (_zobnewweight != 0)
+                        _weight = FindInHashTable(_socket);
+                        if (*_socket != 0)
                         {
 
                             // _weight = newweight()
                             _weight = Minmax(Inverse(color), step - 1, max, min);
-                            *_zobnewweight = _weight;
-                            if(NEqualDouble(_weight, MinmaxOrigin(Inverse(color), step - 1, max, min)))BP;
-                            
-                            // _zobnewweight = 0;                            
+                            // _zobnewweight = 0;
+                            **_socket = _weight;
+                            *_socket = 0;
                         }
                         else
                         {
-                            //pass
+
+                            // pass
+                        }
+                        {
+                            // double temp = MinmaxOrigin(Inverse(color), step - 1, max, min);
+                            // if (NEqualDouble(_weight, temp ))
+                            // {
+                            //     printf("%lf %lf %d %d %d %d;\n", _weight, temp,step,_socket,a,b);
+                            //     ShowBoardArray();
+                            //     BP;
+                            // }
                         }
                         board[a][b] = 0;
+                        // printf("%lf ;\n", _weight);
+
                         if (_weight > min)
                         {
                             min = _weight;
@@ -678,22 +692,33 @@ double Minmax(int color, int step, double max, double min)
                     if (color == WHITE)
                     {
                         board[a][b] = color;
-                        _weight = FindinZobChain(_zobnewweightp);
-                        if (_zobnewweight != 0)
+                        _weight = FindInHashTable(_socket);
+                        if (*_socket != 0)
                         {
                             // _weight = newweight()
                             _weight = Minmax(Inverse(color), step - 1, max, min);
-                            *_zobnewweight = _weight;
-                            if(NEqualDouble(_weight, MinmaxOrigin(Inverse(color), step - 1, max, min)))BP;
+                            **_socket = _weight;
+                            *_socket = 0;
                             
                             // _zobnewweight = 0;
                         }
                         else
                         {
-                            //pass
+                            // pass
                         }
                         // _weight = Minmax(Inverse(color), step - 1, max, min);
+                        // {
+                        //     double temp = MinmaxOrigin(Inverse(color), step - 1, max, min);
+                        //     if (NEqualDouble(_weight, temp ))
+                        //     {
+                        //         printf("%lf %lf %d %d %d %d;\n", _weight, temp,step,_socket,a,b);
+                        //         ShowBoardArray();
+                        //         BP;
+                        //     }
+                        // }
                         board[a][b] = 0;
+                        // printf("%lf ;\n", _weight);
+
                         if (_weight < max)
                         {
                             max = _weight;
@@ -717,7 +742,6 @@ cut:
         return max;
     // return MinWeight(_weight);
 }
-
 
 double MinmaxOrigin(int color, int step, double max, double min)
 {
@@ -803,9 +827,9 @@ cut:
     // return MinWeight(_weight);
 }
 
-int NEqualDouble(double a,double b)
+int NEqualDouble(double a, double b)
 {
-    if (a < b + 1&&a>b-1)
+    if (a < b + 1 && a > b - 1)
         return 0;
     return 1;
 }

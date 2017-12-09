@@ -3,6 +3,24 @@
 #define INF 1E20 
 #define NINF -1E20 
 
+int ShowBoardArray(); //简单显示棋盘
+
+int ShowBoardArray()
+{
+    for (int a = 0; a < BOUNDRY; a++)
+    {
+        for (int b = 0; b < BOUNDRY; b++)
+        {
+            printf("%d ", board[a][b]);
+        }
+        printf("\n");
+    }
+    printf("\n");
+    // CP;
+    // printf("-----------------------------------------------------\n");
+    return 0;
+}
+
 int BoundLim(int a)
 {
     if (a < 0)
