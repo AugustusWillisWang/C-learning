@@ -699,7 +699,7 @@ double Minmax(int color, int step, double max, double min)
                             _weight = Minmax(Inverse(color), step - 1, max, min);
                             **_socket = _weight;
                             *_socket = 0;
-                            
+
                             // _zobnewweight = 0;
                         }
                         else
