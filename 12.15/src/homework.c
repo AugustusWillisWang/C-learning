@@ -115,9 +115,10 @@ int main(int argc, char **argv)
             cnt++;
         }
             now = next(now, n);
-            CK(now);
-            SHOWALL(st, "int");
+            // CK(now);
+            // SHOWALL(st, "int");
     }
-    CK(next(now, n)+1);
+    puts("The answer is:");
+    CK(next(now, n) + 1);
     return 0;
 }
