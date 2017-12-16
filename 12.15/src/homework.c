@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "lazy.h"
-#define BUFSIZE 20
+#define BUFSIZE 2000
 
 int swap(int *target, int a, int b);
 
