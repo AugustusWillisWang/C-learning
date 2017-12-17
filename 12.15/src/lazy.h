@@ -8,14 +8,16 @@
 
 //大写宏
 #ifndef _AWSHEAD
+//#if !defined(_AWSHEAD)
     #define _AWSHEAD
-#ifndef NDEBUG
-    #define DEBUG
+
+#define GET(x) scanf("%d", &x)
+//读取整数
 
 #define TRACK(x) (printf("track: " #x ":%d\n", x) * 0 + x)
 //值追踪
 
-#define CK(x) ({typeof(x) (_x)=(x);printf("track: " #x ":%d\n", _x);_x; })
+#define CK(x) ({typeof(x) (_x)=(x);printf("track: " #x ":%d\n", _x);_x; });
 //整数值追踪
 //注意不要追踪会引发全局变化的函数和非整数值
 
@@ -26,15 +28,9 @@
 //断点
 // #define LICENSE() (printf("Augustus Wang (c) 2017\n"),printf("Compiled on %s at %s\n", __DATE__,__TIME__))
 //签名
-#endif
 
 #define LICENSE (printf("\n%s\n", __FILE__), printf("Augustus Wang (c) 2017\n"), printf("Compiled on %s at %s\n\n", __DATE__, __TIME__))
 //签名
-
-
-#define GET(x) scanf("%d", &x)
-//读取整数
-
 
 #define LEN(x) (sizeof(x) / sizeof(x[0]))
 //数组长度
@@ -71,6 +67,7 @@
 
 #define RAW_CAT(X,Y) X##Y
 //直接连接
+
 #endif
 
 int M_GETLINE(char s[],int lim){
