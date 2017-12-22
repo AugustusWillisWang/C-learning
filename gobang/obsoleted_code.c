@@ -638,3 +638,60 @@ int JudgeWinPlus()
 //     unsigned long int zob = Getzob();
 //     return FindinZobChain(zob, _socket);
 // }
+
+int PrintBoard_Obsoleted()
+{
+    // ┠ ┨┯ ┷┏┓┗ ┛┳⊥﹃﹄┌ ┐└ ┘∟
+    // http://lulinbest.blog.sohu.com/88118628.html
+    int LINE = 103;
+    int VLINE = 104;
+    int CROSS = 105;
+
+    static int display_array[30][30];
+    for (int i = 2; i < 2 + BOUNDRY; i++)
+    {
+        display_array[0][i] = i - 2;
+    }
+
+    for (int i = 2; i < 2 + BOUNDRY; i++)
+    {
+        display_array[i][0] = i - 2;
+    }
+    for (int a = 0; a < BOUNDRY; a++)
+    {
+        for (int b = 0; b < BOUNDRY; b++)
+        {
+            display_array[2 + a][2 + b] = board[a][b];
+        }
+    }
+
+    for (int a = 0; a < 30; a++)
+    {
+        for (int b = 0; b < 30; b++)
+        {
+            switch (display_array[a][b])
+            {
+
+            case BLACK + 100:
+                printf("1");
+                break;
+            case WHITE + 100:
+                printf("2");
+                break;
+            case 0:
+                if (a == 0 || b == 0)
+                {
+                    printf(" 0");
+                    break;
+                }
+                printf(" ");
+                break;
+            default:
+                printf("%d", display_array[a][b]);
+            }
+        }
+        puts("");
+    }
+
+    return 0;
+}

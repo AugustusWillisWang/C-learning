@@ -58,7 +58,7 @@ int next(int now,int n)
 int main(int argc, char **argv)
 {
     if(argc!=5){
-        puts("parameter shoule be like -n 10 -k5");
+        puts("parameter shoule be like -n 10 -k 5");
         return 0;
     }
         int setn = 0;
@@ -118,6 +118,7 @@ int main(int argc, char **argv)
             // CK(now);
             // SHOWALL(st, "int");
     }
+
     puts("The answer is:");
     CK(next(now, n) + 1);
     return 0;

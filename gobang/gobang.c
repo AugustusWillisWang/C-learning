@@ -15,6 +15,9 @@ int board[BOUNDRY][BOUNDRY];      //棋盘数据
 int printboard[BOUNDRY][BOUNDRY]; //绘图板
 double weight[BOUNDRY][BOUNDRY];  //权重变化,注意权重为double
 
+//settings
+int _usesimpletest = 0;
+
 #include "support.h"
 
 #include "algo_basic.h"
@@ -36,16 +39,17 @@ point weight Gen
 better algo
 */
 
-int Algo_Choosed = ALGO_BASIC; //默认使用基本算法
+int Algo_Choosed = ALGO_BASIC; //默认使用算法Random
+int player = 0;
 
 FILE *log_file; //初始化日志文件指针
 
-int PvpMode();        //人人主程序
-int PveMode();        //人机主程序
-int SocketMode();     //与其他程序进行无人值守对战用
-int SetUpBoard();     //初始化棋盘
-int PrintBoard();     //显示棋盘
-int JudgeWin();       //判断胜利,若有一方胜利返回对应的color,否则返回0
+int PvpMode();    //人人主程序
+int PveMode();    //人机主程序
+int SocketMode(); //与其他程序进行无人值守对战用
+int SetUpBoard(); //初始化棋盘
+int PrintBoard(); //显示棋盘
+int JudgeWin();   //判断胜利,若有一方胜利返回对应的color,否则返回0
 // int JudgeWinOriginal();  //判断胜利,若有一方胜利返回对应的color,否则返回0,第一次写的垃圾代码
 // int JudgeWinPlus();      //判断胜利,若有一方胜利返回对应的color,否则返回0,简化后的未测试代码
 int GenWeight();         //产生权重
@@ -60,6 +64,7 @@ int DisplayLog();        //显示棋谱
 
 FILE *InitializeSaving(); //初始化保存文件
 
+
 int main(int argc, char *argv[])
 {
 
@@ -68,6 +73,7 @@ int main(int argc, char *argv[])
 
     //mode选择
     int mode_choosed;
+    char log_name[30];
     if (argc == 1)
     {
         puts("--------------------------------------");
@@ -75,14 +81,76 @@ int main(int argc, char *argv[])
         puts("");
         puts("Run without parameter.");
         puts("Tips: you can also run this program with paramter. ");
-        puts("Please choose game mode. 1:pvp 2:pve 3: pevpe 4:test 5:display log 0:exit");
+        puts("-p pvp, -e pve, -b human uses black, -w human uses white, -r read log, -1, -2, -3, -s,-auto, -test, etc. \n");
+        puts("Please choose game mode. 1:pvp 2:pve 3: unusedfunction 4:test 5:display log 0:exit");
         scanf("%d", &mode_choosed);
         // fflush(stdin);//windows
         setbuf(stdin, NULL); //For all OSs, clear buf to eat \n
     }
     else
     {
-        mode_choosed = atoi(argv[1]);
+        while (--argc)
+        {
+            argv++;
+            if (strcmp(*argv, "-p"))
+            {
+                mode_choosed = 1; //pvpmode
+                continue;
+            }
+            if (strcmp(*argv, "-e"))
+            {
+                mode_choosed = 2; //pvemode
+                continue;
+            }
+            if (strcmp(*argv, "-auto"))
+            {
+                mode_choosed = 3;
+                continue;
+            }
+            if (strcmp(*argv, "-test"))
+            {
+                mode_choosed = 4;
+                continue;
+            }
+            if (strcmp(*argv, "-b"))
+            {
+                player = BLACK;
+                continue;
+            }
+            if (strcmp(*argv, "-w"))
+            {
+                player = WHITE;
+                continue;
+            }
+            if (strcmp(*argv, "-r"))
+            {
+                --argc;
+                ++argv;
+                memcpy(log_name, *argv, 30);
+                goto showlog;
+                continue;
+            }
+            if (strcmp(*argv, "-1"))
+            {
+                Algo_Choosed = 1;
+                continue;
+            }
+            if (strcmp(*argv, "-2"))
+            {
+                Algo_Choosed = 2;
+                continue;
+            }
+            if (strcmp(*argv, "-3"))
+            {
+                Algo_Choosed = 3;
+                continue;
+            }
+            if (strcmp(*argv, "-s"))
+            {
+                _usesimpletest=1;
+                continue;
+            }
+        }
     }
 
     switch (mode_choosed)
@@ -106,9 +174,9 @@ int main(int argc, char *argv[])
         break;
     case 5:
     {
-        char log_name[30];
         //= "SunOct290114402016xxxxxxxxxx.log"; //固定log_name长度,请注意不要爆掉了10 31
         fgets(log_name, 30, stdin);
+    showlog:
         log_file = fopen(log_name, "r");
         DisplayLog();
         break;
@@ -189,11 +257,12 @@ int PveMode()
     LICENSE;
     puts("------------------------------------------");
     puts("This is pve mode.");
-    puts("Please choose the Algo: 0 for Random, 1 for ALGO_LINEAR, 2 for ALGO_POINT");
-    scanf("%d", &Algo_Choosed);
+    puts("Please choose the Algo: 0 for Random, 1 for ALGO_LINEAR, 2 for ALGO_POINT, 3 for ALGO_AlphaBeta");
+    if (ALGO_BASIC == Algo_Choosed)
+        scanf("%d", &Algo_Choosed);
     puts("Please choose your side: 1 for the black and 2 for the white");
-    int player;
-    scanf("%d", &player);
+    if (0 == player)
+        scanf("%d", &player);
     while (player != 1 && player != 2)
     {
         puts("Wrong input!\nPlease choose your side: 1 for the black and 2 for the white");
@@ -275,65 +344,6 @@ int SetUpBoard()
     memset(board, 0, sizeof(int) * BOUNDRY * BOUNDRY);
     return 0;
 }
-
-int PrintBoard_Obsoleted()
-{
-    // ┠ ┨┯ ┷┏┓┗ ┛┳⊥﹃﹄┌ ┐└ ┘∟
-    // http://lulinbest.blog.sohu.com/88118628.html
-    int LINE = 103;
-    int VLINE = 104;
-    int CROSS = 105;
-
-    static int display_array[30][30];
-    for (int i = 2; i < 2 + BOUNDRY; i++)
-    {
-        display_array[0][i] = i - 2;
-    }
-
-    for (int i = 2; i < 2 + BOUNDRY; i++)
-    {
-        display_array[i][0] = i - 2;
-    }
-    for (int a = 0; a < BOUNDRY; a++)
-    {
-        for (int b = 0; b < BOUNDRY; b++)
-        {
-            display_array[2 + a][2 + b] = board[a][b];
-        }
-    }
-
-    for (int a = 0; a < 30; a++)
-    {
-        for (int b = 0; b < 30; b++)
-        {
-            switch (display_array[a][b])
-            {
-
-            case BLACK + 100:
-                printf("1");
-                break;
-            case WHITE + 100:
-                printf("2");
-                break;
-            case 0:
-                if (a == 0 || b == 0)
-                {
-                    printf(" 0");
-                    break;
-                }
-                printf(" ");
-                break;
-            default:
-                printf("%d", display_array[a][b]);
-            }
-        }
-        puts("");
-    }
-
-    return 0;
-}
-
-
 
 int ManualSetUpAll() //手动设置当前棋盘(调试用)
 {

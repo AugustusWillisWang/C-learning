@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "algo_basic.h": "c",
+        "cmath": "c"
+    }
+}
