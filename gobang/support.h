@@ -1,7 +1,43 @@
 //support.h
+#ifndef _SUPPORT_H
+#define _SUPPORT_H
 
-#define INF 1E20 
-#define NINF -1E20 
+#define BOUNDRY 15 //19
+#define BLACK 1
+#define WHITE 2
+#define OUTOFBOARD 3
+
+#define NORMAL 0
+#define CLEAR 1
+
+#include "lazy.h"
+#include "charlib.h"
+
+//global vars.
+int colornow;
+int fstmove = 1;
+int board[BOUNDRY][BOUNDRY];      //棋盘数据
+int printboard[BOUNDRY][BOUNDRY]; //绘图板
+double weight[BOUNDRY][BOUNDRY];  //权重变化,注意权重为double
+
+//settings
+int _usesimpletest = 0;
+int set_savelog = 0;
+
+#define INF 1E20
+#define NINF -1E20
+
+int Board(int a, int b)
+{
+    if (a >= 0 && a < BOUNDRY && b >= 0 && b < BOUNDRY)
+    {
+        return board[a][b];
+    }
+    else
+    {
+        return OUTOFBOARD;
+    }
+}
 
 int ShowBoardArray(); //简单显示棋盘
 
@@ -29,7 +65,7 @@ int BoundLim(int a)
     }
     else if (a >= BOUNDRY)
     {
-        return BOUNDRY;
+        return BOUNDRY - 1;
     }
     else
     {
@@ -328,15 +364,14 @@ int _JudgeWin()
                 {
                     if (incolor && (continuecnt >= 5))
                     {
-                    if (incolor == WHITE)
-                    {
-                        return WHITE;
-                        
-                    }
-                    else if (incolor == BLACK)
-                    {
-                        return BLACK;  
-                    }
+                        if (incolor == WHITE)
+                        {
+                            return WHITE;
+                        }
+                        else if (incolor == BLACK)
+                        {
+                            return BLACK;
+                        }
                         return incolor;
                     }
                     // weight_for_shape_now += WeightContribute(incolor, continuecnt);
@@ -375,3 +410,4 @@ int Inverse(int color)
     }
 }
 
+#endif

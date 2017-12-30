@@ -10,7 +10,8 @@
         "utility": "c",
         "printboard.h": "c",
         "initializer_list": "cpp",
-        "math.h": "c"
+        "math.h": "c",
+        "charlib.h": "c"
     },
     "C_Cpp.errorSquiggles": "Enabled"
 }

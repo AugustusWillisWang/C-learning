@@ -1,12 +1,14 @@
-//zobrist.h
+//hash.h
+#ifndef _HASH_H
+#define _HASH_H
+
 #include <stdlib.h>
 #define SEED 233
-// #ifdef RAND_MAX
-// #undef RAND_MAX
-// #endif
+#ifdef RAND_MAX
+#undef RAND_MAX
+#endif
 #define HASHSIZE 0x0FFFFFF
-// #define RAND_MAX HASHSIZE
-#include "MersenneTwisterRand.h"
+#define RAND_MAX HASHSIZE
 
 int _ndefZobchain = 1;
 
@@ -18,21 +20,21 @@ struct zobhash
 } hashtable[HASHSIZE];
 
 unsigned long int zobrist_table[BOUNDRY][BOUNDRY][2];
-unsigned long int zobrist_table2[BOUNDRY][BOUNDRY][2];
+// unsigned long int zobrist_table2[BOUNDRY][BOUNDRY][2];
+
 
 int Setupzob()
 {
-    InitializeMTRandom(SEED);
-    ExtractMTRandom32();
 
+    srand(SEED);
     for (int a = 0; a < BOUNDRY; a++)
     {
         for (int b = 0; b < BOUNDRY; b++)
         {
-            zobrist_table[a][b][0] = ExtractMTRandom32();
-            zobrist_table[a][b][1] = ExtractMTRandom32();
-            zobrist_table2[a][b][0] = ExtractMTRandom32();
-            zobrist_table2[a][b][1] = ExtractMTRandom32();
+            zobrist_table[a][b][0] = rand();
+            zobrist_table[a][b][1] = rand();
+            // zobrist_table2[a][b][0] = rand();
+            // zobrist_table2[a][b][1] = rand();
         }
         // printf("%lu ", zobrist_table + i);
     }
@@ -64,7 +66,6 @@ unsigned long int Getzob()
 
 unsigned long int Getzob2()
 {
-    return 1;
     unsigned long int result = 0;
     for (int a = 0; a < BOUNDRY; a++)
     {
@@ -83,27 +84,17 @@ unsigned long int Getzob2()
     return result;
 }
 
-unsigned long int NextHash(unsigned long int hash, int a, int b, int colornow)
+double FindInHashTable(unsigned long zob,int level, double **_socket)
 {
-    return zobrist_table[a][b][colornow] + hash;
-}
-
-unsigned long int LastHash(unsigned long int hash, int a, int b, int colornow)
-{
-    return -zobrist_table[a][b][colornow] + hash;
-}
-
-double FindInHashTable(unsigned long zob, int level, double **_socket)
-{
-    if ((level > hashtable[zob%HASHSIZE].level) || !hashtable[zob%HASHSIZE].check)
-        { //!hashtable[zob].check)|| todo
-            // hashtable[zob].check = Getzob2();
-            hashtable[zob%HASHSIZE].level = level;
-            *_socket = &hashtable[zob%HASHSIZE].weight;
+    if((!hashtable[zob].check)||level>hashtable[zob].level||(hashtable[zob].check!=Getzob2())){
+        hashtable[zob].check = Getzob2();
+        hashtable[zob].level = level;
+        *_socket = &hashtable[zob].weight;
+    }else{
+            *_socket = 0;
+        return hashtable[zob].weight;
         }
-    else
-    {
-        *_socket = 0;
-        return hashtable[zob%HASHSIZE].weight;
-    }
 }
+
+
+#endif

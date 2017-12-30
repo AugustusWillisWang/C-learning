@@ -10,13 +10,13 @@
 //这里的权值是随便赋的
 #define W1_2 2
 #define W2_2 5
-#define W3_2 10
-#define W4_2 20
+#define W3_2 100
+#define W4_2 2000
 
 #define W1_1 1
 #define W2_1 3
 #define W3_1 5
-#define W4_1 10
+#define W4_1 100
 
 #define W5 10000000000.0
 
@@ -362,20 +362,20 @@ int GetAroundPosition(int (*_ValidPosition)[BOUNDRY])
 double MinmaxOrigin(int color, int step, double max, double min);
 int NEqualDouble(double a, double b);
 
-int _dbg_(double _weight, int level)
-{
-    static int cnt = 0;
-    if (LEVEL == level)
-    {
-        printf("%lf ", _weight);
-        cnt++;
-        if (BOUNDRY == cnt)
-        {
-            cnt = 0;
-            puts("");
-        }
-    }
-}
+// int _dbg_(double _weight, int level)
+// {
+//     static int cnt = 0;
+//     if (LEVEL == level)
+//     {
+//         printf("%lf ", _weight);
+//         cnt++;
+//         if (BOUNDRY == cnt)
+//         {
+//             cnt = 0;
+//             puts("");
+//         }
+//     }
+// }
 
 double Minmax(int color, int step, double max, double min)
 {
