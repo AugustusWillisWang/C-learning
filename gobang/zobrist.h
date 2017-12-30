@@ -97,7 +97,7 @@ double FindInHashTable(unsigned long zob, int level, double **_socket)
 {
     if ((level > hashtable[zob%HASHSIZE].level) || !hashtable[zob%HASHSIZE].check)
         { //!hashtable[zob].check)|| todo
-            // hashtable[zob].check = Getzob2();
+            hashtable[zob%HASHSIZE].check = Getzob2();
             hashtable[zob%HASHSIZE].level = level;
             *_socket = &hashtable[zob%HASHSIZE].weight;
         }

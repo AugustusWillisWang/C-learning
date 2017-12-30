@@ -3,22 +3,24 @@
 //ALGO_MINMAX
 #define ALGO_FINAL 3
 #define EDGE 3
-#define LEVEL 5
+#define LEVEL 4
 
 #include "zobrist.h"
 
 //这里的权值是随便赋的
 #define W1_2 2
-#define W2_2 5
-#define W3_2 100
-#define W4_2 2000
+#define W2_2 10
+#define W3_2 1000
+#define W4_2 20000
 
 #define W1_1 1
-#define W2_1 3
+#define W2_1 2
 #define W3_1 5
-#define W4_1 100
+#define W4_1 1000
 
-#define W5 10000000000.0
+#define W5 10000000.0
+
+
 
 //Basic calc:
 
@@ -88,6 +90,7 @@ int AlgoFinal(int *ap, int *bp) //Write the position choosed into int* ap,int* b
     // BP;
     *ap = a_choosed;
     *bp = b_choosed;
+    ShowWeightArray();
 
     // ClearWeightMartix_Algo3();
 
@@ -284,19 +287,19 @@ int ShowWeightArray_Algo3()
     }
 }
 
-// int Show_ValidArray_Algo3()
-// {
-//     for (int a = 0; a < BOUNDRY; a++)
-//     {
-//         for (int b = 0; b < BOUNDRY; b++)
-//         {
-//             printf("%d ", _ValidPosition[a][b]);
-//         }
-//         puts("");
-//     }
-// }
+    // int Show_ValidArray_Algo3()
+    // {
+    //     for (int a = 0; a < BOUNDRY; a++)
+    //     {
+    //         for (int b = 0; b < BOUNDRY; b++)
+    //         {
+    //             printf("%d ", _ValidPosition[a][b]);
+    //         }
+    //         puts("");
+    //     }
+    // }
 
-#include"simpletest.h"
+#include "simpletest.h"
 
 int ClearWeightMartix_Algo3()
 {
@@ -377,6 +380,17 @@ int NEqualDouble(double a, double b);
 //     }
 // }
 
+#define OUTPUTWEIGHT     {\
+        if (color == BLACK && step == LEVEL)\
+        {\
+            weight[a][b] = max;\
+        }\
+        if (color == WHITE && step == LEVEL)\
+        {\
+            weight[a][b] = min;\
+        }\
+    }\
+
 double Minmax(int color, int step, double max, double min)
 {
     int temp;
@@ -420,7 +434,7 @@ double Minmax(int color, int step, double max, double min)
                 {
                     // double *_zobnewweight = 0;
                     // double **_zobnewweightp = &_zobnewweight;
-                    // double ___soc = 0;
+                    // double __soc = 0;
                     double *__soc = 0;
                     double **_socket = &__soc;
                     if (color == BLACK)
@@ -436,6 +450,7 @@ double Minmax(int color, int step, double max, double min)
                             **_socket = _weight;
                             *_socket = 0;
                         }
+                        OUTPUTWEIGHT;
                         board[a][b] = 0;
                         // _dbg_(_weight, step);
                         // printf("%lf ;\n", _weight);
@@ -463,7 +478,7 @@ double Minmax(int color, int step, double max, double min)
                             **_socket = _weight;
                             *_socket = 0;
                         }
-
+                        OUTPUTWEIGHT;
                         board[a][b] = 0;
                         // _dbg_(_weight, step);
 
@@ -491,6 +506,7 @@ double Minmax(int color, int step, double max, double min)
 cut:
     aget = _aget;
     bget = _bget;
+
     if (color == BLACK)
         return min;
     // return MaxWeight(_weight);

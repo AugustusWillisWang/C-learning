@@ -81,10 +81,10 @@ int QSlist()
 
 //usage
 //todo
-for (int i = 0; i < HEURISTIC_BOUND;i++){
-    if(heuristic_list[i].valid){
-        //todo: do sth
-    }
-}
+// for (int i = 0; i < HEURISTIC_BOUND;i++){
+//     if(heuristic_list[i].valid){
+//         //todo: do sth
+//     }
+// }
 
 #endif

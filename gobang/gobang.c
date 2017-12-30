@@ -506,5 +506,9 @@ int MakeMove(int *ap, int *bp)
     case ALGO_FINAL:
         return AlgoFinal(ap, bp);
 #endif
+#ifdef ALGO_REBUILD
+    case ALGO_REBUILD:
+        return AlgoRebuild(ap, bp);
+#endif
     }
 }

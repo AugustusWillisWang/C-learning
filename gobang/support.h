@@ -24,8 +24,8 @@ double weight[BOUNDRY][BOUNDRY];  //权重变化,注意权重为double
 int _usesimpletest = 0;
 int set_savelog = 0;
 
-#define INF 1E20
-#define NINF -1E20
+#define INF 1E7
+#define NINF -1E7
 
 int Board(int a, int b)
 {
@@ -408,6 +408,18 @@ int Inverse(int color)
     default:
         return 0;
     }
+}
+
+int ShowWeightArray(){
+    puts("ShowWeightArray:");
+    for (int a = 0; a < BOUNDRY; a++)
+    {
+        for (int b = 0; b < BOUNDRY;b++){
+            printf("%.1lf\t", weight[a][b]);
+        }
+        puts("");
+    }
+    return 0;
 }
 
 #endif
