@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "charlib.h"
-#include"support.h"
+#include "support.h"
 // #define SIZE 15  //BOUNDRY
 #define CHARSIZE 2
 #define SIZE BOUNDRY
@@ -18,34 +18,32 @@ int clearscreen()
 
 //棋盘使用的是GBK编码，每一个中文字符占用2个字节。
 
-//棋盘基本模板 
-char display_board_array[SIZE][SIZE*CHARSIZE+1] = 
-{
-		"┏┯┯┯┯┯┯┯┯┯┯┯┯┯┓",
-		"┠┼┼┼┼┼┼┼┼┼┼┼┼┼┨",
-		"┠┼┼┼┼┼┼┼┼┼┼┼┼┼┨",
-		"┠┼┼┼┼┼┼┼┼┼┼┼┼┼┨",
-		"┠┼┼┼┼┼┼┼┼┼┼┼┼┼┨",
-		"┠┼┼┼┼┼┼┼┼┼┼┼┼┼┨",
-		"┠┼┼┼┼┼┼┼┼┼┼┼┼┼┨",
-		"┠┼┼┼┼┼┼┼┼┼┼┼┼┼┨",
-		"┠┼┼┼┼┼┼┼┼┼┼┼┼┼┨",
-		"┠┼┼┼┼┼┼┼┼┼┼┼┼┼┨",
-		"┠┼┼┼┼┼┼┼┼┼┼┼┼┼┨",
-		"┠┼┼┼┼┼┼┼┼┼┼┼┼┼┨",
-		"┠┼┼┼┼┼┼┼┼┼┼┼┼┼┨",
-		"┠┼┼┼┼┼┼┼┼┼┼┼┼┼┨",
-		"┗┷┷┷┷┷┷┷┷┷┷┷┷┷┛"
-};
-//此数组用于显示棋盘 
+//棋盘基本模板
+char display_board_array[SIZE][SIZE * CHARSIZE + 1] =
+    {
+        "┏┯┯┯┯┯┯┯┯┯┯┯┯┯┓",
+        "┠┼┼┼┼┼┼┼┼┼┼┼┼┼┨",
+        "┠┼┼┼┼┼┼┼┼┼┼┼┼┼┨",
+        "┠┼┼┼┼┼┼┼┼┼┼┼┼┼┨",
+        "┠┼┼┼┼┼┼┼┼┼┼┼┼┼┨",
+        "┠┼┼┼┼┼┼┼┼┼┼┼┼┼┨",
+        "┠┼┼┼┼┼┼┼┼┼┼┼┼┼┨",
+        "┠┼┼┼┼┼┼┼┼┼┼┼┼┼┨",
+        "┠┼┼┼┼┼┼┼┼┼┼┼┼┼┨",
+        "┠┼┼┼┼┼┼┼┼┼┼┼┼┼┨",
+        "┠┼┼┼┼┼┼┼┼┼┼┼┼┼┨",
+        "┠┼┼┼┼┼┼┼┼┼┼┼┼┼┨",
+        "┠┼┼┼┼┼┼┼┼┼┼┼┼┼┨",
+        "┠┼┼┼┼┼┼┼┼┼┼┼┼┼┨",
+        "┗┷┷┷┷┷┷┷┷┷┷┷┷┷┛"};
+//此数组用于显示棋盘
 // char display_board_array[SIZE][SIZE*CHARSIZE+1];
- 
-char play1Pic[]="●";//黑棋子;
-char play1CurrentPic[]="▲"; 
 
-char play2Pic[]="◎";//白棋子;
-char play2CurrentPic[]="△";
+char play1Pic[] = "●"; //黑棋子;
+char play1CurrentPic[] = "▲";
 
+char play2Pic[] = "◎"; //白棋子;
+char play2CurrentPic[] = "△";
 
 int _lastposia = -1;
 int _lastposib = -1;
@@ -116,4 +114,14 @@ int getinput(int *a, int *b)
     *a = BOUNDRY - ra;
 
     *b = (int)(rb - 'A');
+}
+
+int ShowMove(int a, int b, int colornow)
+{
+
+    // CK(BOUNDRY - ra);
+    // CK((int)(rb - 'A'));
+    int ra = BOUNDRY - a;
+    char rb = 'A' + b;
+    printf("%s made move at (%d, %c)\n", ((colornow == BLACK) ? "Black" : "White"), ra, rb);
 }

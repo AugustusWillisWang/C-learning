@@ -8,8 +8,15 @@ int valid_position[BOUNDRY][BOUNDRY];
 int forbid_move[BOUNDRY][BOUNDRY];
 int _fbd_line[9];
 
-int TestForbidMove(int (*valid_position)[BOUNDRY], int a, int b)
+int TestForbidMove(int a, int b, int colornow)
 {
+    //This function assumes that the position is legal, otherwise, other function should take care of this.
+    if (a != BoundLim(a) || b != BoundLim(b))
+        return 0; //Just return 0.
+
+    //White has no forbidden move;
+    if (colornow == WHITE)
+        return 0;
     // int fbd_Testline();
     if (board[a][b])
     {
@@ -19,7 +26,8 @@ int TestForbidMove(int (*valid_position)[BOUNDRY], int a, int b)
     int huo3 = 0;
     int huo4 = 0;
     int huo5 = 0;
-    int link = 0;
+    int longlink5 = 0;
+    int link = 1;
     int block = 0;
 
     board[a][b] = BLACK;
@@ -60,20 +68,24 @@ int TestForbidMove(int (*valid_position)[BOUNDRY], int a, int b)
             }
         }
 
-        if (link >= 3 && block == 0)
+        if (link >= 3 && (block == 0)) //33FORBID
         {
             huo3++;
         }
-        if (link >= 4 && block == 0)
+        if (link >= 4 && (block != 2)) //44FORBID
         {
             huo4++;
         }
-        if (link >= 5)
+        if (5==link) //5 edge enabled
         {
             huo5++;
         }
+        if (link >= 5)
+        { //long link forbid_move
+            longlink5++;
+        }
 
-        link = 0;
+        link = 1;
         block = 0;
     }
 
@@ -114,20 +126,23 @@ int TestForbidMove(int (*valid_position)[BOUNDRY], int a, int b)
             }
         }
 
-        if (link >= 3 && block == 0)
+        if (link >= 3 && (block == 0)) //33FORBID
         {
             huo3++;
         }
-        if (link >= 4 && block == 0)
+        if (link >= 4 && (block != 2)) //44FORBID
         {
             huo4++;
         }
-        if (link >= 5)
+        if (5==link) //5 edge enabled
         {
             huo5++;
         }
-
-        link = 0;
+        if (link >= 5)
+        { //long link forbid_move
+            longlink5++;
+        }
+        link = 1;
         block = 0;
     }
 
@@ -167,21 +182,24 @@ int TestForbidMove(int (*valid_position)[BOUNDRY], int a, int b)
                 }
             }
         }
-
-        if (link >= 3 && block == 0)
+        if (link >= 3 && (block == 0)) //33FORBID
         {
             huo3++;
         }
-        if (link >= 4 && block == 0)
+        if (link >= 4 && (block != 2)) //44FORBID
         {
             huo4++;
         }
-        if (link >= 5)
+        if (5==link) //5 edge enabled
         {
             huo5++;
         }
+        if (link >= 5)
+        { //long link forbid_move
+            longlink5++;
+        }
 
-        link = 0;
+        link = 1;
         block = 0;
     }
 
@@ -222,20 +240,24 @@ int TestForbidMove(int (*valid_position)[BOUNDRY], int a, int b)
             }
         }
 
-        if (link >= 3 && block == 0)
+        if (link >= 3 && (block == 0)) //33FORBID
         {
             huo3++;
         }
-        if (link >= 4 && block == 0)
+        if (link >= 4 && (block != 2)) //44FORBID
         {
             huo4++;
         }
-        if (link >= 5)
+        if (5==link) //5 edge enabled
         {
             huo5++;
         }
+        if (link >= 5)
+        { //long link forbid_move
+            longlink5++;
+        }
 
-        link = 0;
+        link = 1;
         block = 0;
     }
 
@@ -243,6 +265,8 @@ int TestForbidMove(int (*valid_position)[BOUNDRY], int a, int b)
     board[a][b] = 0;
     if (huo5)
         return 0;
+    if (longlink5)
+        return 1;
     if (huo3 >= 2)
         return 1;
     if (huo4 >= 2)
@@ -271,7 +295,7 @@ int GenForbidMove(int (*valid_position)[BOUNDRY], int colornow)
         {
             if (valid_position[a][b])
             {
-                valid_position[a][b] = TestForbidMove(valid_position, a, b);
+                valid_position[a][b] = TestForbidMove(a, b, colornow);
             }
         }
     }
@@ -293,5 +317,15 @@ int GenValidPosition(int (*valid_position)[BOUNDRY], int colornow)
             }
         }
     }
+}
+
+int TestTipForbidMove(int a, int b, int colornow)
+{
+    if (TestForbidMove(a, b, colornow))
+    {
+        puts("Black takes forbidden move, reinput please!");
+        return 1;
+    }
+    return 0;
 }
 #endif

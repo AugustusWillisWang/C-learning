@@ -1,4 +1,5 @@
 //support.h
+//Judgewin, and some basic parameters.
 #ifndef _SUPPORT_H
 #define _SUPPORT_H
 
@@ -73,7 +74,7 @@ int BoundLim(int a)
     }
 }
 
-int JudgeWin()
+int JudgeWin() //Haveoutput.version
 {
     // double weight_for_shape_now = 0.0;
     //line
@@ -108,6 +109,19 @@ int JudgeWin()
             }
         }
         // weight_for_shape_now += WeightContribute(incolor, continuecnt);
+        if (incolor && (continuecnt >= 5))
+        {
+
+            if (incolor == WHITE)
+            {
+                printf("White wins!\n");
+            }
+            else if (incolor == BLACK)
+            {
+                printf("Black wins!\n");
+            }
+            return incolor;
+        }
         incolor = 0;
         continuecnt = 0;
     }
@@ -144,6 +158,19 @@ int JudgeWin()
             }
         }
         // weight_for_shape_now += WeightContribute(incolor, continuecnt);
+        if (incolor && (continuecnt >= 5))
+        {
+
+            if (incolor == WHITE)
+            {
+                printf("White wins!\n");
+            }
+            else if (incolor == BLACK)
+            {
+                printf("Black wins!\n");
+            }
+            return incolor;
+        }
         incolor = 0;
         continuecnt = 0;
     }
@@ -184,6 +211,19 @@ int JudgeWin()
             }
         }
         // weight_for_shape_now += WeightContribute(incolor, continuecnt);
+        if (incolor && (continuecnt >= 5))
+        {
+
+            if (incolor == WHITE)
+            {
+                printf("White wins!\n");
+            }
+            else if (incolor == BLACK)
+            {
+                printf("Black wins!\n");
+            }
+            return incolor;
+        }
         incolor = 0;
         continuecnt = 0;
     }
@@ -224,6 +264,19 @@ int JudgeWin()
             }
         }
         // weight_for_shape_now += WeightContribute(incolor, continuecnt);
+        if (incolor && (continuecnt >= 5))
+        {
+
+            if (incolor == WHITE)
+            {
+                printf("White wins!\n");
+            }
+            else if (incolor == BLACK)
+            {
+                printf("Black wins!\n");
+            }
+            return incolor;
+        }
         incolor = 0;
         continuecnt = 0;
     }
@@ -231,7 +284,7 @@ int JudgeWin()
     return 0;
 }
 
-int _JudgeWin()
+int _JudgeWin() //Nooutput.version
 {
     // double weight_for_shape_now = 0.0;
     //line
@@ -266,6 +319,19 @@ int _JudgeWin()
             }
         }
         // weight_for_shape_now += WeightContribute(incolor, continuecnt);
+        if (incolor && (continuecnt >= 5))
+        {
+
+            if (incolor == WHITE)
+            {
+                printf("White wins!\n");
+            }
+            else if (incolor == BLACK)
+            {
+                printf("Black wins!\n");
+            }
+            return incolor;
+        }
         incolor = 0;
         continuecnt = 0;
     }
@@ -302,6 +368,19 @@ int _JudgeWin()
             }
         }
         // weight_for_shape_now += WeightContribute(incolor, continuecnt);
+        if (incolor && (continuecnt >= 5))
+        {
+
+            if (incolor == WHITE)
+            {
+                printf("White wins!\n");
+            }
+            else if (incolor == BLACK)
+            {
+                printf("Black wins!\n");
+            }
+            return incolor;
+        }
         incolor = 0;
         continuecnt = 0;
     }
@@ -342,6 +421,19 @@ int _JudgeWin()
             }
         }
         // weight_for_shape_now += WeightContribute(incolor, continuecnt);
+        if (incolor && (continuecnt >= 5))
+        {
+
+            if (incolor == WHITE)
+            {
+                printf("White wins!\n");
+            }
+            else if (incolor == BLACK)
+            {
+                printf("Black wins!\n");
+            }
+            return incolor;
+        }
         incolor = 0;
         continuecnt = 0;
     }
@@ -381,6 +473,19 @@ int _JudgeWin()
             }
         }
         // weight_for_shape_now += WeightContribute(incolor, continuecnt);
+        if (incolor && (continuecnt >= 5))
+        {
+
+            if (incolor == WHITE)
+            {
+                printf("White wins!\n");
+            }
+            else if (incolor == BLACK)
+            {
+                printf("Black wins!\n");
+            }
+            return incolor;
+        }
         incolor = 0;
         continuecnt = 0;
     }
@@ -410,11 +515,13 @@ int Inverse(int color)
     }
 }
 
-int ShowWeightArray(){
+int ShowWeightArray()
+{
     puts("ShowWeightArray:");
     for (int a = 0; a < BOUNDRY; a++)
     {
-        for (int b = 0; b < BOUNDRY;b++){
+        for (int b = 0; b < BOUNDRY; b++)
+        {
             printf("%.1lf\t", weight[a][b]);
         }
         puts("");

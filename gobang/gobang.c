@@ -223,7 +223,7 @@ int PvpMode()
         // scanf("%d%d", &a, &b);
         getinput(&a, &b);
 
-        while (ManualSetUp(a, b, colornow))
+        while (TestTipForbidMove(a,b,colornow)||ManualSetUp(a, b, colornow))
             // scanf("%d%d", &a, &b);
             getinput(&a, &b);
 
@@ -305,7 +305,7 @@ int PveMode()
             // scanf("%d%d", &a, &b);
             getinput(&a, &b);
 
-            while (ManualSetUp(a, b, colornow))
+            while (TestTipForbidMove(a,b,colornow)||ManualSetUp(a, b, colornow))
                 // scanf("%d%d", &a, &b);
                 getinput(&a, &b);
 
@@ -400,6 +400,7 @@ int ForcedManualSetUp(int a, int b, int color) //手动设置当前棋盘某一位置(调试用
 
 int Save(int a, int b) //保存当前操作到棋谱
 {
+    ShowMove(a, b, colornow);
     fprintf(log_file, "%d %d\n", a, b);
 }
 

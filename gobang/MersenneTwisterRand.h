@@ -76,3 +76,5 @@ uint32_t ExtractMTRandom32()
     y ^= (y >> L);
     return y;
 }
+
+// 产生一个64位随机数
