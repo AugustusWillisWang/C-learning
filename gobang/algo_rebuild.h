@@ -3,22 +3,22 @@
 //ALGO_MINMAX
 #define ALGO_FINAL 3
 #define EDGE 3
-#define LEVEL 2
+#define LEVEL 3
 
 #include "zobrist.h"
 #include "support.h"
 #include "heuristic.h"
 
 //这里的权值是随便赋的
-#define W1_2 2
-#define W2_2 10
-#define W3_2 1000
-#define W4_2 20000
+#define W1_2 0
+#define W2_2 (4 / 2)
+#define W3_2 (500 / 3)
+#define W4_2 (20000 / 4)
 
-#define W1_1 1
-#define W2_1 2
-#define W3_1 5
-#define W4_1 1000
+#define W1_1 0
+#define W2_1 (1 / 2)
+#define W3_1 (10 / 3)
+#define W4_1 (500 / 4)
 
 #define W5 10000000.0
 
@@ -380,8 +380,13 @@ double Search(int color, double alpha, double beta, int depth, unsigned long lon
         board[a][b] = 0;
 
         //debug
-        if (depth == LEVEL)
-            weight[a][b] = score;
+        // if (depth == LEVEL)
+        // {
+        //     ShowWeightArray(weight);
+        //     memset(weight, 0, sizeof(weight));
+        // }
+        // if (depth == LEVEL - 1)
+        //     weight[a][b] = score;
         if (score > alpha)
         {
             alpha = score;
@@ -410,7 +415,6 @@ double Search(int color, double alpha, double beta, int depth, unsigned long lon
         return alpha;
     }
 }
-
 
 int AlphaBeta(int depth, int color, double alpha, double beta)
 {
@@ -442,7 +446,7 @@ int AlphaBeta(int depth, int color, double alpha, double beta)
                         beta = score;
                         if (depth == LEVEL)
                         {
-                            weight[a][b] = score;                            
+                            weight[a][b] = score;
                             bestmoverec.a = a;
                             bestmoverec.b = b;
                         }
@@ -509,8 +513,8 @@ int AlgoFinal(int *ap, int *bp) //Write the position choosed into int* ap,int* b
     // SHOWALL(weight, "double");
     memset(history_table, 0, sizeof(history_table));
     memset(weight, 0, sizeof(weight));
-    Search(colornow, -INF, INF, LEVEL, Getzob(), Getzob2());
-    // AlphaBeta(LEVEL, colornow, -INF, INF);
+    // Search(colornow, -INF, INF, LEVEL, Getzob(), Getzob2());
+    AlphaBeta(LEVEL, colornow, -INF, INF);
     CK(bestmoverec.a);
     CK(bestmoverec.b);
     // ShowWeightArray_Algo3();
@@ -518,7 +522,10 @@ int AlgoFinal(int *ap, int *bp) //Write the position choosed into int* ap,int* b
     *ap = bestmoverec.a;
     *bp = bestmoverec.b;
     if (board[*ap][*bp])
+    {
+        scanf("%d", *ap);
         BOOM("wrong position!");
+    }
     ShowWeightArray(weight);
 
     // ClearWeightMartix_Algo3();
