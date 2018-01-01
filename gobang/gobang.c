@@ -1,11 +1,12 @@
-// Copyright (c) 2017-2018 Augustus Wang 
+// Copyright (c) 2017-2018 Augustus Wang
 #include "support.h"
 #include "forbidden_move.h"
 
 #include "algo_basic.h"
 #include "algo_linear.h"
 #include "algo_point.h"
-#include "algo_final.h"
+// #include "algo_final.h"
+#include "algo_rebuild.h"
 #include "printboard.h"
 
 #define TEST              \
@@ -46,7 +47,6 @@ int DisplayLog();        //显示棋谱
 
 FILE *InitializeSaving(); //初始化保存文件
 
-
 int main(int argc, char *argv[])
 {
 
@@ -83,33 +83,33 @@ int main(int argc, char *argv[])
             if (!strcmp(*argv, "-e"))
             {
                 mode_choosed = 2; //pvemode
-                puts("mode_choosed = 2");                
+                puts("mode_choosed = 2");
                 continue;
             }
             if (!strcmp(*argv, "-auto"))
             {
                 mode_choosed = 3;
                 puts("mode_choosed = 3");
-                
+
                 continue;
             }
             if (!strcmp(*argv, "-test"))
             {
                 mode_choosed = 4;
                 puts("mode_choosed = 4");
-                
+
                 continue;
             }
             if (!strcmp(*argv, "-b"))
             {
                 player = BLACK;
-                puts("player = BLACK");                
+                puts("player = BLACK");
                 continue;
             }
             if (!strcmp(*argv, "-w"))
             {
                 player = WHITE;
-                puts("player = WHITE");                                
+                puts("player = WHITE");
                 continue;
             }
             if (!strcmp(*argv, "-r"))
@@ -123,36 +123,36 @@ int main(int argc, char *argv[])
             if (!strcmp(*argv, "-1"))
             {
                 Algo_Choosed = 1;
-                puts("Algo_Choosed = 1");                
-                
+                puts("Algo_Choosed = 1");
+
                 continue;
             }
             if (!strcmp(*argv, "-2"))
             {
                 Algo_Choosed = 2;
-                puts("Algo_Choosed = 2");                
-                
+                puts("Algo_Choosed = 2");
+
                 continue;
             }
             if (!strcmp(*argv, "-3"))
             {
                 Algo_Choosed = 3;
-                puts("Algo_Choosed = 3");                
-                
+                puts("Algo_Choosed = 3");
+
                 continue;
             }
             if (!strcmp(*argv, "-s"))
             {
-                _usesimpletest=1;
-                puts("_usesimpletest=1");                
-                
+                _usesimpletest = 1;
+                puts("_usesimpletest=1");
+
                 continue;
             }
             if (!strcmp(*argv, "-log"))
             {
-                set_savelog=1;
-                puts("set_savelog=1");                
-                
+                set_savelog = 1;
+                puts("set_savelog=1");
+
                 continue;
             }
         }
@@ -223,7 +223,7 @@ int PvpMode()
         // scanf("%d%d", &a, &b);
         getinput(&a, &b);
 
-        while (TestTipForbidMove(a,b,colornow)||ManualSetUp(a, b, colornow))
+        while (TestTipForbidMove(a, b, colornow) || ManualSetUp(a, b, colornow))
             // scanf("%d%d", &a, &b);
             getinput(&a, &b);
 
@@ -305,7 +305,7 @@ int PveMode()
             // scanf("%d%d", &a, &b);
             getinput(&a, &b);
 
-            while (TestTipForbidMove(a,b,colornow)||ManualSetUp(a, b, colornow))
+            while (TestTipForbidMove(a, b, colornow) || ManualSetUp(a, b, colornow))
                 // scanf("%d%d", &a, &b);
                 getinput(&a, &b);
 
@@ -464,16 +464,19 @@ int DisplayLog()
 FILE *InitializeSaving() //初始化保存文件
 {
     //初始化log文件,保存棋谱.
-    if(set_savelog){
-    time_t time_now;
-    time_now = time(NULL);
-    char *log_name = DelSpaceAddLog(ctime(&time_now));
-    printf("Log file is saved at %s \n", log_name);
-    log_file = fopen(log_name, "a+");
-    // char log_name_str[] = ctime(&time_now);
-    // log_file = fopen(log_name_str, "a");
-    return log_file;
-    }else{
+    if (set_savelog)
+    {
+        time_t time_now;
+        time_now = time(NULL);
+        char *log_name = DelSpaceAddLog(ctime(&time_now));
+        printf("Log file is saved at %s \n", log_name);
+        log_file = fopen(log_name, "a+");
+        // char log_name_str[] = ctime(&time_now);
+        // log_file = fopen(log_name_str, "a");
+        return log_file;
+    }
+    else
+    {
         char *log_name = "tempfile";
         printf("No log is recquired.");
         log_file = fopen(log_name, "a+");

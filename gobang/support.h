@@ -13,6 +13,7 @@
 
 #include "lazy.h"
 #include "charlib.h"
+#include "malloc.h"
 
 //global vars.
 int colornow;
@@ -27,6 +28,20 @@ int set_savelog = 0;
 
 #define INF 1E7
 #define NINF -1E7
+
+struct move
+{
+    int a;
+    int b;
+};
+
+struct movenode
+{
+    int a;
+    int b;
+    double weight;
+    int history_score;
+};
 
 int Board(int a, int b)
 {
@@ -72,6 +87,13 @@ int BoundLim(int a)
     {
         return a;
     }
+}
+
+int EqualDouble(double a, double b)
+{
+    if (a < b + 1 && a > b - 1)
+        return 0;
+    return 1;
 }
 
 int JudgeWin() //Haveoutput.version
@@ -515,7 +537,7 @@ int Inverse(int color)
     }
 }
 
-int ShowWeightArray()
+int ShowWeightArray(double weight[BOUNDRY][BOUNDRY])
 {
     puts("ShowWeightArray:");
     for (int a = 0; a < BOUNDRY; a++)

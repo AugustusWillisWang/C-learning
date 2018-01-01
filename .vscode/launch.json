@@ -7,7 +7,7 @@
                 "type": "cppdbg",
                 "request": "launch",
                 "program": "${file}.exe",
-                "args": [],
+                "args": ["-e","-3","-w"],
                 "stopAtEntry": false,
                 "cwd": "${workspaceRoot}",
                 "environment": [],

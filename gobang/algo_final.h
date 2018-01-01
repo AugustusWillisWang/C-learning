@@ -90,7 +90,7 @@ int AlgoFinal(int *ap, int *bp) //Write the position choosed into int* ap,int* b
     // BP;
     *ap = a_choosed;
     *bp = b_choosed;
-    ShowWeightArray();
+    ShowWeightArray(weight);
 
     // ClearWeightMartix_Algo3();
 

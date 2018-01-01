@@ -96,7 +96,7 @@ int PrintBoard()
     {
         printf("%s %d\n", display_board_array[a], BOUNDRY - a);
     }
-    printf("ABCDEFGHIJKLMNO\n");
+    printf("A B C D E F G H I J K L M N O\n");
     // ShowBoardArray();
 }
 
