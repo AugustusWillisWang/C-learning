@@ -2,24 +2,28 @@
 
 #define ALGO_FINAL 3
 #define EDGE 3
-#define LEVEL 7
+#define LEVEL 6
 #define NEABOR 1
+//(6,2)is recommended;
 #define THINKINGUPPERBOUND 100
 #define DEEPLEVELUPPERBOUND 20
 // #define WEIGHTHEURISTIC
 // #define ENABLEHASH
 
+// #define ENABLEFBDMOVE
+
 #include "zobrist.h"
 #include "support.h"
 #include "heuristic.h"
 #include "weight.h"
+#include "killfirst.h"
 
 int GetAroundPosition();
 double showweight[BOUNDRY][BOUNDRY];
 
 //------------------------------------------
 
-int GetAroundPosition(int (*_ValidPosition)[BOUNDRY])
+int GetAroundPosition(int (*_ValidPosition)[BOUNDRY],int depth,int color)
 {
     memset(_ValidPosition, 0, sizeof(int) * BOUNDRY * BOUNDRY);
     for (int a = 0; a < BOUNDRY; a++)
@@ -33,7 +37,19 @@ int GetAroundPosition(int (*_ValidPosition)[BOUNDRY])
                     for (int ib = -NEABOR; ib <= NEABOR; ib++)
                     {
                         if (!board[BoundLim(a + ia)][BoundLim(b + ib)])
-                            _ValidPosition[BoundLim(a + ia)][BoundLim(b + ib)] = 1;
+                        {
+                            int _a = BoundLim(a + ia);
+                            int _b = BoundLim(b + ib);
+                            _ValidPosition[_a][_b] = 1;
+#ifdef KILLSEARCH
+                            if (depth <= (LEVEL - KILLSEARCH))
+                                _ValidPosition[_a][_b] *= TestKillPoint( _a, _b);
+
+#endif
+#ifdef ENABLEFBDMOVE
+                            _ValidPosition[_a][_b] *= !TestForbidMove(_a, _b, color);
+#endif
+                        }
                     }
                 }
             }
@@ -67,18 +83,31 @@ int AlphaBeta(int depth, int color, double alpha, double beta, unsigned long lon
     double score;
 #ifdef ENABLEHASH
     struct findresult hashresult;
-    hashresult = FindInHashTable(zob, zob2, depth);
+    hashresult = FindInHashTable(zob, zob2, depth, color);
 
-    score = hashresult.weight;
     if (hashresult.find)
-        return score;
+    {
+        score = hashresult.weight;
+        switch (hashresult.type)
+        {
+        case LOWER:
+            if (score >= alpha)
+            {
+                return score;
+            }
+        case UPPER:
+
+        case VALUE:
+            return score;
+        }
+    }
 #endif
 
     if (depth <= 0)
         return GenerateWeight();
     int valid_position[BOUNDRY][BOUNDRY];
     memset(valid_position, 0, sizeof(valid_position));
-    GetAroundPosition(valid_position);
+    GetAroundPosition(valid_position,depth,color);
     struct heuristic_element heuristic_list[BOUNDRY * BOUNDRY];
     memset(heuristic_list, 0, sizeof(heuristic_list));
     int hcnt = 0; //hcnt-1 为最后一个节点的位置
@@ -93,6 +122,14 @@ int AlphaBeta(int depth, int color, double alpha, double beta, unsigned long lon
             }
         }
     }
+
+#ifdef KILLSEARCH
+    if (hcnt == 0)
+    {
+        return GenerateWeight();
+    }
+#endif
+
 #ifdef WEIGHTHEURISTIC
     LinearGenWeightMartix_Algo1();
 
@@ -186,7 +223,7 @@ int AlphaBeta(int depth, int color, double alpha, double beta, unsigned long lon
                 hashresult.point->weight = beta;
                 hashresult.point->check = zob2;
                 hashresult.point->level = depth;
-                hashresult.point->type = VALUE;
+                hashresult.point->type = BETA;
             }
 #endif
             // **_socket = beta;
@@ -254,7 +291,7 @@ int AlphaBeta(int depth, int color, double alpha, double beta, unsigned long lon
                 hashresult.point->weight = alpha;
                 hashresult.point->check = zob2;
                 hashresult.point->level = depth;
-                hashresult.point->type = VALUE;
+                hashresult.point->type = ALPHA;
             }
 #endif
             // **_socket = alpha;

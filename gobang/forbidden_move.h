@@ -1,6 +1,6 @@
 #ifndef _FBD_MOVE
 #define _FBD_MOVE
-
+#define ENABLEFBDMOVE
 // int board[BOUNDRY][BOUNDRY];      //棋盘数据
 // int BoundLim(int a)
 

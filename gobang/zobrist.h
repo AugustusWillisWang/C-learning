@@ -1,6 +1,6 @@
 //zobrist.h
 #ifndef _ZOBRIST_H
-#define _ZOBRIST_h
+#define _ZOBRIST_H
 
 #include <stdlib.h>
 #define SEED 233
@@ -20,7 +20,7 @@ struct zobhash
     unsigned long long check;
     int level;
     int type; //todo
-} hashtable[HASHSIZE];
+} hashtable[HASHSIZE+1];
 
 unsigned long int zobrist_table[BOUNDRY][BOUNDRY][2];
 unsigned long int zobrist_check_table[BOUNDRY][BOUNDRY][2];
@@ -64,7 +64,7 @@ unsigned long int Getzob()
             }
         }
     }
-    return result;
+    return result&HASHSIZE;
 }
 
 unsigned long int Getzob2()
@@ -84,7 +84,7 @@ unsigned long int Getzob2()
             }
         }
     }
-    return result;
+    return result&HASHSIZE;
 }
 
 unsigned long int NextHash(unsigned long int hash, int a, int b, int colornow)
@@ -94,16 +94,16 @@ unsigned long int NextHash(unsigned long int hash, int a, int b, int colornow)
 
 unsigned long int LastHash(unsigned long int hash, int a, int b, int colornow)
 {
-    return (-zobrist_table[a][b][colornow] + hash) % HASHSIZE;
+    return (-zobrist_table[a][b][colornow] + hash) & HASHSIZE;
 }
 unsigned long int NextHash2(unsigned long int hash, int a, int b, int colornow)
 {
-    return (zobrist_check_table[a][b][colornow] + hash) % HASHSIZE;
+    return (zobrist_check_table[a][b][colornow] + hash) & HASHSIZE;
 }
 
 unsigned long int LastHash2(unsigned long int hash, int a, int b, int colornow)
 {
-    return (-zobrist_check_table[a][b][colornow] + hash) % HASHSIZE;
+    return (-zobrist_check_table[a][b][colornow] + hash) & HASHSIZE;
 }
 
 
@@ -115,21 +115,20 @@ struct findresult
     int type;
 };
 
-#define ALPHA 1
-#define BETA 2
+#define LOWER 1
+#define UPPER 2
 #define VALUE 3
 
-struct findresult FindInHashTable(unsigned long zob, unsigned long zob2, int level)
+struct findresult FindInHashTable(unsigned long zob, unsigned long zob2, int level,int type) //type:color
 {
-    //**_socket 为权值的值
-    //*_socket 为权值在hash表中的保存位置
-    if ((level > hashtable[zob % HASHSIZE].level) || hashtable[zob % HASHSIZE].check != zob2)
+    unsigned long int hashvalue = zob;
+    if ((level < hashtable[hashvalue].level) || hashtable[hashvalue].check != zob2 || hashtable[hashvalue].type != type)
     { //!hashtable[zob].check)|| todo
-        hashtable[zob % HASHSIZE].check = zob2;
-        hashtable[zob % HASHSIZE].level = level;
+        hashtable[hashvalue].check = zob2;
+        hashtable[hashvalue].level = level;
         struct findresult result=
         {
-            0, &hashtable[zob % HASHSIZE], hashtable[zob % HASHSIZE].weight, hashtable[zob % HASHSIZE].type
+            0, &hashtable[hashvalue], hashtable[hashvalue].weight, hashtable[hashvalue].type
         };
         return result;
     }
@@ -137,7 +136,7 @@ struct findresult FindInHashTable(unsigned long zob, unsigned long zob2, int lev
     {
         struct findresult result=
         {
-            1, &hashtable[zob % HASHSIZE], hashtable[zob % HASHSIZE].weight, hashtable[zob % HASHSIZE].type
+            1, &hashtable[hashvalue], hashtable[hashvalue].weight, hashtable[hashvalue].type
         };
         return result;
     }

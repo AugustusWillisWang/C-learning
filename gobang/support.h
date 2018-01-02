@@ -589,4 +589,23 @@ double MinWeight(int (*weight)[BOUNDRY])
 }
 
 
+int SetUp(int a, int b, int color) //设置当前棋盘某一位置(程序用)
+{
+    if (a >= 0 && a < BOUNDRY && b >= 0 && b < BOUNDRY && (color == 0 || color == BLACK || color == WHITE))
+    {
+        if (board[a][b] != 0)
+        {
+            puts("Wrong input, please input again!");
+            setbuf(stdin, NULL);
+            return -1;
+        }
+        board[a][b] = color;
+
+        return 0;
+    }
+    puts("Wrong input, please input again!");
+    setbuf(stdin, NULL);
+    return -1;
+}
+
 #endif

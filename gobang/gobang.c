@@ -22,38 +22,37 @@ point weight Gen
 better algo
 */
 
-int Algo_Choosed = ALGO_BASIC; //Ä¬ÈÏÊ¹ÓÃËã·¨Random
+int Algo_Choosed = ALGO_BASIC; //é»˜è®¤ä½¿ç”¨ç®—æ³•Random
 int player = 0;
 
-FILE *log_file; //³õÊ¼»¯ÈÕÖ¾ÎÄ¼şÖ¸Õë
+FILE *log_file; //åˆå§‹åŒ–æ—¥å¿—æ–‡ä»¶æŒ‡é’ˆ
 
-int PvpMode();    //ÈËÈËÖ÷³ÌĞò
-int PveMode();    //ÈË»úÖ÷³ÌĞò
-int SocketMode(); //ÓëÆäËû³ÌĞò½øĞĞÎŞÈËÖµÊØ¶ÔÕ½ÓÃ
-int SetUpBoard(); //³õÊ¼»¯ÆåÅÌ
-int PrintBoard(); //ÏÔÊ¾ÆåÅÌ
-int JudgeWin();   //ÅĞ¶ÏÊ¤Àû,ÈôÓĞÒ»·½Ê¤Àû·µ»Ø¶ÔÓ¦µÄcolor,·ñÔò·µ»Ø0
-// int JudgeWinOriginal();  //ÅĞ¶ÏÊ¤Àû,ÈôÓĞÒ»·½Ê¤Àû·µ»Ø¶ÔÓ¦µÄcolor,·ñÔò·µ»Ø0,µÚÒ»´ÎĞ´µÄÀ¬»ø´úÂë
-// int JudgeWinPlus();      //ÅĞ¶ÏÊ¤Àû,ÈôÓĞÒ»·½Ê¤Àû·µ»Ø¶ÔÓ¦µÄcolor,·ñÔò·µ»Ø0,¼ò»¯ºóµÄÎ´²âÊÔ´úÂë
-int GenWeight();         //²úÉúÈ¨ÖØ
-int MakeMove();          //µçÄÔÂä×Ó
-int Abs();               //¾ø¶ÔÖµ
-int ManualSetUpAll();    //ÊÖ¶¯ÉèÖÃµ±Ç°ÆåÅÌ(µ÷ÊÔÓÃ)
-int ManualSetUp();       //ÊÖ¶¯ÉèÖÃµ±Ç°ÆåÅÌÄ³Ò»Î»ÖÃ(µ÷ÊÔÓÃ)(pvpÓÃ)
-int ForcedManualSetUp(); //ÊÖ¶¯ÉèÖÃµ±Ç°ÆåÅÌÄ³Ò»Î»ÖÃ(µ÷ÊÔÓÃ)(ÎŞÏŞÖÆĞŞ¸Ä)
-int _Tester();           //ÅĞ¶ÏÊ¤¸ºÊ±Ê¹ÓÃµÄ×Óº¯Êı
-int Save();              //±£´æµ±Ç°²Ù×÷µ½ÆåÆ×
-int DisplayLog();        //ÏÔÊ¾ÆåÆ×
+int PvpMode();    //äººäººä¸»ç¨‹åº
+int PveMode();    //äººæœºä¸»ç¨‹åº
+int SocketMode(); //ä¸å…¶ä»–ç¨‹åºè¿›è¡Œæ— äººå€¼å®ˆå¯¹æˆ˜ç”¨
+int SetUpBoard(); //åˆå§‹åŒ–æ£‹ç›˜
+int PrintBoard(); //æ˜¾ç¤ºæ£‹ç›˜
+int JudgeWin();   //åˆ¤æ–­èƒœåˆ©,è‹¥æœ‰ä¸€æ–¹èƒœåˆ©è¿”å›å¯¹åº”çš„color,å¦åˆ™è¿”å›0
+// int JudgeWinOriginal();  //åˆ¤æ–­èƒœåˆ©,è‹¥æœ‰ä¸€æ–¹èƒœåˆ©è¿”å›å¯¹åº”çš„color,å¦åˆ™è¿”å›0,ç¬¬ä¸€æ¬¡å†™çš„åƒåœ¾ä»£ç 
+// int JudgeWinPlus();      //åˆ¤æ–­èƒœåˆ©,è‹¥æœ‰ä¸€æ–¹èƒœåˆ©è¿”å›å¯¹åº”çš„color,å¦åˆ™è¿”å›0,ç®€åŒ–åçš„æœªæµ‹è¯•ä»£ç 
+int GenWeight();         //äº§ç”Ÿæƒé‡
+int MakeMove();          //ç”µè„‘è½å­
+int Abs();               //ç»å¯¹å€¼
+int ManualSetUpAll();    //æ‰‹åŠ¨è®¾ç½®å½“å‰æ£‹ç›˜(è°ƒè¯•ç”¨)
+int ManualSetUp();       //æ‰‹åŠ¨è®¾ç½®å½“å‰æ£‹ç›˜æŸä¸€ä½ç½®(è°ƒè¯•ç”¨)(pvpç”¨)
+int ForcedManualSetUp(); //æ‰‹åŠ¨è®¾ç½®å½“å‰æ£‹ç›˜æŸä¸€ä½ç½®(è°ƒè¯•ç”¨)(æ— é™åˆ¶ä¿®æ”¹)
+int _Tester();           //åˆ¤æ–­èƒœè´Ÿæ—¶ä½¿ç”¨çš„å­å‡½æ•°
+int Save();              //ä¿å­˜å½“å‰æ“ä½œåˆ°æ£‹è°±
+int DisplayLog();        //æ˜¾ç¤ºæ£‹è°±
 
-FILE *InitializeSaving(); //³õÊ¼»¯±£´æÎÄ¼ş
-
+FILE *InitializeSaving(); //åˆå§‹åŒ–ä¿å­˜æ–‡ä»¶
 int main(int argc, char *argv[])
 {
-
-    //³õÊ¼»¯ÆåÅÌ
+    //åˆå§‹åŒ–æ£‹ç›˜
     SetUpBoard();
 
-    //modeÑ¡Ôñ
+    //modeé€‰æ‹©
+
     int mode_choosed;
     char log_name[30];
     if (argc == 1)
@@ -110,7 +109,7 @@ int main(int argc, char *argv[])
             {
                 player = WHITE;
                 puts("player = WHITE");
-                continue; 
+                continue;
             }
             if (!strcmp(*argv, "-r"))
             {
@@ -179,7 +178,6 @@ int main(int argc, char *argv[])
         break;
     case 5:
     {
-        //= "SunOct290114402016xxxxxxxxxx.log"; //¹Ì¶¨log_name³¤¶È,Çë×¢Òâ²»Òª±¬µôÁË10 31
         fgets(log_name, 30, stdin);
     showlog:
         log_file = fopen(log_name, "r");
@@ -223,11 +221,15 @@ int PvpMode()
         // scanf("%d%d", &a, &b);
         getinput(&a, &b);
 
+#ifdef ENABLEFBDMOVE
         while (TestTipForbidMove(a, b, colornow) || ManualSetUp(a, b, colornow))
             // scanf("%d%d", &a, &b);
             getinput(&a, &b);
-
-        ;
+#else
+        while (ManualSetUp(a, b, colornow))
+            // scanf("%d%d", &a, &b);
+            getinput(&a, &b);
+#endif
         Save(a, b);
         movecnt++;
         if (colornow == BLACK)
@@ -305,9 +307,15 @@ int PveMode()
             // scanf("%d%d", &a, &b);
             getinput(&a, &b);
 
+#ifdef ENABLEFBDMOVE
             while (TestTipForbidMove(a, b, colornow) || ManualSetUp(a, b, colornow))
                 // scanf("%d%d", &a, &b);
                 getinput(&a, &b);
+#else
+            while (ManualSetUp(a, b, colornow))
+                // scanf("%d%d", &a, &b);
+                getinput(&a, &b);
+#endif
 
             ;
         }
@@ -350,7 +358,7 @@ int SetUpBoard()
     return 0;
 }
 
-int ManualSetUpAll() //ÊÖ¶¯ÉèÖÃµ±Ç°ÆåÅÌ(µ÷ÊÔÓÃ)
+int ManualSetUpAll() //æ‰‹åŠ¨è®¾ç½®å½“å‰æ£‹ç›˜(è°ƒè¯•ç”¨)
 {
     for (int a = 0; a < BOUNDRY; a++)
     {
@@ -367,7 +375,7 @@ int ManualSetUpAll() //ÊÖ¶¯ÉèÖÃµ±Ç°ÆåÅÌ(µ÷ÊÔÓÃ)
     return 0;
 }
 
-int ManualSetUp(int a, int b, int color) //ÉèÖÃµ±Ç°ÆåÅÌÄ³Ò»Î»ÖÃ(³ÌĞòÓÃ)
+int ManualSetUp(int a, int b, int color) //è®¾ç½®å½“å‰æ£‹ç›˜æŸä¸€ä½ç½®(ç¨‹åºç”¨)
 {
     if (a >= 0 && a < BOUNDRY && b >= 0 && b < BOUNDRY && (color == 0 || color == BLACK || color == WHITE))
     {
@@ -387,7 +395,7 @@ int ManualSetUp(int a, int b, int color) //ÉèÖÃµ±Ç°ÆåÅÌÄ³Ò»Î»ÖÃ(³ÌĞòÓÃ)
     return -1;
 }
 
-int ForcedManualSetUp(int a, int b, int color) //ÊÖ¶¯ÉèÖÃµ±Ç°ÆåÅÌÄ³Ò»Î»ÖÃ(µ÷ÊÔÓÃ)(ÎŞÊÓ¹æÔò)
+int ForcedManualSetUp(int a, int b, int color) 
 {
     if (a >= 0 && a < BOUNDRY && b >= 0 && b < BOUNDRY && (color == 0 || color == BLACK || color == WHITE))
     {
@@ -397,8 +405,7 @@ int ForcedManualSetUp(int a, int b, int color) //ÊÖ¶¯ÉèÖÃµ±Ç°ÆåÅÌÄ³Ò»Î»ÖÃ(µ÷ÊÔÓÃ
     puts("Wrong input, setup failed!");
     return -1;
 }
-
-int Save(int a, int b) //±£´æµ±Ç°²Ù×÷µ½ÆåÆ×
+int Save(int a, int b) //ä¿å­˜å½“å‰æ“ä½œåˆ°æ£‹è°±
 {
     ShowMove(a, b, colornow);
     fprintf(log_file, "%d %d\n", a, b);
@@ -461,9 +468,8 @@ int DisplayLog()
     return 0;
 }
 
-FILE *InitializeSaving() //³õÊ¼»¯±£´æÎÄ¼ş
+FILE *InitializeSaving() //åˆå§‹åŒ–ä¿å­˜æ–‡ä»¶
 {
-    //³õÊ¼»¯logÎÄ¼ş,±£´æÆåÆ×.
     if (set_savelog)
     {
         time_t time_now;
