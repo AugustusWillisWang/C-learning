@@ -28,7 +28,7 @@
 //签名
 #endif
 
-#define LICENSE (printf("\n%s\n", __FILE__), printf("Augustus Wang (c) 2017\n"), printf("Compiled on %s at %s\n\n", __DATE__, __TIME__))
+#define LICENSE (printf("\n%s\n", __FILE__), printf("Copyright (c) 2018 Augustus Wang\n"), printf("Compiled on %s at %s\n\n", __DATE__, __TIME__))
 //签名
 
 
@@ -71,7 +71,6 @@
 
 #define RAW_CAT(X,Y) X##Y
 //直接连接
-#endif
 
 int M_GETLINE(char s[],int lim){
     int c,i;
@@ -145,3 +144,5 @@ char *M_REVERSE(char *str)
     }
     return str;
 }
+
+#endif

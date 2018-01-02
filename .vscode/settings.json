@@ -11,7 +11,11 @@
         "printboard.h": "c",
         "initializer_list": "cpp",
         "math.h": "c",
-        "charlib.h": "c"
+        "charlib.h": "c",
+        "support.h": "c"
     },
-    "C_Cpp.errorSquiggles": "Enabled"
+    "C_Cpp.errorSquiggles": "Enabled",
+    "cSpell.words": [
+        "boundry"
+    ]
 }

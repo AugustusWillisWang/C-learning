@@ -10,6 +10,8 @@
 //使用梅森旋转法生成随机数, 而非C99自带的实现
 //注记: hash分成两部分, 短的数组索引和长的校验用数.
 
+// #define ENABLEHASH
+
 int _ndefZobchain = 1;
 
 struct zobhash
@@ -17,6 +19,7 @@ struct zobhash
     double weight;
     unsigned long long check;
     int level;
+    int type; //todo
 } hashtable[HASHSIZE];
 
 unsigned long int zobrist_table[BOUNDRY][BOUNDRY][2];
@@ -86,38 +89,76 @@ unsigned long int Getzob2()
 
 unsigned long int NextHash(unsigned long int hash, int a, int b, int colornow)
 {
-    return zobrist_table[a][b][colornow] + hash;
+    return (zobrist_table[a][b][colornow] + hash) & HASHSIZE;
 }
 
 unsigned long int LastHash(unsigned long int hash, int a, int b, int colornow)
 {
-    return -zobrist_table[a][b][colornow] + hash;
+    return (-zobrist_table[a][b][colornow] + hash) % HASHSIZE;
 }
 unsigned long int NextHash2(unsigned long int hash, int a, int b, int colornow)
 {
-    return zobrist_check_table[a][b][colornow] + hash;
+    return (zobrist_check_table[a][b][colornow] + hash) % HASHSIZE;
 }
 
 unsigned long int LastHash2(unsigned long int hash, int a, int b, int colornow)
 {
-    return -zobrist_check_table[a][b][colornow] + hash;
+    return (-zobrist_check_table[a][b][colornow] + hash) % HASHSIZE;
 }
 
-double FindInHashTable(unsigned long zob,unsigned long zob2, int level, double **_socket)
+
+struct findresult
+{
+    int find;
+    struct zobhash *point;
+    double weight;
+    int type;
+};
+
+#define ALPHA 1
+#define BETA 2
+#define VALUE 3
+
+struct findresult FindInHashTable(unsigned long zob, unsigned long zob2, int level)
 {
     //**_socket 为权值的值
     //*_socket 为权值在hash表中的保存位置
-    if ((level > hashtable[zob%HASHSIZE].level) || hashtable[zob%HASHSIZE].check!=zob2)
-        { //!hashtable[zob].check)|| todo
-            hashtable[zob%HASHSIZE].check = zob2;
-            hashtable[zob%HASHSIZE].level = level;
-            *_socket = &hashtable[zob%HASHSIZE].weight;
-        }
+    if ((level > hashtable[zob % HASHSIZE].level) || hashtable[zob % HASHSIZE].check != zob2)
+    { //!hashtable[zob].check)|| todo
+        hashtable[zob % HASHSIZE].check = zob2;
+        hashtable[zob % HASHSIZE].level = level;
+        struct findresult result=
+        {
+            0, &hashtable[zob % HASHSIZE], hashtable[zob % HASHSIZE].weight, hashtable[zob % HASHSIZE].type
+        };
+        return result;
+    }
     else
     {
-        *_socket = 0;
-        return hashtable[zob%HASHSIZE].weight;
+        struct findresult result=
+        {
+            1, &hashtable[zob % HASHSIZE], hashtable[zob % HASHSIZE].weight, hashtable[zob % HASHSIZE].type
+        };
+        return result;
     }
 }
+
+// struct zobhash
+// {
+//     double weight;
+//     unsigned long long check;
+//     int level;
+//     int type; //todo
+// } hashtable[HASHSIZE];
+
+// SaveToZob(,unsigned long zob, unsigned long zob2, int level, int type, double weight);
+//usage:
+// {
+//     struct findresult result;
+//     result.point->weight=
+//     result.point->check=
+//     result.point->level=
+//     result.point->type=
+// }
 
 #endif

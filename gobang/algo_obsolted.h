@@ -858,3 +858,107 @@ double GenWeightFromMarco(int incolor, int cnt, int space, int start0, int end0)
     BP;
     return 0;
 }
+
+
+double Search(int color, double alpha, double beta, int depth, unsigned long long zob, unsigned long long zob2)
+{
+    int win = _JudgeWin();
+    if (win)
+    {
+        if (win == BLACK)
+            return INF;
+        if (win == WHITE)
+            return INF;
+        BOOM("this should not happen");
+    }
+
+    double score;
+    double *__soc = 0;
+    double **_socket = &__soc;
+
+    score = FindInHashTable(zob, zob2, depth, _socket);
+    //If in hash table
+    if (0 == *_socket)
+        return score;
+
+    //If not in hash table;
+    //If depth==0;
+    if (depth <= 0)
+    {
+        score = (color == BLACK ? 1 : -1) * PointGenWeightForShapeNow_Algo3(); //Return evaluate
+        **_socket = score;
+        *_socket = 0;
+
+        return score;
+    }
+
+    //depth!=0;
+    int valid_position[BOUNDRY][BOUNDRY];
+    memset(valid_position, 0, sizeof(valid_position));
+    GetAroundPosition(valid_position);
+    struct heuristic_element heuristic_list[BOUNDRY * BOUNDRY];
+    int hcnt = 0; //hcnt-1 为最后一个节点的位置
+    for (int a = 0; a < BOUNDRY; a++)
+    {
+        for (int b = 0; b < BOUNDRY; b++)
+        {
+            if (valid_position[a][b])
+            {
+                AddTo_heuristic_list(heuristic_list, hcnt, a, b, depth, FindIn_history_table(history_table, a, b, depth));
+                hcnt++;
+            }
+        }
+    }
+    Qsort_heuristic_element(heuristic_list, 0, hcnt - 1);
+
+    int bestmove = -1;
+
+    for (int i = 0; i < hcnt; i++)
+    {
+        int a = heuristic_list[i].a;
+        int b = heuristic_list[i].b;
+        unsigned long long hashnext = NextHash(zob, a, b, colornow);
+        unsigned long long hash2next = NextHash2(zob2, a, b, colornow);
+
+        board[a][b] = color;
+        color = Inverse(color);
+        score = -Search(color, -beta, -alpha, depth - 1, hashnext, hash2next);
+        color = Inverse(color);
+        board[a][b] = 0;
+
+        //debug
+        // if (depth == LEVEL)
+        // {
+        //     ShowWeightArray(weight);
+        //     memset(weight, 0, sizeof(weight));
+        // }
+        // if (depth == LEVEL - 1)
+        //     weight[a][b] = score;
+        if (score > alpha)
+        {
+            alpha = score;
+
+            if (depth == LEVEL)
+            {
+                bestmoverec.a = a;
+                bestmoverec.b = b;
+            }
+            bestmove = i;
+        }
+        if (alpha >= beta)
+        {
+            AddTo_history_table(history_table, a, b, depth);
+            bestmove = i;
+            return beta;
+            break;
+        }
+    }
+    if (bestmove != (-1))
+    {
+        **_socket = beta;
+        *_socket = 0;
+
+        AddTo_history_table(history_table, heuristic_list[bestmove].a, heuristic_list[bestmove].b, depth);
+        return alpha;
+    }
+}

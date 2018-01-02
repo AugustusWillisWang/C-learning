@@ -110,7 +110,7 @@ int main(int argc, char *argv[])
             {
                 player = WHITE;
                 puts("player = WHITE");
-                continue;
+                continue; 
             }
             if (!strcmp(*argv, "-r"))
             {

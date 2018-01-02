@@ -28,7 +28,7 @@ int Swap_heuristic_element(struct heuristic_element heuristic_list[BOUNDRY * BOU
 
 int Cmp_heuristic_element(struct heuristic_element a, struct heuristic_element b) //a have bigger weight than b
 {
-    if (a.history >= b.history)
+    if (a.history > b.history)
         return 1;
     return 0;
 }
@@ -101,7 +101,7 @@ int FindIn_history_table(int history_table[BOUNDRY][BOUNDRY][LEVEL+1], int a, in
 
 int AddTo_history_table(int history_table[BOUNDRY][BOUNDRY][LEVEL+1], int a, int b, int depth)
 {
-    history_table[a][b][depth] += 2 << depth;
+    history_table[a][b][depth] += (2 << depth);
     return history_table[a][b][depth];
 }
 

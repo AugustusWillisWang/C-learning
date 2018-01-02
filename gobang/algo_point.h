@@ -4,17 +4,17 @@
 #define EDGE 3
 
 //这里的权值是随便赋的
-#define WEIGHT_1_2SIDE 20.0
-#define WEIGHT_2_2SIDE (500.0 / 2)
-#define WEIGHT_3_2SIDE (100000.0 / 3)
-#define WEIGHT_4_2SIDE (200000.0 / 4)
+#define WEIGHT_1_2SIDE 1.0
+#define WEIGHT_2_2SIDE (5.0 / 2)
+#define WEIGHT_3_2SIDE (1000.0 / 3)
+#define WEIGHT_4_2SIDE (2000.0 / 4)
 
-#define WEIGHT_1_1SIDE 10.0
-#define WEIGHT_2_1SIDE (100.0 / 2)
-#define WEIGHT_3_1SIDE (50000.0 / 3)
-#define WEIGHT_4_1SIDE (150000.0 / 4)
+#define WEIGHT_1_1SIDE 0.0
+#define WEIGHT_2_1SIDE (10.0 / 2)
+#define WEIGHT_3_1SIDE (500.0 / 3)
+#define WEIGHT_4_1SIDE (1500.0 / 4)
 
-#define WEIGHT_5_WIN 10000000000.0
+#define WEIGHT_5_WIN 10000.0
 
 //Let + be black weight, and - be white weight;
 int ShowWeightArray_Algo2();
@@ -109,8 +109,8 @@ int AlgoPoint(int *ap, int *bp) //Write the position choosed into int* ap,int* b
     }
     CK(a_choosed);
     CK(b_choosed);
-    ShowWeightArray_Algo2();
-    BP;
+    // ShowWeightArray_Algo2();
+    // BP;
     *ap = a_choosed;
     *bp = b_choosed;
 
@@ -632,7 +632,7 @@ int GenNaiveConstrain_Algo2(int cntneeded, int spaceneeded, int start, int end, 
             _ValidPositionForPointAlgo[startposition[0]][startposition[1]] = 1;
         if (endposition[0] != -1 && endposition[1] != -1)
             _ValidPositionForPointAlgo[endposition[0]][endposition[1]] = 1;
-        BP;
+        // BP;
     }
 }
 

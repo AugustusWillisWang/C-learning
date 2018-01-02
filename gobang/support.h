@@ -26,8 +26,8 @@ double weight[BOUNDRY][BOUNDRY];  //权重变化,注意权重为double
 int _usesimpletest = 0;
 int set_savelog = 0;
 
-#define INF 1E7
-#define NINF -1E7
+#define INF 10000000
+#define NINF -1000000
 
 struct move
 {
@@ -550,5 +550,43 @@ int ShowWeightArray(double weight[BOUNDRY][BOUNDRY])
     }
     return 0;
 }
+double Abs_double(double input)
+{
+    if (input < 0)
+    {
+        return -input;
+    }
+}
+
+
+double MaxWeight(int (*weight)[BOUNDRY])
+{
+    double max = NINF;
+    //    double min = 100000000000.0;
+    for (int a = 0; a < BOUNDRY; a++)
+    {
+        for (int b = 0; b < BOUNDRY; b++)
+        {
+            if (weight[a][b] > max)
+                max = weight[a][b];
+        }
+    }
+    return max;
+}
+
+double MinWeight(int (*weight)[BOUNDRY])
+{
+    double min = INF;
+    for (int a = 0; a < BOUNDRY; a++)
+    {
+        for (int b = 0; b < BOUNDRY; b++)
+        {
+            if (weight[a][b] < min)
+                min = weight[a][b];
+        }
+    }
+    return min;
+}
+
 
 #endif
