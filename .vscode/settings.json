@@ -12,7 +12,8 @@
         "initializer_list": "cpp",
         "math.h": "c",
         "charlib.h": "c",
-        "support.h": "c"
+        "support.h": "c",
+        "stdlib.h": "c"
     },
     "C_Cpp.errorSquiggles": "Enabled",
     "cSpell.words": [
