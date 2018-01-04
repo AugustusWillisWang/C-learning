@@ -20,7 +20,7 @@ int colornow;
 int fstmove = 1;
 int board[BOUNDRY][BOUNDRY];      //棋盘数据
 int printboard[BOUNDRY][BOUNDRY]; //绘图板
-double weight[BOUNDRY][BOUNDRY];  //权重变化,注意权重为double
+int weight[BOUNDRY][BOUNDRY];  //权重变化,注意权重为double
 
 //settings
 int _usesimpletest = 0;
@@ -39,7 +39,7 @@ struct movenode
 {
     int a;
     int b;
-    double weight;
+    int weight;
     int history_score;
 };
 
@@ -89,7 +89,7 @@ int BoundLim(int a)
     }
 }
 
-int EqualDouble(double a, double b)
+int EqualDouble(int a, int b)
 {
     if (a < b + 1 && a > b - 1)
         return 0;
@@ -98,7 +98,7 @@ int EqualDouble(double a, double b)
 
 int JudgeWin() //Haveoutput.version
 {
-    // double weight_for_shape_now = 0.0;
+    // int weight_for_shape_now = 0.0;
     //line
     int incolor = 0;
     int continuecnt = 0;
@@ -308,7 +308,7 @@ int JudgeWin() //Haveoutput.version
 
 int _JudgeWin() //Nooutput.version
 {
-    // double weight_for_shape_now = 0.0;
+    // int weight_for_shape_now = 0.0;
     //line
     int incolor = 0;
     int continuecnt = 0;
@@ -537,7 +537,7 @@ int Inverse(int color)
     }
 }
 
-int ShowWeightArray(double weight[BOUNDRY][BOUNDRY])
+int ShowWeightArray(int weight[BOUNDRY][BOUNDRY])
 {
     puts("ShowWeightArray:");
     for (int a = 0; a < BOUNDRY; a++)
@@ -550,7 +550,7 @@ int ShowWeightArray(double weight[BOUNDRY][BOUNDRY])
     }
     return 0;
 }
-double Abs_double(double input)
+int Abs_double(int input)
 {
     if (input < 0)
     {
@@ -559,10 +559,10 @@ double Abs_double(double input)
 }
 
 
-double MaxWeight(int (*weight)[BOUNDRY])
+int MaxWeight(int (*weight)[BOUNDRY])
 {
-    double max = NINF;
-    //    double min = 100000000000.0;
+    int max = NINF;
+    //    int min = 100000000000.0;
     for (int a = 0; a < BOUNDRY; a++)
     {
         for (int b = 0; b < BOUNDRY; b++)
@@ -574,9 +574,9 @@ double MaxWeight(int (*weight)[BOUNDRY])
     return max;
 }
 
-double MinWeight(int (*weight)[BOUNDRY])
+int MinWeight(int (*weight)[BOUNDRY])
 {
-    double min = INF;
+    int min = INF;
     for (int a = 0; a < BOUNDRY; a++)
     {
         for (int b = 0; b < BOUNDRY; b++)

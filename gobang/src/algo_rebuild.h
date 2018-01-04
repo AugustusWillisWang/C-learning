@@ -19,7 +19,7 @@
 #include "killfirst.h"
 
 int GetAroundPosition();
-double showweight[BOUNDRY][BOUNDRY];
+int showweight[BOUNDRY][BOUNDRY];
 
 //------------------------------------------
 
@@ -72,7 +72,7 @@ int GetAroundPosition(int (*_ValidPosition)[BOUNDRY],int depth,int color)
 #define MAXNODE 20
 struct move bestmoverec = {-1, -1};
 
-int AlphaBeta(int depth, int color, double alpha, double beta, unsigned long long zob, unsigned long long zob2)
+int AlphaBeta(int depth, int color, int alpha, int beta, unsigned long long zob, unsigned long long zob2)
 {
     int result = _JudgeWin();
     if (result)
@@ -80,7 +80,7 @@ int AlphaBeta(int depth, int color, double alpha, double beta, unsigned long lon
         return (result == BLACK) ? INF : (-INF);
     }
 
-    double score;
+    int score;
 #ifdef ENABLEHASH
     struct findresult hashresult;
     hashresult = FindInHashTable(zob, zob2, depth, color);
@@ -304,7 +304,7 @@ int AlphaBeta(int depth, int color, double alpha, double beta, unsigned long lon
 }
 
 // struct move bestmoverec = {-1, -1};
-// double Search(int color, double alpha, double beta, int depth, unsigned long long zob, unsigned long long zob2)
+// int Search(int color, int alpha, int beta, int depth, unsigned long long zob, unsigned long long zob2)
 int AlgoFinal(int *ap, int *bp) //Write the position choosed into int* ap,int* bp;
 {
     time_t timestart = clock();
@@ -322,7 +322,7 @@ int AlgoFinal(int *ap, int *bp) //Write the position choosed into int* ap,int* b
         return 0;
     }
 
-    // SHOWALL(weight, "double");
+    // SHOWALL(weight, "int");
     memset(history_table, 0, sizeof(history_table));
     memset(showweight, 0, sizeof(showweight));
     AlphaBeta(LEVEL, colornow, -INF, INF, Getzob(), Getzob2());

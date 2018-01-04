@@ -16,17 +16,17 @@
 
 //对矩阵的整体查找
  int GenValidPosition_Algo1();
- double WeightContribute_Algo1(int incolor, int continuecnt);
- double LinearGenWeightForShapeNow_Algo1();
- double LinearGenweightAt_Algo1(int a, int b);
+ int WeightContribute_Algo1(int incolor, int continuecnt);
+ int LinearGenWeightForShapeNow_Algo1();
+ int LinearGenweightAt_Algo1(int a, int b);
  int LinearGenWeightMartix_Algo1();
 
 // //对每个点的附近进行查找
-//  double PointGenWeightAt(int a, int b);
+//  int PointGenWeightAt(int a, int b);
 
  int _ValidPositionForLinearAlgo[BOUNDRY][BOUNDRY];
 
- double _weightnow;
+ int _weightnow;
 
 //  int JudgeWinPlus();
 //  int _LinearWeightCnter(int a, int b, int mode); //if mode==CLEAR, set cnt,max,color=0
@@ -42,11 +42,11 @@ int AlgoLinear(int *ap, int *bp) //Write the position choosed into int* ap,int* 
     }
 
     LinearGenWeightMartix_Algo1();
-    // SHOWALL(weight, "double");
+    // SHOWALL(weight, "int");
     int a_choosed = 0, b_choosed = 0;
     if (colornow == BLACK)
     {
-        double max_weight_get = -100000.0;
+        int max_weight_get = -100000.0;
         for (int a = 0; a < BOUNDRY; a++)
         {
             for (int b = 0; b < BOUNDRY; b++)
@@ -62,7 +62,7 @@ int AlgoLinear(int *ap, int *bp) //Write the position choosed into int* ap,int* 
     }
     else
     {
-        double min_weight_get = 100000.0;
+        int min_weight_get = 100000.0;
         for (int a = 0; a < BOUNDRY; a++)
         {
             for (int b = 0; b < BOUNDRY; b++)
@@ -85,9 +85,9 @@ int AlgoLinear(int *ap, int *bp) //Write the position choosed into int* ap,int* 
 }
 //colornow is known;
 
- double WeightContribute_Algo1(int incolor, int continuecnt)
+ int WeightContribute_Algo1(int incolor, int continuecnt)
 {
-    double result = 0.0;
+    int result = 0.0;
     switch (continuecnt)
     {
     case 0:
@@ -124,9 +124,9 @@ int AlgoLinear(int *ap, int *bp) //Write the position choosed into int* ap,int* 
     }
 }
 
- double LinearGenWeightForShapeNow_Algo1()
+ int LinearGenWeightForShapeNow_Algo1()
 {
-    double weight_for_shape_now = 0.0;
+    int weight_for_shape_now = 0.0;
     //line
     int incolor = 0;
     int continuecnt = 0;
@@ -229,14 +229,14 @@ int AlgoLinear(int *ap, int *bp) //Write the position choosed into int* ap,int* 
     return weight_for_shape_now;
 }
 
- double LinearGenweightAt_Algo1(int a, int b)
+ int LinearGenweightAt_Algo1(int a, int b)
 {
     if (board[a][b]) //该位置无法落子
     {
         return 0;
     }
     board[a][b] = colornow;
-    double change = LinearGenWeightForShapeNow_Algo1() - _weightnow;
+    int change = LinearGenWeightForShapeNow_Algo1() - _weightnow;
     board[a][b] = 0;
     return change;
 }
@@ -306,7 +306,7 @@ int AlgoLinear(int *ap, int *bp) //Write the position choosed into int* ap,int* 
     {
         for (int b = 0; b < BOUNDRY; b++)
         {
-            printf("%lf ", weight[a][b]);
+            printf("%d ", weight[a][b]);
         }
         puts("");
     }

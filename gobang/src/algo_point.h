@@ -4,17 +4,17 @@
 #define EDGE 3
 
 //这里的权值是随便赋的
-#define WEIGHT_1_2SIDE 1.0
-#define WEIGHT_2_2SIDE (5.0 / 2)
-#define WEIGHT_3_2SIDE (1000.0 / 3)
-#define WEIGHT_4_2SIDE (2000.0 / 4)
+#define WEIGHT_1_2SIDE 1
+#define WEIGHT_2_2SIDE 5
+#define WEIGHT_3_2SIDE 1000
+#define WEIGHT_4_2SIDE 2000
 
-#define WEIGHT_1_1SIDE 0.0
-#define WEIGHT_2_1SIDE (10.0 / 2)
-#define WEIGHT_3_1SIDE (500.0 / 3)
-#define WEIGHT_4_1SIDE (1500.0 / 4)
+#define WEIGHT_1_1SIDE 0
+#define WEIGHT_2_1SIDE 10
+#define WEIGHT_3_1SIDE 500
+#define WEIGHT_4_1SIDE 1500
 
-#define WEIGHT_5_WIN 10000.0
+#define WEIGHT_5_WIN 10000
 
 //Let + be black weight, and - be white weight;
 int ShowWeightArray_Algo2();
@@ -22,9 +22,9 @@ int Show_ValidArray_Algo2();
 
 //对矩阵的整体查找
 int GenValidPosition_Algo2();    //Calc only near the exist point.
-double WeightContribute_Algo2(); //Gen weight for a single line in _Testline[9]
-double PointGenWeightForShapeNow_Algo2();
-double PointGenWeightAt_Algo2(int a, int b); //Get the weight change if making move at a,b.
+int WeightContribute_Algo2(); //Gen weight for a single line in _Testline[9]
+int PointGenWeightForShapeNow_Algo2();
+int PointGenWeightAt_Algo2(int a, int b); //Get the weight change if making move at a,b.
 int PointGenWeightMartix_Algo2();
 
 int ClearWeightMartix();
@@ -56,7 +56,7 @@ int _ValidPositionForPointAlgo[BOUNDRY][BOUNDRY];
 int _TestedPositionForPointAlgo[BOUNDRY][BOUNDRY];
 int _Testline[9]; //Get 9 elements out to check the weight.
 
-double _weightnow;
+int _weightnow;
 
 //  int JudgeWinPlus();
 //  int _LinearWeightCnter(int a, int b, int mode); //if mode==CLEAR, set cnt,max,color=0
@@ -72,12 +72,12 @@ int AlgoPoint(int *ap, int *bp) //Write the position choosed into int* ap,int* b
     }
 
     PointGenWeightMartix_Algo2();
-    // SHOWALL(weight, "double");
+    // SHOWALL(weight, "int");
 
     int a_choosed = 0, b_choosed = 0;
     if (colornow == BLACK)
     {
-        double max_weight_get = -100000000000000.0;
+        int max_weight_get = -INF;
         for (int a = 0; a < BOUNDRY; a++)
         {
             for (int b = 0; b < BOUNDRY; b++)
@@ -93,7 +93,7 @@ int AlgoPoint(int *ap, int *bp) //Write the position choosed into int* ap,int* b
     }
     else
     {
-        double min_weight_get = 100000000000000.0;
+        int min_weight_get = INF;
         for (int a = 0; a < BOUNDRY; a++)
         {
             for (int b = 0; b < BOUNDRY; b++)
@@ -120,7 +120,7 @@ int AlgoPoint(int *ap, int *bp) //Write the position choosed into int* ap,int* b
 }
 //colornow is known;
 
-double WeightContribute_Algo2()
+int WeightContribute_Algo2()
 //Deal with the 1-d 9 element array, return the weight generated.
 //At the same time, mark the point tested.(Obsoleted)
 {
@@ -234,9 +234,9 @@ double WeightContribute_Algo2()
     return 0;
 }
 
-double PointGenWeightForShapeNow_Algo2()
+int PointGenWeightForShapeNow_Algo2()
 {
-    double weight_for_shape_now = 0.0;
+    int weight_for_shape_now = 0.0;
     for (int a = 0; a < BOUNDRY; a++)
     {
         for (int b = 0; b < BOUNDRY; b++)
@@ -297,15 +297,15 @@ double PointGenWeightForShapeNow_Algo2()
     return weight_for_shape_now;
 }
 
-double PointGenWeightAt_Algo2(int a, int b)
+int PointGenWeightAt_Algo2(int a, int b)
 {
     if (board[a][b]) //该位置无法落子
     {
         return 0;
     }
     board[a][b] = colornow;
-    double change = PointGenWeightForShapeNow_Algo2();
-    // printf("change:%lf\n", change);
+    int change = PointGenWeightForShapeNow_Algo2();
+    // printf("change:%d\n", change);
     board[a][b] = 0;
     return change;
 }
@@ -638,7 +638,7 @@ int GenNaiveConstrain_Algo2(int cntneeded, int spaceneeded, int start, int end, 
 
 int ClearWeightMartix()
 {
-    memset(weight, 0, sizeof(double) * BOUNDRY * BOUNDRY);
+    memset(weight, 0, sizeof(int) * BOUNDRY * BOUNDRY);
 }
 
 // int GenNaiveConstrain_Algo2(int a,int b,int lima,int lim b,)
@@ -721,7 +721,7 @@ int ClearWeightMartix()
 // int PointTestNaiveSituationForShapeNow_Algo2(int a,int b)
 // {
 //     int _algo2_havenot_clear_array = 1;
-//     // double weight_for_shape_now = 0.0;
+//     // int weight_for_shape_now = 0.0;
 //     for (int a = 0; a < BOUNDRY; a++)
 //     {
 //         for (int b = 0; b < BOUNDRY; b++)

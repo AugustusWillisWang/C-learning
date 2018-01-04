@@ -30,9 +30,9 @@
 
 //对矩阵的整体查找
 // int GenValidPosition_Algo3();    //Calc only near the exist point.
-double WeightContribute_Algo3(); //Gen weight for a single line in _Testline_[9]
-double PointGenWeightForShapeNow_Algo3();
-// double PointGenWeightAt_Algo3(int a, int b); //Get the weight change if making move at a,b.
+int WeightContribute_Algo3(); //Gen weight for a single line in _Testline_[9]
+int PointGenWeightForShapeNow_Algo3();
+// int PointGenWeightAt_Algo3(int a, int b); //Get the weight change if making move at a,b.
 // int PointGenWeightMartix_Algo3();
 
 int ClearWeightMartix_Algo3();
@@ -44,7 +44,7 @@ int GenNaiveConstrain_Algo3();
 int PointTestNaiveSituationForShapeNow_Algo3();
 int GetAroundPosition();
 
-double Minmax();
+int Minmax();
 
 int _algo3_havenot_clear_array = 1;
 
@@ -54,7 +54,7 @@ int _ValidPositionForFinalAlgo[BOUNDRY][BOUNDRY];
 // int _TestedPositionForFinalAlgo[BOUNDRY][BOUNDRY];
 int _Testline_[9]; //Get 9 elements out to check the weight.
 
-// double _weightnow_;
+// int _weightnow_;
 
 int aget;
 int bget;
@@ -78,7 +78,7 @@ int AlgoFinal(int *ap, int *bp) //Write the position choosed into int* ap,int* b
         return 0;
     }
 
-    // SHOWALL(weight, "double");
+    // SHOWALL(weight, "int");
 
     int a_choosed = 0, b_choosed = 0;
     Minmax(colornow, LEVEL, NINF, INF);
@@ -98,7 +98,7 @@ int AlgoFinal(int *ap, int *bp) //Write the position choosed into int* ap,int* b
 }
 //colornow is known;
 
-double WeightContribute_Algo3()
+int WeightContribute_Algo3()
 //Deal with the 1-d 9 element array, return the weight generated.
 //At the same time, mark the point tested.(Obsoleted)
 {
@@ -212,9 +212,9 @@ double WeightContribute_Algo3()
     return 0;
 }
 
-double PointGenWeightForShapeNow_Algo3()
+int PointGenWeightForShapeNow_Algo3()
 {
-    double weight_for_shape_now = 0.0;
+    int weight_for_shape_now = 0.0;
     for (int a = 0; a < BOUNDRY; a++)
     {
         for (int b = 0; b < BOUNDRY; b++)
@@ -303,17 +303,17 @@ int ShowWeightArray_Algo3()
 
 int ClearWeightMartix_Algo3()
 {
-    memset(weight, 0, sizeof(double) * BOUNDRY * BOUNDRY);
+    memset(weight, 0, sizeof(int) * BOUNDRY * BOUNDRY);
 }
 
 //Minmax:
 
 // int _JudgeWin();
 
-double MaxWeight(int *weight[])
+int MaxWeight(int *weight[])
 {
-    double max = -100000000000.0;
-    //    double min = 100000000000.0;
+    int max = -100000000000.0;
+    //    int min = 100000000000.0;
     for (int a = 0; a < BOUNDRY; a++)
     {
         for (int b = 0; b < BOUNDRY; b++)
@@ -324,10 +324,10 @@ double MaxWeight(int *weight[])
     }
     return max;
 }
-double MinWeight(int *weight[])
+int MinWeight(int *weight[])
 {
-    // double max = -100000000000.0;
-    double min = 100000000000.0;
+    // int max = -100000000000.0;
+    int min = 100000000000.0;
     for (int a = 0; a < BOUNDRY; a++)
     {
         for (int b = 0; b < BOUNDRY; b++)
@@ -362,15 +362,15 @@ int GetAroundPosition(int (*_ValidPosition)[BOUNDRY])
     }
 }
 
-double MinmaxOrigin(int color, int step, double max, double min);
-int NEqualDouble(double a, double b);
+int MinmaxOrigin(int color, int step, int max, int min);
+int NEqualDouble(int a, int b);
 
-// int _dbg_(double _weight, int level)
+// int _dbg_(int _weight, int level)
 // {
 //     static int cnt = 0;
 //     if (LEVEL == level)
 //     {
-//         printf("%lf ", _weight);
+//         printf("%d ", _weight);
 //         cnt++;
 //         if (BOUNDRY == cnt)
 //         {
@@ -391,7 +391,7 @@ int NEqualDouble(double a, double b);
         }\
     }\
 
-double Minmax(int color, int step, double max, double min)
+int Minmax(int color, int step, int max, int min)
 {
     int temp;
     int _aget, _bget;
@@ -416,7 +416,7 @@ double Minmax(int color, int step, double max, double min)
     else
     {
         // int _weight[BOUNDRY][BOUNDRY];
-        double _weight;
+        int _weight;
         int _ValidPosition[BOUNDRY][BOUNDRY];
         memset(_ValidPosition, 0, sizeof(int) * BOUNDRY * BOUNDRY);
         // memset(_weight, 0, sizeof(int) * BOUNDRY * BOUNDRY);
@@ -424,19 +424,19 @@ double Minmax(int color, int step, double max, double min)
         GetAroundPosition(_ValidPosition);
         if (_usesimpletest)
             SimpleSituationCheck_Algo3(_ValidPosition);
-        // double maxget = max;
-        // double minget = min;
+        // int maxget = max;
+        // int minget = min;
         for (int a = 0; a < BOUNDRY; a++)
         {
             for (int b = 0; b < BOUNDRY; b++)
             {
                 if (_ValidPosition[a][b] && board[a][b] == 0)
                 {
-                    // double *_zobnewweight = 0;
-                    // double **_zobnewweightp = &_zobnewweight;
-                    // double __soc = 0;
-                    double *__soc = 0;
-                    double **_socket = &__soc;
+                    // int *_zobnewweight = 0;
+                    // int **_zobnewweightp = &_zobnewweight;
+                    // int __soc = 0;
+                    int *__soc = 0;
+                    int **_socket = &__soc;
                     if (color == BLACK)
                     {
                         board[a][b] = color;
@@ -453,7 +453,7 @@ double Minmax(int color, int step, double max, double min)
                         OUTPUTWEIGHT;
                         board[a][b] = 0;
                         // _dbg_(_weight, step);
-                        // printf("%lf ;\n", _weight);
+                        // printf("%d ;\n", _weight);
 
                         if (_weight > max)
                         {
@@ -515,7 +515,7 @@ cut:
     // return MinWeight(_weight);
 }
 
-double MinmaxOrigin(int color, int step, double max, double min)
+int MinmaxOrigin(int color, int step, int max, int min)
 {
     int temp;
     int _aget, _bget;
@@ -540,15 +540,15 @@ double MinmaxOrigin(int color, int step, double max, double min)
     else
     {
         // int _weight[BOUNDRY][BOUNDRY];
-        double _weight;
+        int _weight;
         int _ValidPosition[BOUNDRY][BOUNDRY];
         memset(_ValidPosition, 0, sizeof(int) * BOUNDRY * BOUNDRY);
         // memset(_weight, 0, sizeof(int) * BOUNDRY * BOUNDRY);
 
         GetAroundPosition(_ValidPosition);
         SimpleSituationCheck_Algo3(_ValidPosition);
-        // double maxget = max;
-        // double minget = min;
+        // int maxget = max;
+        // int minget = min;
         for (int a = 0; a < BOUNDRY; a++)
         {
             for (int b = 0; b < BOUNDRY; b++)
@@ -599,7 +599,7 @@ cut:
     // return MinWeight(_weight);
 }
 
-int NEqualDouble(double a, double b)
+int NEqualDouble(int a, int b)
 {
     if (a < b + 1 && a > b - 1)
         return 0;

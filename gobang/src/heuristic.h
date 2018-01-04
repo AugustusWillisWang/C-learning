@@ -9,7 +9,7 @@ struct heuristic_element
     int a;
     int b;
     int history;
-    // double weight;
+    // int weight;
 };
 
 // int history_table[BOUNDRY][BOUNDRY];

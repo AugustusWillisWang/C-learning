@@ -16,7 +16,7 @@ int _ndefZobchain = 1;
 
 struct zobhash
 {
-    double weight;
+    int weight;
     unsigned long long check;
     int level;
     int type; //todo
@@ -111,7 +111,7 @@ struct findresult
 {
     int find;
     struct zobhash *point;
-    double weight;
+    int weight;
     int type;
 };
 
@@ -144,13 +144,13 @@ struct findresult FindInHashTable(unsigned long zob, unsigned long zob2, int lev
 
 // struct zobhash
 // {
-//     double weight;
+//     int weight;
 //     unsigned long long check;
 //     int level;
 //     int type; //todo
 // } hashtable[HASHSIZE];
 
-// SaveToZob(,unsigned long zob, unsigned long zob2, int level, int type, double weight);
+// SaveToZob(,unsigned long zob, unsigned long zob2, int level, int type, int weight);
 //usage:
 // {
 //     struct findresult result;

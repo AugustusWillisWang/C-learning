@@ -9,14 +9,14 @@
 #define EDGE 3
 
 //这里的权值是随便赋的
-#define WEIGHT1_2SIDE 2.0
-#define WEIGHT2_2SIDE 20.0
-#define WEIGHT3_2SIDE 1000.0
-#define WEIGHT4_2SIDE 2000.0
-#define WEIGHT1_1SIDE 1.0
-#define WEIGHT2_1SIDE 10.0
-#define WEIGHT3_1SIDE 500.0
-#define WEIGHT4_1SIDE 1500.0
+#define WEIGHT1_2SIDE 2
+#define WEIGHT2_2SIDE 20
+#define WEIGHT3_2SIDE 1000
+#define WEIGHT4_2SIDE 2000
+#define WEIGHT1_1SIDE 1
+#define WEIGHT2_1SIDE 10
+#define WEIGHT3_1SIDE 500
+#define WEIGHT4_1SIDE 1500
 
 #define WEIGHT5 10000.0
 
@@ -84,9 +84,9 @@ int FlushScanMartix()
     // printf("%d ", i);
 }
 
-double GenerateWeight()
+int GenerateWeight()
 {
-    double weight = 0.0;
+    int weight = 0.0;
     int record[BOUNDRY + 2][3][3]; //record[link][side][color]
     memset(record, 0, sizeof(record));
     FlushScanMartix();
@@ -175,12 +175,12 @@ double GenerateWeight()
     return weight;
 }
 
-double GenerateWeightAt(int a,int b, int color)
+int GenerateWeightAt(int a,int b, int color)
 {
     if(board[a][b])
         BOOM("!!!!");
     board[a][b] = color;
-    double result = GenerateWeight();
+    int result = GenerateWeight();
     board[a][b] = 0;
     return result;
 }
