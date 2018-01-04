@@ -89,4 +89,8 @@ int TestKillPoint(int a, int b)
     }
     return 0;
 }
+
+int UpdateKillBoard(int a, int b, int color){
+    
+}
 #endif

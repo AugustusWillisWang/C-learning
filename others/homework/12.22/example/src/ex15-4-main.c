@@ -4,9 +4,9 @@ int main()
 {
     struct rect screen;
     struct point middle,a1,a2,a3;
-    struct point makepoiont(double,double);
-    screen.pt1=makepoint((double)3,(double)27);
-    screen.pt2=makepoint((double)18,(double)7);
+    struct point makepoiont(int,int);
+    screen.pt1=makepoint((int)3,(int)27);
+    screen.pt2=makepoint((int)18,(int)7);
     printf("screen:\n");
     printf("pt1(%.2lf,%.2lf) pt2(%.2lf,%.2lf)\n",screen.pt1.x,screen.pt1.y,screen.pt2.x,screen.pt2.y);
     screen=canonrect(screen);
