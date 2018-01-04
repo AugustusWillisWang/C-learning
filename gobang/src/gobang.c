@@ -8,6 +8,7 @@
 // #include "algo_final.h"
 #include "algo_rebuild.h"
 #include "printboard.h"
+#include "socket.h"
 
 #define TEST              \
     ManualSetUp(1, 2, 1); \
@@ -321,6 +322,19 @@ int PveMode()
         }
         else
         {
+            clearscreen();
+            LICENSE;
+            puts("------------------------------------------");
+            puts("This is pve mode.");
+            puts("The board now is:");
+            // ShowBoardArray();
+            PrintBoard();
+
+            puts("------------------------------------------");
+            printf("This is move %d.\n", movecnt);
+            printf("Turn for the %s side.\n", (colornow == BLACK ? "black" : "white"));
+            puts("Please input your coordinate, the format is like \"10 A\"");
+            printf("a,b ranges from 0 to %d\n", BOUNDRY - 1);
             MakeMove(&a, &b);
             ManualSetUp(a, b, colornow);
         }
@@ -348,6 +362,106 @@ int PveMode()
 
 int SocketMode()
 {
+    int a;
+    int b;
+    int movecnt = 1;
+    int computermove = 0;
+
+    colornow = BLACK;
+
+    clearscreen();
+    LICENSE;
+    puts("------------------------------------------");
+    puts("This is socket mode.");
+    puts("Please choose the Algo: 0 for Random, 1 for ALGO_LINEAR, 2 for ALGO_POINT, 3 for ALGO_AlphaBeta");
+    if (ALGO_BASIC == Algo_Choosed)
+        scanf("%d", &Algo_Choosed);
+    puts("Please choose your side: 1 for the black and 2 for the white");
+    if (0 == player)
+        scanf("%d", &player);
+    while (player != 1 && player != 2)
+    {
+        puts("Wrong input!\nPlease choose your side: 1 for the black and 2 for the white");
+        scanf("%d", &player);
+    }
+
+    if (player == 1)
+    {
+        computermove = WHITE;
+    }
+    else
+    {
+        computermove = BLACK;
+    }
+    InitializeSocket(computermove);
+    setbuf(stdin, NULL); //For all OSs, clear buf to eat \n
+
+    struct position position;
+    while (!JudgeWin())
+    {
+        if (colornow != computermove)
+        {
+            clearscreen();
+            LICENSE;
+            puts("------------------------------------------");
+            puts("This is socket mode.");
+            puts("The board now is:");
+            // ShowBoardArray();
+            PrintBoard();
+
+            puts("------------------------------------------");
+            printf("This is move %d.\n", movecnt);
+            printf("Turn for the %s side.\n", (colornow == BLACK ? "black" : "white"));
+            // puts("Please input your coordinate, the format is like \"10 A\"");
+            // printf("a,b ranges from 0 to %d\n", BOUNDRY - 1);
+            // scanf("%d%d", &a, &b);
+            // position=Transfer(a, b);
+            a = position.a;
+            b = position.b;
+            // getinput(&a, &b);
+
+#ifdef ENABLEFBDMOVE
+            if (TestTipForbidMove(a, b, colornow))
+            {
+                puts("Forbidden move detected!");
+            }
+#endif
+        }
+        else
+        {
+            clearscreen();
+            LICENSE;
+            puts("------------------------------------------");
+            puts("This is socket mode.");
+            puts("The board now is:");
+            // ShowBoardArray();
+            PrintBoard();
+
+            puts("------------------------------------------");
+            printf("This is move %d.\n", movecnt);
+            printf("Turn for the %s side.\n", (colornow == BLACK ? "black" : "white"));
+            MakeMove(&a, &b);
+            position = Transfer(a, b);
+            ManualSetUp(a, b, colornow);
+        }
+        Save(a, b);
+        movecnt++;
+        if (colornow == BLACK)
+        {
+            colornow = WHITE;
+        }
+        else
+        {
+            colornow = BLACK;
+        }
+    }
+    printf("Game finished in move %d.\n", movecnt);
+    puts("--------------------------------------");
+    // ShowBoardArray();
+    PrintBoard();
+
+    puts("--------------------------------------");
+
     BP;
     return 0;
 }
@@ -395,7 +509,7 @@ int ManualSetUp(int a, int b, int color) //设置当前棋盘某一位置(程序
     return -1;
 }
 
-int ForcedManualSetUp(int a, int b, int color) 
+int ForcedManualSetUp(int a, int b, int color)
 {
     if (a >= 0 && a < BOUNDRY && b >= 0 && b < BOUNDRY && (color == 0 || color == BLACK || color == WHITE))
     {

@@ -544,7 +544,7 @@ int ShowWeightArray(int weight[BOUNDRY][BOUNDRY])
     {
         for (int b = 0; b < BOUNDRY; b++)
         {
-            printf("%.1lf\t", weight[a][b]);
+            printf("%d\t", weight[a][b]);
         }
         puts("");
     }

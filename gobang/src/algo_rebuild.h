@@ -2,11 +2,11 @@
 
 #define ALGO_FINAL 3
 #define EDGE 3
-#define LEVEL 6
+#define LEVEL 8
 #define NEABOR 1
 //(6,2)is recommended;
-#define THINKINGUPPERBOUND 100
-#define DEEPLEVELUPPERBOUND 20
+// #define THINKINGUPPERBOUND 100
+#define DEEPLEVELUPPERBOUND 60
 // #define WEIGHTHEURISTIC
 // #define ENABLEHASH
 
@@ -25,6 +25,8 @@ int showweight[BOUNDRY][BOUNDRY];
 
 int GetAroundPosition(int (*_ValidPosition)[BOUNDRY],int depth,int color)
 {
+    int checked[BOUNDRY][BOUNDRY];
+    memset(checked, 0, sizeof(checked));
     memset(_ValidPosition, 0, sizeof(int) * BOUNDRY * BOUNDRY);
     for (int a = 0; a < BOUNDRY; a++)
     {
@@ -36,10 +38,11 @@ int GetAroundPosition(int (*_ValidPosition)[BOUNDRY],int depth,int color)
                 {
                     for (int ib = -NEABOR; ib <= NEABOR; ib++)
                     {
-                        if (!board[BoundLim(a + ia)][BoundLim(b + ib)])
-                        {
                             int _a = BoundLim(a + ia);
                             int _b = BoundLim(b + ib);
+                        if (!board[_a][_b]&&!checked[a][b])
+                        {
+                            checked[a][b] = 1;
                             _ValidPosition[_a][_b] = 1;
 #ifdef KILLSEARCH
                             if (depth <= (LEVEL - KILLSEARCH))

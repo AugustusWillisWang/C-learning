@@ -319,7 +319,7 @@ int GenValidPosition(int (*valid_position)[BOUNDRY], int colornow)
     }
 }
 
-int TestTipForbidMove(int a, int b, int colornow)
+int TestTipForbidMove(int a, int b, int colornow)//return 1 if it is a forbidden move
 {
     if (TestForbidMove(a, b, colornow))
     {

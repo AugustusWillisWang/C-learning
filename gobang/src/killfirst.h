@@ -2,7 +2,7 @@
 #define _KILLFIRST_H
 #include "support.h"
 
-// #define KILLSEARCH 4
+#define KILLSEARCH 6
 int TestKillPoint(int a, int b)
 {
     if (board[a][b])
@@ -90,7 +90,10 @@ int TestKillPoint(int a, int b)
     return 0;
 }
 
+int killboard[BOUNDRY][BOUNDRY];
+
 int UpdateKillBoard(int a, int b, int color){
-    
+    killboard[a][b] = 0;
+
 }
 #endif
