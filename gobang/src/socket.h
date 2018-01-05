@@ -7,21 +7,34 @@
 // #include <windows.h> //windows
 // #include <unistd.h>  //linux
 
-//---------------------
+//------------------------------------------------------
 //usage:
+//Before 1st move: call InitializeBlackSocket() or InitializeWhiteSocket()
+//Opposite's move: OppositeMove().a OppositeMove().b all of them are int type;
+//Transfer your move after calculating: Transfer(int a, int b);
 
+//-------------------------------------------------------
 struct position
 {
     int a;
     int b;
-};
+} _lastmove;
 
 // computer color: black --> InitializeSocket(1);
 // computer color: white --> InitializeSocket(2);
 int InitializeSocket(int color);
+int InitializeBlackSocket()
+{
+    InitializeSocket(1);
+}
+int InitializeWhiteSocket()
+{
+    InitializeSocket(2);
+};
 
 struct position Transfer(int a, int b);
 
+struct position OppositeMove();
 //------------------------------------
 
 //For windows:
@@ -38,7 +51,9 @@ struct position Transfer(int a, int b);
 //      sleep(waittime);
 // }
 
-void _Wait(int waittime)
+//If you have conflict name, etc. Crossplatform version.
+
+void _Wait(int waittime) 
 {
     clock_t endwait;
     endwait = clock() + waittime;
@@ -52,7 +67,6 @@ int _RandTime()
 {
     return rand() % 50;
 }
-
 
 // BLACK==1;
 // WHITE==2;
@@ -68,6 +82,10 @@ int InitializeSocket(int color)
     {
         _exchangefile = fopen("swapfile", "w");
         fclose(_exchangefile);
+    }
+    if (color == 2)
+    {
+        Transfer(-1, -1);
     }
     return 0;
 }
@@ -87,7 +105,7 @@ struct position Transfer(int a, int b)
 {
     int col = 0;
     struct position position;
-    if (_color == 2 && _fststep == 0)
+    if (_color == 2 && _fststep == 0)//This is for the compatibility for last version.
     {
         do
         {
@@ -96,11 +114,12 @@ struct position Transfer(int a, int b)
             fscanf(_exchangefile, "%d %d %d", &position.a, &position.b, &col);
             fclose(_exchangefile);
             _Wait(_RandTime());
-            
 
         } while (col != _InvColor(_color));
         // fclose(_exchangefile);
         _fststep = 1;
+        _lastmove.a = position.a;
+        _lastmove.b = position.b;
         return position;
     }
 
@@ -119,7 +138,14 @@ struct position Transfer(int a, int b)
     } while (col != _InvColor(_color));
     fclose(_exchangefile);
 
+    _lastmove.a = position.a;
+    _lastmove.b = position.b;
     return position;
+}
+
+struct position OppositeMove()
+{
+    return _lastmove;
 }
 
 int CloseSocket()
