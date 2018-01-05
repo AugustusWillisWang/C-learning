@@ -206,7 +206,7 @@ int AlphaBeta(int depth, int color, int alpha, int beta, unsigned long long zob,
                     AddTo_history_table(history_table, a, b, depth);
                     bestmove = i;
 #ifdef ENABLEHASH
-                    SaveToZob(findresult, zob2, depth, LOWER,score);
+                    SaveToZob(findresult, zob2, depth, UPPER,score);
 
 #endif
                     // **_socket = alpha;
@@ -224,7 +224,7 @@ int AlphaBeta(int depth, int color, int alpha, int beta, unsigned long long zob,
                 SaveToZob(findresult, zob2, depth, VALUE,beta);
 
             else
-                SaveToZob(findresult, zob2, depth, UPPER,beta);
+                SaveToZob(findresult, zob2, depth, LOWER,beta);
 
 #endif
 
