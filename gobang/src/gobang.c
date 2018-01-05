@@ -333,7 +333,7 @@ int PveMode()
             puts("------------------------------------------");
             printf("This is move %d.\n", movecnt);
             printf("Turn for the %s side.\n", (colornow == BLACK ? "black" : "white"));
-            puts("Please input your coordinate, the format is like \"10 A\"");
+            // puts("Please input your coordinate, the format is like \"10 A\"");
             printf("a,b ranges from 0 to %d\n", BOUNDRY - 1);
             MakeMove(&a, &b);
             ManualSetUp(a, b, colornow);
@@ -401,6 +401,7 @@ int SocketMode()
     {
         if (colornow != computermove)
         {
+            position = Transfer(0, 0);
             clearscreen();
             LICENSE;
             puts("------------------------------------------");

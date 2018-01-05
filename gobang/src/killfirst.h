@@ -2,7 +2,7 @@
 #define _KILLFIRST_H
 #include "support.h"
 
-#define KILLSEARCH 6
+// #define KILLSEARCH 6
 int TestKillPoint(int a, int b)
 {
     if (board[a][b])

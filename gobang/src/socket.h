@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <time.h>
 #include <stdlib.h>
-#include <windows.h> //windows
+// #include <windows.h> //windows
 // #include <unistd.h>  //linux
 
 //---------------------
@@ -26,10 +26,10 @@ struct position Transfer(int a, int b);
 
 //For windows:
 
-void _Wait(int waittime)
-{
-    Sleep(waittime);
-}
+// void _Wait(int waittime)
+// {
+//     Sleep(waittime);
+// }
 
 //For linux:
 
@@ -38,15 +38,15 @@ void _Wait(int waittime)
 //      sleep(waittime);
 // }
 
-// void _Wait(int waittime)
-// {
-//     clock_t endwait;
-//     endwait = clock() + waittime;
-//     while (clock() < endwait)
-//     {
-//         ;
-//     }
-// }
+void _Wait(int waittime)
+{
+    clock_t endwait;
+    endwait = clock() + waittime;
+    while (clock() < endwait)
+    {
+        ;
+    }
+}
 
 int _RandTime()
 {
