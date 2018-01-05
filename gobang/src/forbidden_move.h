@@ -267,8 +267,11 @@ int TestForbidMove(int a, int b, int colornow)
         return 0;
     if (longlink5)
         return 1;
-    if (huo3 >= 2)
-        return 1;
+    if (huo3 >= 2){
+        if(huo4>=1)
+            return 0;
+    return 1;
+    }
     if (huo4 >= 2)
         return 1;
     return 0;

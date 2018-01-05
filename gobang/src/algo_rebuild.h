@@ -2,7 +2,7 @@
 
 #define ALGO_FINAL 3
 #define EDGE 3
-#define LEVEL 8
+#define LEVEL 6
 #define NEABOR 1
 //(6,2)is recommended;
 // #define THINKINGUPPERBOUND 100
@@ -10,7 +10,7 @@
 // #define WEIGHTHEURISTIC
 // #define ENABLEHASH
 
-// #define ENABLEFBDMOVE
+#define ENABLEFBDMOVE
 
 #include "zobrist.h"
 #include "support.h"
@@ -40,9 +40,9 @@ int GetAroundPosition(int (*_ValidPosition)[BOUNDRY],int depth,int color)
                     {
                             int _a = BoundLim(a + ia);
                             int _b = BoundLim(b + ib);
-                        if (!board[_a][_b]&&!checked[a][b])
+                        if ((!board[_a][_b])&&(!checked[_a][_b]))
                         {
-                            checked[a][b] = 1;
+                            checked[_a][_b] = 1;
                             _ValidPosition[_a][_b] = 1;
 #ifdef KILLSEARCH
                             if (depth <= (LEVEL - KILLSEARCH))
