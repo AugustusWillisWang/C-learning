@@ -20,7 +20,7 @@ struct zobhash
     unsigned long long check;
     int level;
     int type; //todo
-} hashtable[HASHSIZE+1];
+} hashtable[HASHSIZE + 1];
 
 unsigned long int zobrist_table[BOUNDRY][BOUNDRY][2];
 unsigned long int zobrist_check_table[BOUNDRY][BOUNDRY][2];
@@ -64,7 +64,7 @@ unsigned long int Getzob()
             }
         }
     }
-    return result&HASHSIZE;
+    return result & HASHSIZE;
 }
 
 unsigned long int Getzob2()
@@ -84,7 +84,7 @@ unsigned long int Getzob2()
             }
         }
     }
-    return result&HASHSIZE;
+    return result & HASHSIZE;
 }
 
 unsigned long int NextHash(unsigned long int hash, int a, int b, int colornow)
@@ -106,7 +106,6 @@ unsigned long int LastHash2(unsigned long int hash, int a, int b, int colornow)
     return (-zobrist_check_table[a][b][colornow] + hash) & HASHSIZE;
 }
 
-
 struct findresult
 {
     int find;
@@ -119,27 +118,44 @@ struct findresult
 #define UPPER 2
 #define VALUE 3
 
-struct findresult FindInHashTable(unsigned long zob, unsigned long zob2, int level,int type) //type:color
+struct findresult FindInHashTable(unsigned long zob, unsigned long zob2, int level, int type) //type:color
 {
     unsigned long int hashvalue = zob;
     if ((level < hashtable[hashvalue].level) || hashtable[hashvalue].check != zob2 || hashtable[hashvalue].type != type)
     { //!hashtable[zob].check)|| todo
         hashtable[hashvalue].check = zob2;
         hashtable[hashvalue].level = level;
-        struct findresult result=
-        {
-            0, &hashtable[hashvalue], hashtable[hashvalue].weight, hashtable[hashvalue].type
-        };
+        struct findresult result =
+            {
+                0, &hashtable[hashvalue], hashtable[hashvalue].weight, hashtable[hashvalue].type};
         return result;
     }
     else
     {
-        struct findresult result=
-        {
-            1, &hashtable[hashvalue], hashtable[hashvalue].weight, hashtable[hashvalue].type
-        };
+        struct findresult result =
+            {
+                1, &hashtable[hashvalue], hashtable[hashvalue].weight, hashtable[hashvalue].type};
         return result;
     }
+}
+
+int CheckHashResult(struct findresult result, int alpha, int beta)
+{
+    if (!result.find)
+        return 0;
+    if (result.type == VALUE)
+        return 1;
+    if (result.type == LOWER)
+    {
+        if (result.weight >= beta)
+            return 1;
+    }
+    if (result.type == UPPER)
+    {
+        if (result.weight <= alpha)
+            return 1;
+    }
+    return 0;
 }
 
 // struct zobhash
@@ -150,14 +166,16 @@ struct findresult FindInHashTable(unsigned long zob, unsigned long zob2, int lev
 //     int type; //todo
 // } hashtable[HASHSIZE];
 
-// SaveToZob(,unsigned long zob, unsigned long zob2, int level, int type, int weight);
-//usage:
-// {
-//     struct findresult result;
-//     result.point->weight=
-//     result.point->check=
-//     result.point->level=
-//     result.point->type=
-// }
+int SaveToZob(struct findresult result, unsigned long zob2, int level, int type, int weight)
+{
+    result.point->weight = weight;
+    result.point->check = zob2;
+    result.point->level = level;
+    result.point->type = type;
+    return 0;
+}
+
+int _hit = 0;
+int _tot = 0;
 
 #endif

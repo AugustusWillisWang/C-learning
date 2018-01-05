@@ -8,7 +8,7 @@
 // #define THINKINGUPPERBOUND 100
 #define DEEPLEVELUPPERBOUND 60
 // #define WEIGHTHEURISTIC
-// #define ENABLEHASH
+#define ENABLEHASH
 
 #define ENABLEFBDMOVE
 
@@ -23,7 +23,7 @@ int showweight[BOUNDRY][BOUNDRY];
 
 //------------------------------------------
 
-int GetAroundPosition(int (*_ValidPosition)[BOUNDRY],int depth,int color)
+int GetAroundPosition(int (*_ValidPosition)[BOUNDRY], int depth, int color)
 {
     int checked[BOUNDRY][BOUNDRY];
     memset(checked, 0, sizeof(checked));
@@ -38,15 +38,15 @@ int GetAroundPosition(int (*_ValidPosition)[BOUNDRY],int depth,int color)
                 {
                     for (int ib = -NEABOR; ib <= NEABOR; ib++)
                     {
-                            int _a = BoundLim(a + ia);
-                            int _b = BoundLim(b + ib);
-                        if ((!board[_a][_b])&&(!checked[_a][_b]))
+                        int _a = BoundLim(a + ia);
+                        int _b = BoundLim(b + ib);
+                        if ((!board[_a][_b]) && (!checked[_a][_b]))
                         {
                             checked[_a][_b] = 1;
                             _ValidPosition[_a][_b] = 1;
 #ifdef KILLSEARCH
                             if (depth <= (LEVEL - KILLSEARCH))
-                                _ValidPosition[_a][_b] *= TestKillPoint( _a, _b);
+                                _ValidPosition[_a][_b] *= TestKillPoint(_a, _b);
 
 #endif
 #ifdef ENABLEFBDMOVE
@@ -85,32 +85,35 @@ int AlphaBeta(int depth, int color, int alpha, int beta, unsigned long long zob,
 
     int score;
 #ifdef ENABLEHASH
-    struct findresult hashresult;
-    hashresult = FindInHashTable(zob, zob2, depth, color);
+    struct findresult findresult;
+    findresult = FindInHashTable(zob, zob2, depth, color);
 
-    if (hashresult.find)
+    if (findresult.find)
     {
-        score = hashresult.weight;
-        switch (hashresult.type)
+        score = findresult.weight;
+        if (CheckHashResult(findresult, alpha, beta))
         {
-        case LOWER:
-            if (score >= alpha)
-            {
-                return score;
-            }
-        case UPPER:
-
-        case VALUE:
+            _hit++;
             return score;
         }
     }
+    _tot++;
 #endif
 
     if (depth <= 0)
-        return GenerateWeight();
+    {
+        int weight = GenerateWeight();
+
+#ifdef ENABLEHASH
+        SaveToZob(findresult, zob2, depth, VALUE, weight);
+#endif
+        return weight;
+    }
+
+    int type = 0;
     int valid_position[BOUNDRY][BOUNDRY];
     memset(valid_position, 0, sizeof(valid_position));
-    GetAroundPosition(valid_position,depth,color);
+    GetAroundPosition(valid_position, depth, color);
     struct heuristic_element heuristic_list[BOUNDRY * BOUNDRY];
     memset(heuristic_list, 0, sizeof(heuristic_list));
     int hcnt = 0; //hcnt-1 为最后一个节点的位置
@@ -197,18 +200,14 @@ int AlphaBeta(int depth, int color, int alpha, int beta, unsigned long long zob,
                     bestmoverec.b = b;
                 }
                 bestmove = i;
+                type = VALUE;
                 if (alpha >= beta)
                 {
                     AddTo_history_table(history_table, a, b, depth);
                     bestmove = i;
 #ifdef ENABLEHASH
-                    {
-                        // struct findresult result;
-                        hashresult.point->weight = alpha;
-                        hashresult.point->check = zob2;
-                        hashresult.point->level = depth;
-                        hashresult.point->type = ALPHA;
-                    }
+                    SaveToZob(findresult, zob2, depth, LOWER,score);
+
 #endif
                     // **_socket = alpha;
                     // *_socket = 0;
@@ -221,16 +220,13 @@ int AlphaBeta(int depth, int color, int alpha, int beta, unsigned long long zob,
         {
 #ifdef ENABLEHASH
 
-            {
-                // struct findresult result;
-                hashresult.point->weight = beta;
-                hashresult.point->check = zob2;
-                hashresult.point->level = depth;
-                hashresult.point->type = BETA;
-            }
+            if (type)
+                SaveToZob(findresult, zob2, depth, VALUE,beta);
+
+            else
+                SaveToZob(findresult, zob2, depth, UPPER,beta);
+
 #endif
-            // **_socket = beta;
-            // *_socket = 0;
 
             if (bestmove != -1)
                 AddTo_history_table(history_table, heuristic_list[bestmove].a, heuristic_list[bestmove].b, depth);
@@ -264,19 +260,16 @@ int AlphaBeta(int depth, int color, int alpha, int beta, unsigned long long zob,
                     bestmoverec.b = b;
                 }
                 bestmove = i;
+                type == VALUE;
                 if (alpha >= beta)
                 {
                     AddTo_history_table(history_table, a, b, depth);
                     bestmove = i;
 
 #ifdef ENABLEHASH
-                    {
-                        // struct findresult result;
-                        hashresult.point->weight = beta;
-                        hashresult.point->check = zob2;
-                        hashresult.point->level = depth;
-                        hashresult.point->type = BETA;
-                    }
+
+                    SaveToZob(findresult, zob2, depth, LOWER,score);
+
 #endif
                     // **_socket = beta;
                     // *_socket = 0;
@@ -288,14 +281,13 @@ int AlphaBeta(int depth, int color, int alpha, int beta, unsigned long long zob,
 
         {
 #ifdef ENABLEHASH
-            {
 
-                // struct findresult result;
-                hashresult.point->weight = alpha;
-                hashresult.point->check = zob2;
-                hashresult.point->level = depth;
-                hashresult.point->type = ALPHA;
-            }
+            if (type)
+                SaveToZob(findresult, zob2, depth, VALUE,alpha);
+
+            else
+                SaveToZob(findresult, zob2, depth, UPPER,alpha);
+
 #endif
             // **_socket = alpha;
             // *_socket = 0;
@@ -343,5 +335,9 @@ int AlgoFinal(int *ap, int *bp) //Write the position choosed into int* ap,int* b
     // ClearWeightMartix_Algo3();
     time_t timeend = clock();
     CK(timeend - timestart);
+    CK(_hit);
+    _hit = 0;
+    CK(_tot);
+    _tot = 0;
     return 0;
 }

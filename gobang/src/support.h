@@ -20,7 +20,7 @@ int colornow;
 int fstmove = 1;
 int board[BOUNDRY][BOUNDRY];      //棋盘数据
 int printboard[BOUNDRY][BOUNDRY]; //绘图板
-int weight[BOUNDRY][BOUNDRY];  //权重变化,注意权重为double
+int weight[BOUNDRY][BOUNDRY];     //权重变化,注意权重为double
 
 //settings
 int _usesimpletest = 0;
@@ -324,15 +324,6 @@ int _JudgeWin() //Nooutput.version
             {
                 if (incolor && (continuecnt >= 5))
                 {
-
-                    if (incolor == WHITE)
-                    {
-                        return WHITE;
-                    }
-                    else if (incolor == BLACK)
-                    {
-                        return BLACK;
-                    }
                     return incolor;
                 }
                 // weight_for_shape_now += WeightContribute(incolor, continuecnt);
@@ -343,15 +334,6 @@ int _JudgeWin() //Nooutput.version
         // weight_for_shape_now += WeightContribute(incolor, continuecnt);
         if (incolor && (continuecnt >= 5))
         {
-
-            if (incolor == WHITE)
-            {
-                printf("White wins!\n");
-            }
-            else if (incolor == BLACK)
-            {
-                printf("Black wins!\n");
-            }
             return incolor;
         }
         incolor = 0;
@@ -373,15 +355,6 @@ int _JudgeWin() //Nooutput.version
             {
                 if (incolor && (continuecnt >= 5))
                 {
-
-                    if (incolor == WHITE)
-                    {
-                        return WHITE;
-                    }
-                    else if (incolor == BLACK)
-                    {
-                        return BLACK;
-                    }
                     return incolor;
                 }
                 // weight_for_shape_now += WeightContribute(incolor, continuecnt);
@@ -393,14 +366,6 @@ int _JudgeWin() //Nooutput.version
         if (incolor && (continuecnt >= 5))
         {
 
-            if (incolor == WHITE)
-            {
-                printf("White wins!\n");
-            }
-            else if (incolor == BLACK)
-            {
-                printf("Black wins!\n");
-            }
             return incolor;
         }
         incolor = 0;
@@ -426,15 +391,7 @@ int _JudgeWin() //Nooutput.version
                     if (incolor && (continuecnt >= 5))
 
                     {
-                        if (incolor == WHITE)
-
-                        {
-                            return WHITE;
-                        }
-                        else if (incolor == BLACK)
-                        {
-                            return BLACK;
-                        }
+                        return incolor;
                     }
                     // weight_for_shape_now += WeightContribute(incolor, continuecnt);
                     continuecnt = 1;
@@ -445,15 +402,6 @@ int _JudgeWin() //Nooutput.version
         // weight_for_shape_now += WeightContribute(incolor, continuecnt);
         if (incolor && (continuecnt >= 5))
         {
-
-            if (incolor == WHITE)
-            {
-                printf("White wins!\n");
-            }
-            else if (incolor == BLACK)
-            {
-                printf("Black wins!\n");
-            }
             return incolor;
         }
         incolor = 0;
@@ -478,14 +426,6 @@ int _JudgeWin() //Nooutput.version
                 {
                     if (incolor && (continuecnt >= 5))
                     {
-                        if (incolor == WHITE)
-                        {
-                            return WHITE;
-                        }
-                        else if (incolor == BLACK)
-                        {
-                            return BLACK;
-                        }
                         return incolor;
                     }
                     // weight_for_shape_now += WeightContribute(incolor, continuecnt);
@@ -497,15 +437,6 @@ int _JudgeWin() //Nooutput.version
         // weight_for_shape_now += WeightContribute(incolor, continuecnt);
         if (incolor && (continuecnt >= 5))
         {
-
-            if (incolor == WHITE)
-            {
-                printf("White wins!\n");
-            }
-            else if (incolor == BLACK)
-            {
-                printf("Black wins!\n");
-            }
             return incolor;
         }
         incolor = 0;
@@ -558,7 +489,6 @@ int Abs_double(int input)
     }
 }
 
-
 int MaxWeight(int (*weight)[BOUNDRY])
 {
     int max = NINF;
@@ -587,7 +517,6 @@ int MinWeight(int (*weight)[BOUNDRY])
     }
     return min;
 }
-
 
 int SetUp(int a, int b, int color) //设置当前棋盘某一位置(程序用)
 {
