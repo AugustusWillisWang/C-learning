@@ -2,15 +2,17 @@
 
 #define ALGO_FINAL 3
 #define EDGE 3
-#define LEVEL 6
-#define NEABOR 1
+#define LEVEL 3
+#define NEABOR 2
 //(6,2)is recommended;
 // #define THINKINGUPPERBOUND 100
-#define DEEPLEVELUPPERBOUND 60
+// #define DEEPLEVELUPPERBOUND 60
+// #define DEEPLEVEL 4
 // #define WEIGHTHEURISTIC
 #define ENABLEHASH
 
 #define ENABLEFBDMOVE
+#define TIMELIMIT 15000
 
 #include "zobrist.h"
 #include "support.h"
@@ -20,6 +22,7 @@
 
 int GetAroundPosition();
 int showweight[BOUNDRY][BOUNDRY];
+time_t _starttime = 0;
 
 //------------------------------------------
 
@@ -77,6 +80,10 @@ struct move bestmoverec = {-1, -1};
 
 int AlphaBeta(int depth, int color, int alpha, int beta, unsigned long long zob, unsigned long long zob2)
 {
+#ifdef TIMELIMIT
+    if ((clock() - _starttime) > TIMELIMIT)
+        return 0;
+#endif
     int result = _JudgeWin();
     if (result)
     {
@@ -88,6 +95,7 @@ int AlphaBeta(int depth, int color, int alpha, int beta, unsigned long long zob,
     struct findresult findresult;
     findresult = FindInHashTable(zob, zob2, depth, color);
 
+    _tot++;
     if (findresult.find)
     {
         score = findresult.weight;
@@ -97,7 +105,6 @@ int AlphaBeta(int depth, int color, int alpha, int beta, unsigned long long zob,
             return score;
         }
     }
-    _tot++;
 #endif
 
     if (depth <= 0)
@@ -163,9 +170,9 @@ int AlphaBeta(int depth, int color, int alpha, int beta, unsigned long long zob,
 #endif
 
 #ifdef DEEPLEVELUPPERBOUND
-    if (LEVEL > 4)
+    if (LEVEL > DEEPLEVEL)
     {
-        if (depth <= LEVEL - 4)
+        if (depth <= LEVEL - DEEPLEVEL)
         {
             hcnt = DEEPLEVELUPPERBOUND;
         }
@@ -206,7 +213,7 @@ int AlphaBeta(int depth, int color, int alpha, int beta, unsigned long long zob,
                     AddTo_history_table(history_table, a, b, depth);
                     bestmove = i;
 #ifdef ENABLEHASH
-                    SaveToZob(findresult, zob2, depth, UPPER,score);
+                    SaveToZob(findresult, zob2, depth, UPPER, score);
 
 #endif
                     // **_socket = alpha;
@@ -221,10 +228,10 @@ int AlphaBeta(int depth, int color, int alpha, int beta, unsigned long long zob,
 #ifdef ENABLEHASH
 
             if (type)
-                SaveToZob(findresult, zob2, depth, VALUE,beta);
+                SaveToZob(findresult, zob2, depth, VALUE, beta);
 
             else
-                SaveToZob(findresult, zob2, depth, LOWER,beta);
+                SaveToZob(findresult, zob2, depth, LOWER, beta);
 
 #endif
 
@@ -268,7 +275,7 @@ int AlphaBeta(int depth, int color, int alpha, int beta, unsigned long long zob,
 
 #ifdef ENABLEHASH
 
-                    SaveToZob(findresult, zob2, depth, LOWER,score);
+                    SaveToZob(findresult, zob2, depth, LOWER, score);
 
 #endif
                     // **_socket = beta;
@@ -283,10 +290,10 @@ int AlphaBeta(int depth, int color, int alpha, int beta, unsigned long long zob,
 #ifdef ENABLEHASH
 
             if (type)
-                SaveToZob(findresult, zob2, depth, VALUE,alpha);
+                SaveToZob(findresult, zob2, depth, VALUE, alpha);
 
             else
-                SaveToZob(findresult, zob2, depth, UPPER,alpha);
+                SaveToZob(findresult, zob2, depth, UPPER, alpha);
 
 #endif
             // **_socket = alpha;
@@ -296,6 +303,17 @@ int AlphaBeta(int depth, int color, int alpha, int beta, unsigned long long zob,
             return alpha;
         }
     }
+}
+
+int IterativeDeepenAB()
+{
+    _starttime = clock();
+    int levelnow = 1;
+    while (levelnow <= LEVEL)
+    {
+        AlphaBeta(levelnow++, colornow, -INF, INF, Getzob(), Getzob2());
+    }
+    return 0;
 }
 
 // struct move bestmoverec = {-1, -1};
@@ -320,7 +338,13 @@ int AlgoFinal(int *ap, int *bp) //Write the position choosed into int* ap,int* b
     // SHOWALL(weight, "int");
     memset(history_table, 0, sizeof(history_table));
     memset(showweight, 0, sizeof(showweight));
+
+#ifndef TIMELIMIT
     AlphaBeta(LEVEL, colornow, -INF, INF, Getzob(), Getzob2());
+#else
+    IterativeDeepenAB();
+#endif
+
     CK(bestmoverec.a);
     CK(bestmoverec.b);
     *ap = bestmoverec.a;
