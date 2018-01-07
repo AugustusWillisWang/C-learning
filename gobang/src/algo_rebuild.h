@@ -2,8 +2,8 @@
 
 #define ALGO_FINAL 3
 #define EDGE 3
-#define LEVEL 3
-#define NEABOR 2
+#define LEVEL 7
+#define NEABOR 1
 //(6,2)is recommended;
 // #define THINKINGUPPERBOUND 100
 // #define DEEPLEVELUPPERBOUND 60
@@ -19,6 +19,7 @@
 #include "heuristic.h"
 #include "weight.h"
 #include "killfirst.h"
+#include "fuck_plagiarizer.h"
 
 int GetAroundPosition();
 int showweight[BOUNDRY][BOUNDRY];
@@ -48,7 +49,7 @@ int GetAroundPosition(int (*_ValidPosition)[BOUNDRY], int depth, int color)
                             checked[_a][_b] = 1;
                             _ValidPosition[_a][_b] = 1;
 #ifdef KILLSEARCH
-                            if (depth <= (LEVEL - KILLSEARCH))
+                            if (depth <= (toplevel - KILLSEARCH))
                                 _ValidPosition[_a][_b] *= TestKillPoint(_a, _b);
 
 #endif
@@ -75,10 +76,12 @@ int GetAroundPosition(int (*_ValidPosition)[BOUNDRY], int depth, int color)
         }                                    \
     }
 
+int hashv = 0; //dbghash
+
 #define MAXNODE 20
 struct move bestmoverec = {-1, -1};
 
-int AlphaBeta(int depth, int color, int alpha, int beta, unsigned long long zob, unsigned long long zob2)
+int AlphaBeta(int depth, int color, int alpha, int beta, unsigned long long zob, unsigned long long zob2, int toplevel)
 {
 #ifdef TIMELIMIT
     if ((clock() - _starttime) > TIMELIMIT)
@@ -99,10 +102,12 @@ int AlphaBeta(int depth, int color, int alpha, int beta, unsigned long long zob,
     if (findresult.find)
     {
         score = findresult.weight;
-        if (CheckHashResult(findresult, alpha, beta))
+        if (CheckHashResult(findresult, alpha, beta) && (depth != toplevel))
         {
             _hit++;
-            return score;
+            //dbghash
+            hashv = score;
+            // return score;
         }
     }
 #endif
@@ -130,7 +135,7 @@ int AlphaBeta(int depth, int color, int alpha, int beta, unsigned long long zob,
         {
             if (valid_position[a][b])
             {
-                AddTo_heuristic_list(heuristic_list, hcnt, a, b, depth, 10000 * FindIn_history_table(history_table, a, b, depth));
+                AddTo_heuristic_list(heuristic_list, hcnt, a, b, depth, 1 * FindIn_history_table(history_table, a, b, depth));
                 hcnt++;
             }
         }
@@ -170,9 +175,9 @@ int AlphaBeta(int depth, int color, int alpha, int beta, unsigned long long zob,
 #endif
 
 #ifdef DEEPLEVELUPPERBOUND
-    if (LEVEL > DEEPLEVEL)
+    if (toplevel > DEEPLEVEL)
     {
-        if (depth <= LEVEL - DEEPLEVEL)
+        if (depth <= toplevel - DEEPLEVEL)
         {
             hcnt = DEEPLEVELUPPERBOUND;
         }
@@ -191,8 +196,8 @@ int AlphaBeta(int depth, int color, int alpha, int beta, unsigned long long zob,
             unsigned long long hash2next = NextHash2(zob2, a, b, colornow);
 
             board[a][b] = color;
-            score = AlphaBeta(depth - 1, Inverse(color), alpha, beta, hashnext, hash2next);
-            if (depth == LEVEL)
+            score = AlphaBeta(depth - 1, Inverse(color), alpha, beta, hashnext, hash2next, toplevel);
+            if (depth == toplevel)
             {
                 showweight[a][b] = score;
             }
@@ -200,7 +205,7 @@ int AlphaBeta(int depth, int color, int alpha, int beta, unsigned long long zob,
             if (score < beta)
             {
                 beta = score;
-                if (depth == LEVEL)
+                if (depth == toplevel)
                 {
                     showweight[a][b] = score;
                     bestmoverec.a = a;
@@ -212,12 +217,10 @@ int AlphaBeta(int depth, int color, int alpha, int beta, unsigned long long zob,
                 {
                     AddTo_history_table(history_table, a, b, depth);
                     bestmove = i;
+
 #ifdef ENABLEHASH
                     SaveToZob(findresult, zob2, depth, UPPER, score);
-
 #endif
-                    // **_socket = alpha;
-                    // *_socket = 0;
 
                     return alpha;
                 }
@@ -251,8 +254,8 @@ int AlphaBeta(int depth, int color, int alpha, int beta, unsigned long long zob,
             unsigned long long hash2next = NextHash2(zob2, a, b, colornow);
 
             board[a][b] = color;
-            score = AlphaBeta(depth - 1, Inverse(color), alpha, beta, hashnext, hash2next);
-            if (depth == LEVEL)
+            score = AlphaBeta(depth - 1, Inverse(color), alpha, beta, hashnext, hash2next, toplevel);
+            if (depth == toplevel)
             {
                 showweight[a][b] = score;
             }
@@ -260,7 +263,7 @@ int AlphaBeta(int depth, int color, int alpha, int beta, unsigned long long zob,
             if (score > alpha)
             {
                 alpha = score;
-                if (depth == LEVEL)
+                if (depth == toplevel)
                 {
                     showweight[a][b] = score;
                     bestmoverec.a = a;
@@ -309,10 +312,25 @@ int IterativeDeepenAB()
 {
     _starttime = clock();
     int levelnow = 1;
+    int ltrec_a;
+    int ltrec_b;
     while (levelnow <= LEVEL)
     {
-        AlphaBeta(levelnow++, colornow, -INF, INF, Getzob(), Getzob2());
+        printf("Started level %d at %d\n", levelnow, clock() - _starttime);
+        AlphaBeta(levelnow, colornow, -INF, INF, Getzob(), Getzob2(), levelnow);
+        levelnow++;
+        if ((clock() - _starttime) < TIMELIMIT)
+        {
+            ltrec_a = bestmoverec.a;
+            ltrec_b = bestmoverec.b;
+            CK(ltrec_a);
+            CK(ltrec_b);
+        }
     }
+    CK(ltrec_a);
+    CK(ltrec_b);
+    bestmoverec.a = ltrec_a;
+    bestmoverec.b = ltrec_b;
     return 0;
 }
 
@@ -331,6 +349,9 @@ int AlgoFinal(int *ap, int *bp) //Write the position choosed into int* ap,int* b
     {
         *ap = BOUNDRY / 2;
         *bp = BOUNDRY / 2;
+#ifdef FUCK_PLAGIARIZER
+        RandomFirstMove(ap, bp); //首步随机落子函数, 防止对手使用不支持平移的开局库
+#endif
         fstmove = 0;
         return 0;
     }
@@ -340,13 +361,13 @@ int AlgoFinal(int *ap, int *bp) //Write the position choosed into int* ap,int* b
     memset(showweight, 0, sizeof(showweight));
 
 #ifndef TIMELIMIT
-    AlphaBeta(LEVEL, colornow, -INF, INF, Getzob(), Getzob2());
+    AlphaBeta(LEVEL, colornow, -INF, INF, Getzob(), Getzob2(), LEVEL);
 #else
     IterativeDeepenAB();
 #endif
 
-    CK(bestmoverec.a);
-    CK(bestmoverec.b);
+    // CK(bestmoverec.a);
+    // CK(bestmoverec.b);
     *ap = bestmoverec.a;
     *bp = bestmoverec.b;
     ShowWeightArray(showweight);
@@ -358,10 +379,13 @@ int AlgoFinal(int *ap, int *bp) //Write the position choosed into int* ap,int* b
 
     // ClearWeightMartix_Algo3();
     time_t timeend = clock();
-    CK(timeend - timestart);
+    // CK(timeend - timestart);
+    printf("Used %dms in total.\n", timeend - timestart);
+#ifdef ENABLEHASH
     CK(_hit);
     _hit = 0;
     CK(_tot);
     _tot = 0;
+#endif
     return 0;
 }

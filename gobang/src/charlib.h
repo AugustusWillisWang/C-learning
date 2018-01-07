@@ -1,3 +1,7 @@
+//Copyright (c) 2017-2018 Augustus Wang
+//charlib.h
+//处理用户输入输出的文本
+
 #ifndef CHARLIB
 #define CHARLIB
 #include <ctype.h>
@@ -7,7 +11,7 @@
 
 char _inputbuff[BUFFSIZE];
 
-int AdvancedScanf(int *ra, char *rb)
+int AdvancedScanf(int *ra, char *rb)//将用户输入的(10,A)转化成board数组中的坐标
 {
     fgets(_inputbuff, BUFFSIZE, stdin);
     for (int i = 0; i < BUFFSIZE; i++)
@@ -45,7 +49,7 @@ int AdvancedScanf(int *ra, char *rb)
 
 //--------------------------------------
 
-char *DelSpaceAddLog(char *input)
+char *DelSpaceAddLog(char *input)//为自动生成的棋谱文件命名用
 {
     int a = 0;
     int b = 0;

@@ -121,7 +121,7 @@ struct findresult
 struct findresult FindInHashTable(unsigned long zob, unsigned long zob2, int level, int type) //type:color
 {
     unsigned long int hashvalue = zob;
-    if ((level < hashtable[hashvalue].level) || hashtable[hashvalue].check != zob2 || hashtable[hashvalue].type != type)
+    if ((level > hashtable[hashvalue].level) || hashtable[hashvalue].check != zob2 || hashtable[hashvalue].type != type)
     { //!hashtable[zob].check)|| todo
         hashtable[hashvalue].check = zob2;
         hashtable[hashvalue].level = level;
