@@ -1,4 +1,6 @@
-//zobrist.h
+// Copyright (c) 2017-2018 Augustus Wang
+// zobrist.h
+// zobrist hash 实现及空间分配
 #ifndef _ZOBRIST_H
 #define _ZOBRIST_H
 
@@ -89,20 +91,32 @@ unsigned long int Getzob2()
 
 unsigned long int NextHash(unsigned long int hash, int a, int b, int colornow)
 {
+#ifndef ENABLEHASH
+    return 0;
+#endif
     return (zobrist_table[a][b][colornow] + hash) & HASHSIZE;
 }
 
 unsigned long int LastHash(unsigned long int hash, int a, int b, int colornow)
 {
+#ifndef ENABLEHASH
+    return 0;
+#endif
     return (-zobrist_table[a][b][colornow] + hash) & HASHSIZE;
 }
 unsigned long int NextHash2(unsigned long int hash, int a, int b, int colornow)
 {
+#ifndef ENABLEHASH
+    return 0;
+#endif
     return (zobrist_check_table[a][b][colornow] + hash) & HASHSIZE;
 }
 
 unsigned long int LastHash2(unsigned long int hash, int a, int b, int colornow)
 {
+#ifndef ENABLEHASH
+    return 0;
+#endif
     return (-zobrist_check_table[a][b][colornow] + hash) & HASHSIZE;
 }
 

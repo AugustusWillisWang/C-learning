@@ -1,6 +1,9 @@
+// Copyright (c) 2017-2018 Augustus Wang
+// 禁手判断相关函数
 #ifndef _FBD_MOVE
 #define _FBD_MOVE
-#define ENABLEFBDMOVE
+#include "support.h"
+// #define ENABLEFBDMOVE
 // int board[BOUNDRY][BOUNDRY];      //棋盘数据
 // int BoundLim(int a)
 
@@ -8,8 +11,9 @@ int valid_position[BOUNDRY][BOUNDRY];
 int forbid_move[BOUNDRY][BOUNDRY];
 int _fbd_line[9];
 
-int TestForbidMove(int a, int b, int colornow)
+int TestForbidMove(int a, int b, int colornow) //判断一点是否为禁手点, 读取的全局变量: board 若为禁手点, 返回1, 否则返回0
 {
+    StartTimer(0);
     //This function assumes that the position is legal, otherwise, other function should take care of this.
     if (a != BoundLim(a) || b != BoundLim(b))
         return 0; //Just return 0.
@@ -134,7 +138,7 @@ int TestForbidMove(int a, int b, int colornow)
         {
             huo4++;
         }
-        if (5==link) //5 edge enabled
+        if (5 == link) //5 edge enabled
         {
             huo5++;
         }
@@ -190,7 +194,7 @@ int TestForbidMove(int a, int b, int colornow)
         {
             huo4++;
         }
-        if (5==link) //5 edge enabled
+        if (5 == link) //5 edge enabled
         {
             huo5++;
         }
@@ -248,7 +252,7 @@ int TestForbidMove(int a, int b, int colornow)
         {
             huo4++;
         }
-        if (5==link) //5 edge enabled
+        if (5 == link) //5 edge enabled
         {
             huo5++;
         }
@@ -260,20 +264,22 @@ int TestForbidMove(int a, int b, int colornow)
         link = 1;
         block = 0;
     }
-
+    EndTimer(0);
     //====================================
     board[a][b] = 0;
     if (huo5)
         return 0;
     if (longlink5)
         return 1;
-    if (huo3 >= 2){
-        if(huo4>=1)
+    if (huo3 >= 2)
+    {
+        if (huo4 >= 1)
             return 0;
     return 1;
     }
     if (huo4 >= 2)
         return 1;
+
     return 0;
     //-----------------------------------------------------------
 }
@@ -307,6 +313,8 @@ int GenForbidMove(int (*valid_position)[BOUNDRY], int colornow)
 
 int GenValidPosition(int (*valid_position)[BOUNDRY], int colornow)
 {
+    StartTimer(1);
+
     for (int a = 0; a < BOUNDRY; a++)
     {
         for (int b = 0; b < BOUNDRY; b++)
@@ -320,9 +328,10 @@ int GenValidPosition(int (*valid_position)[BOUNDRY], int colornow)
             }
         }
     }
+    EndTimer(1);
 }
 
-int TestTipForbidMove(int a, int b, int colornow)//return 1 if it is a forbidden move
+int TestTipForbidMove(int a, int b, int colornow) //return 1 if it is a forbidden move
 {
     if (TestForbidMove(a, b, colornow))
     {

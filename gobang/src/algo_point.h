@@ -2,7 +2,7 @@
 
 #define ALGO_POINT 2
 #define EDGE 3
-
+#include "support.h"
 //这里的权值是随便赋的
 #define WEIGHT_1_2SIDE 1
 #define WEIGHT_2_2SIDE 5

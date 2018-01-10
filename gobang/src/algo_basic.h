@@ -1,7 +1,7 @@
 //测试用完全随机算法
 
 #define ALGO_BASIC 0
-
+#include "support.h"
 // static int GenWeight();
 
 int AlgoBasic(int *ap, int *bp) //Write the position choosed into int* ap,int* bp;

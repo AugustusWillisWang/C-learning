@@ -1,3 +1,6 @@
+// Copyright (c) 2017-2018 Augustus Wang
+// VCF 连续冲4/活三取胜判断
+
 #ifndef _KILLFIRST_H
 #define _KILLFIRST_H
 #include "support.h"

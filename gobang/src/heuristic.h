@@ -12,6 +12,8 @@ struct heuristic_element
     // int weight;
 };
 
+int historyhitcnt = 0;
+
 // int history_table[BOUNDRY][BOUNDRY];
 
 //Declare this at every level.
@@ -96,6 +98,8 @@ int AddTo_heuristic_list(struct heuristic_element heuristic_list[BOUNDRY * BOUND
 // int history_table[BOUNDRY][BOUNDRY];
 int FindIn_history_table(int history_table[BOUNDRY][BOUNDRY][LEVEL+1], int a, int b, int depth)
 {
+    if(history_table[a][b][depth])
+        historyhitcnt++;
     return history_table[a][b][depth];
 }
 

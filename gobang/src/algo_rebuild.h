@@ -1,15 +1,20 @@
 // Copyright (c) 2017-2018 Augustus Wang
+// AlphaBeta剪枝和历史启发为基本框架, 其他部分通过头文件引入
 
+//常量定义
 #define ALGO_FINAL 3
 #define EDGE 3
-#define LEVEL 7
-#define NEABOR 1
+
+//程序设置
+#define LEVEL 6
+#define NEABOR 2 //for GetAroundPosition()
 //(6,2)is recommended;
-// #define THINKINGUPPERBOUND 100
-// #define DEEPLEVELUPPERBOUND 60
-// #define DEEPLEVEL 4
+#define THINKINGUPPERBOUND 100
+#define DEEPLEVELUPPERBOUND 60
+#define DEEPLEVEL 4
 // #define WEIGHTHEURISTIC
-#define ENABLEHASH
+// #define ENABLEHASH
+#define FUCK_PLAGIARIZER
 
 #define ENABLEFBDMOVE
 #define TIMELIMIT 15000
@@ -20,15 +25,62 @@
 #include "weight.h"
 #include "killfirst.h"
 #include "fuck_plagiarizer.h"
+#include "greedy.h"
 
+//全局变量
 int GetAroundPosition();
 int showweight[BOUNDRY][BOUNDRY];
 time_t _starttime = 0;
-
+int best_weight_found;
+int maxlevel = LEVEL;
+int thinkingupperbound = 200;
+int deeplevelupperbound = 200;
+int deeplevel = 4;
+int maxneabor=2;
 //------------------------------------------
+int ChangeMaxLevel()
+{
+    static int cnt = 0;
+    cnt++;
+    if (cnt == 1)
+    {
+        maxlevel = 6;
+        thinkingupperbound = 250;
+        deeplevelupperbound = 250;
+        deeplevel = 9;
+        maxneabor = 1;
+    }
+    if (cnt == 2)
+    {
+        maxlevel = 8;
+        thinkingupperbound = 250;
+        deeplevelupperbound = 250;
+        deeplevel = 9;
+        maxneabor = 1;
+    }
+    if (cnt == 4)
+    {
+        maxlevel = 8;
+        thinkingupperbound = 120;
+        deeplevelupperbound = 45;
+        deeplevel = 4;
+    }
+    if (cnt == 8)
+    {
+        maxlevel = 8;
+        thinkingupperbound = 80;
+        deeplevelupperbound = 40;
+        deeplevel = 4;
+        maxneabor = 2;
+    }
+    if (cnt == 10)
+        maxlevel = 8;
+    
+}
 
 int GetAroundPosition(int (*_ValidPosition)[BOUNDRY], int depth, int color)
 {
+    StartTimer(4);
     int checked[BOUNDRY][BOUNDRY];
     memset(checked, 0, sizeof(checked));
     memset(_ValidPosition, 0, sizeof(int) * BOUNDRY * BOUNDRY);
@@ -38,9 +90,9 @@ int GetAroundPosition(int (*_ValidPosition)[BOUNDRY], int depth, int color)
         {
             if (board[a][b])
             {
-                for (int ia = -NEABOR; ia <= NEABOR; ia++)
+                for (int ia = -maxneabor; ia <= maxneabor; ia++)
                 {
-                    for (int ib = -NEABOR; ib <= NEABOR; ib++)
+                    for (int ib = -maxneabor; ib <= maxneabor; ib++)
                     {
                         int _a = BoundLim(a + ia);
                         int _b = BoundLim(b + ib);
@@ -62,6 +114,7 @@ int GetAroundPosition(int (*_ValidPosition)[BOUNDRY], int depth, int color)
             }
         }
     }
+    EndTimer(4);
 }
 
 #define OUTPUTWEIGHT                         \
@@ -81,16 +134,16 @@ int hashv = 0; //dbghash
 #define MAXNODE 20
 struct move bestmoverec = {-1, -1};
 
-int AlphaBeta(int depth, int color, int alpha, int beta, unsigned long long zob, unsigned long long zob2, int toplevel)
+int AlphaBeta(int depth, int color, int alpha, int beta, unsigned long long zob, unsigned long long zob2, int toplevel, int original_weight)
 {
 #ifdef TIMELIMIT
     if ((clock() - _starttime) > TIMELIMIT)
         return 0;
 #endif
-    int result = _JudgeWin();
-    if (result)
+
+    if (original_weight > BIG_WEIGHT || original_weight < (-BIG_WEIGHT))
     {
-        return (result == BLACK) ? INF : (-INF);
+        return original_weight;
     }
 
     int score;
@@ -114,13 +167,14 @@ int AlphaBeta(int depth, int color, int alpha, int beta, unsigned long long zob,
 
     if (depth <= 0)
     {
-        int weight = GenerateWeight();
+        int weight = original_weight;
 
 #ifdef ENABLEHASH
         SaveToZob(findresult, zob2, depth, VALUE, weight);
 #endif
         return weight;
     }
+    StartTimer(5);
 
     int type = 0;
     int valid_position[BOUNDRY][BOUNDRY];
@@ -135,7 +189,7 @@ int AlphaBeta(int depth, int color, int alpha, int beta, unsigned long long zob,
         {
             if (valid_position[a][b])
             {
-                AddTo_heuristic_list(heuristic_list, hcnt, a, b, depth, 1 * FindIn_history_table(history_table, a, b, depth));
+                AddTo_heuristic_list(heuristic_list, hcnt, a, b, depth, 0*(valid_position[a][b]) + 100 * FindIn_history_table(history_table, a, b, depth));
                 hcnt++;
             }
         }
@@ -144,7 +198,7 @@ int AlphaBeta(int depth, int color, int alpha, int beta, unsigned long long zob,
 #ifdef KILLSEARCH
     if (hcnt == 0)
     {
-        return GenerateWeight();
+        return original_weight;
     }
 #endif
 
@@ -169,20 +223,21 @@ int AlphaBeta(int depth, int color, int alpha, int beta, unsigned long long zob,
 
 #ifdef THINKINGUPPERBOUND
 
-    if (hcnt > THINKINGUPPERBOUND)
-        hcnt = THINKINGUPPERBOUND;
+    if (hcnt > thinkingupperbound)
+        hcnt = thinkingupperbound;
 
 #endif
 
 #ifdef DEEPLEVELUPPERBOUND
-    if (toplevel > DEEPLEVEL)
+    if (toplevel > deeplevel)
     {
-        if (depth <= toplevel - DEEPLEVEL)
+        if (depth <= toplevel - deeplevel)
         {
-            hcnt = DEEPLEVELUPPERBOUND;
+            hcnt = deeplevelupperbound;
         }
     }
 #endif
+    EndTimer(5);
 
     int bestmove = -1;
 
@@ -192,16 +247,30 @@ int AlphaBeta(int depth, int color, int alpha, int beta, unsigned long long zob,
         {
             int a = heuristic_list[i].a;
             int b = heuristic_list[i].b;
-            unsigned long long hashnext = NextHash(zob, a, b, colornow);
-            unsigned long long hash2next = NextHash2(zob2, a, b, colornow);
+            unsigned long long hashnext = NextHash(zob, a, b, color);
+            unsigned long long hash2next = NextHash2(zob2, a, b, color);
 
             board[a][b] = color;
-            score = AlphaBeta(depth - 1, Inverse(color), alpha, beta, hashnext, hash2next, toplevel);
+            score = AlphaBeta(depth - 1, Inverse(color), alpha, beta, hashnext, hash2next, toplevel, UpdateWeight(a, b, original_weight));
+            board[a][b] = 0;
             if (depth == toplevel)
             {
                 showweight[a][b] = score;
+                //输出推断出的最好情况估分
+                {
+                    if (colornow == BLACK)
+                    {
+                        if (original_weight > best_weight_found)
+                        {
+                            best_weight_found = original_weight;
+                        }
+                    }
+                    else if (original_weight < best_weight_found)
+                    {
+                        best_weight_found = original_weight;
+                    }
+                }
             }
-            board[a][b] = 0;
             if (score < beta)
             {
                 beta = score;
@@ -250,16 +319,30 @@ int AlphaBeta(int depth, int color, int alpha, int beta, unsigned long long zob,
         {
             int a = heuristic_list[i].a;
             int b = heuristic_list[i].b;
-            unsigned long long hashnext = NextHash(zob, a, b, colornow);
-            unsigned long long hash2next = NextHash2(zob2, a, b, colornow);
+            unsigned long long hashnext = NextHash(zob, a, b, color);
+            unsigned long long hash2next = NextHash2(zob2, a, b, color);
 
             board[a][b] = color;
-            score = AlphaBeta(depth - 1, Inverse(color), alpha, beta, hashnext, hash2next, toplevel);
+            score = AlphaBeta(depth - 1, Inverse(color), alpha, beta, hashnext, hash2next, toplevel, UpdateWeight(a, b, original_weight));
+            board[a][b] = 0;
             if (depth == toplevel)
             {
                 showweight[a][b] = score;
+                //输出推断出的最好情况估分
+                {
+                    if (colornow == BLACK)
+                    {
+                        if (original_weight > best_weight_found)
+                        {
+                            best_weight_found = original_weight;
+                        }
+                    }
+                    else if (original_weight < best_weight_found)
+                    {
+                        best_weight_found = original_weight;
+                    }
+                }
             }
-            board[a][b] = 0;
             if (score > alpha)
             {
                 alpha = score;
@@ -314,11 +397,17 @@ int IterativeDeepenAB()
     int levelnow = 1;
     int ltrec_a;
     int ltrec_b;
-    while (levelnow <= LEVEL)
+    int original_weight = GenerateWeight();
+    StartTimer(6);
+
+    ChangeMaxLevel();
+
+    while (levelnow <= maxlevel)
     {
         printf("Started level %d at %d\n", levelnow, clock() - _starttime);
-        AlphaBeta(levelnow, colornow, -INF, INF, Getzob(), Getzob2(), levelnow);
+        AlphaBeta(levelnow, colornow, -INF, INF, Getzob(), Getzob2(), levelnow, original_weight);
         levelnow++;
+#ifdef TIMELIMIT
         if ((clock() - _starttime) < TIMELIMIT)
         {
             ltrec_a = bestmoverec.a;
@@ -326,11 +415,15 @@ int IterativeDeepenAB()
             CK(ltrec_a);
             CK(ltrec_b);
         }
+#endif
     }
     CK(ltrec_a);
     CK(ltrec_b);
+    CK(historyhitcnt);
     bestmoverec.a = ltrec_a;
     bestmoverec.b = ltrec_b;
+    EndTimer(6);
+    ShowTimer();
     return 0;
 }
 
@@ -343,6 +436,15 @@ int AlgoFinal(int *ap, int *bp) //Write the position choosed into int* ap,int* b
     {
         Setupzob();
         _ndefZobchain = 0;
+    }
+
+    if (colornow == BLACK)
+    {
+        best_weight_found = -INF;
+    }
+    else
+    {
+        best_weight_found = INF;
     }
 
     if (fstmove && colornow == BLACK)
@@ -360,8 +462,10 @@ int AlgoFinal(int *ap, int *bp) //Write the position choosed into int* ap,int* b
     memset(history_table, 0, sizeof(history_table));
     memset(showweight, 0, sizeof(showweight));
 
+    int original_weight = GenerateWeight();
+
 #ifndef TIMELIMIT
-    AlphaBeta(LEVEL, colornow, -INF, INF, Getzob(), Getzob2(), LEVEL);
+    AlphaBeta(maxlevel, colornow, -INF, INF, Getzob(), Getzob2(), maxlevel, original_weight);
 #else
     IterativeDeepenAB();
 #endif
@@ -387,5 +491,6 @@ int AlgoFinal(int *ap, int *bp) //Write the position choosed into int* ap,int* b
     CK(_tot);
     _tot = 0;
 #endif
+    CK(best_weight_found);
     return 0;
 }

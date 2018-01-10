@@ -108,7 +108,7 @@ int SHOW(void* array,char* type,int length){
         {
                 if(i%10==0)
                     puts("");
-                printf("%d ", *(point + i));
+                printf("%f ", *(point + i));
         }
         puts("");
     }else if(!strcmp(type,"char")){

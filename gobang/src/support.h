@@ -5,21 +5,25 @@
 #ifndef _SUPPORT_H
 #define _SUPPORT_H
 
-#define BOUNDRY 15 //棋盘大小
-#define BLACK 1 //黑方
-#define WHITE 2 //白方
+#define BOUNDRY 15   //棋盘大小
+#define BLACK 1      //黑方
+#define WHITE 2      //白方
 #define OUTOFBOARD 3 //棋盘边界, 超出棋盘范围的点用3表示
 
 #define NORMAL 0 //旧的判断函数用的, 懒得改掉了
-#define CLEAR 1 //旧的判断函数用的, 懒得改掉了
+#define CLEAR 1  //旧的判断函数用的, 懒得改掉了
 
-#include "lazy.h" //一些调试用的函数
+#include "lazy.h"    //一些调试用的函数
 #include "charlib.h" //处理用户输入输出的文本
-#include <malloc.h> 
+#include <malloc.h>
 
+#define INF 10000000
+#define NINF -1000000
+
+//结构和变量定义
 //global vars.
-int colornow; //当前应走子的颜色
-int fstmove = 1; //是否为第一步
+int colornow;                     //当前应走子的颜色
+int fstmove = 1;                  //是否为第一步
 int board[BOUNDRY][BOUNDRY];      //棋盘数据
 int printboard[BOUNDRY][BOUNDRY]; //绘图板
 int weight[BOUNDRY][BOUNDRY];     //权重变化,注意权重为double
@@ -27,9 +31,6 @@ int weight[BOUNDRY][BOUNDRY];     //权重变化,注意权重为double
 //settings
 int _usesimpletest = 0;
 int set_savelog = 0;
-
-#define INF 10000000
-#define NINF -1000000
 
 struct move
 {
@@ -45,6 +46,9 @@ struct movenode //历史启发搜索用排序节点
     int history_score;
 };
 
+//定义4个方向以简化代码
+int direction[4][2] = {{1, 0}, {0, 1}, {1, 1}, {1, -1}};
+
 int Board(int a, int b) //若坐标合法, 返回该位置的棋子颜色, 否则, 返回越界"3"
 {
     if (a >= 0 && a < BOUNDRY && b >= 0 && b < BOUNDRY)
@@ -59,7 +63,7 @@ int Board(int a, int b) //若坐标合法, 返回该位置的棋子颜色, 否�
 
 int ShowBoardArray(); //简单显示棋盘(调试用)
 
-int ShowBoardArray()//简单显示棋盘(调试用)
+int ShowBoardArray() //简单显示棋盘(调试用)
 {
     for (int a = 0; a < BOUNDRY; a++)
     {
@@ -75,7 +79,7 @@ int ShowBoardArray()//简单显示棋盘(调试用)
     return 0;
 }
 
-int BoundLim(int a)//将一个输入数的取值规整到[0:BOUNDRY]
+int BoundLim(int a) //将一个输入数的取值规整到[0:BOUNDRY]
 {
     if (a < 0)
     {
@@ -91,7 +95,7 @@ int BoundLim(int a)//将一个输入数的取值规整到[0:BOUNDRY]
     }
 }
 
-int EqualDouble(int a, int b)//浮点数相等判断
+int EqualDouble(int a, int b) //浮点数相等判断
 {
     if (a < b + 1 && a > b - 1)
         return 0;
@@ -449,7 +453,7 @@ int _JudgeWin() //Nooutput.version //快速胜负判断, 早期写法, 性能最
     return 0;
 }
 
-int Abs(int input)//绝对值
+int Abs(int input) //绝对值
 {
     if (input < 0)
     {
@@ -458,7 +462,7 @@ int Abs(int input)//绝对值
     return input;
 }
 
-int Inverse(int color)//颜色反转 黑->白, 白->黑
+int Inverse(int color) //颜色反转 黑->白, 白->黑
 {
     switch (color)
     {
@@ -471,7 +475,7 @@ int Inverse(int color)//颜色反转 黑->白, 白->黑
     }
 }
 
-int ShowWeightArray(int weight[BOUNDRY][BOUNDRY])//调试用, 显示权重数组
+int ShowWeightArray(int weight[BOUNDRY][BOUNDRY]) //调试用, 显示权重数组
 {
     puts("ShowWeightArray:");
     for (int a = 0; a < BOUNDRY; a++)
@@ -485,7 +489,7 @@ int ShowWeightArray(int weight[BOUNDRY][BOUNDRY])//调试用, 显示权重数组
     return 0;
 }
 
-int Abs_double(int input)//绝对值
+int Abs_double(int input) //绝对值
 {
     if (input < 0)
     {

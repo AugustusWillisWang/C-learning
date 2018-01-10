@@ -1,4 +1,5 @@
 // Copyright (c) 2017-2018 Augustus Wang
+// 自动对战借口
 #ifndef _SOCKET_H
 #define _SOCKET_H
 #include <stdio.h>
@@ -26,10 +27,12 @@ int InitializeSocket(int color);
 int InitializeBlackSocket()
 {
     InitializeSocket(1);
+	return 0;
 }
 int InitializeWhiteSocket()
 {
     InitializeSocket(2);
+	return 0;
 };
 
 struct position Transfer(int a, int b);
@@ -99,6 +102,7 @@ int _InvColor(int i)
         return 1;
     }
     puts("Invalid socket call!");
+	return 0;
 }
 
 struct position Transfer(int a, int b)
@@ -151,6 +155,7 @@ struct position OppositeMove()
 int CloseSocket()
 {
     system("del swapfile");
+	return 0;
 }
 
     // int SocketMain(int a, int b, int color);

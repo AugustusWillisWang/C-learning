@@ -1,16 +1,19 @@
 //Copyright (c) 2017-2018 Augustus Wang
 //自注释风格的函数和变量名命名, 应该不用太多注释....
 //主程序
-#include "support.h"//棋盘定义, 数据结构定义, 基础情况判断以及其他共用部分, 写成头文件以方便单元测试
-#include "forbidden_move.h"//禁手判断
+#define TIMEIT
+#define TEST
+#include "timer.h"          //性能分析
+#include "support.h"        //棋盘定义, 数据结构定义, 基础情况判断以及其他共用部分, 写成头文件以方便单元测试
+#include "forbidden_move.h" //禁手判断
 
-#include "algo_basic.h"//大猩猩下棋
-#include "algo_linear.h"//一层两岁小孩下棋(别看了, 没用的, 注释也不存在的)
-#include "algo_point.h"//一层三岁小孩下棋(别看了, 没用的, 注释也不存在的)
+#include "algo_basic.h"  //大猩猩下棋
+#include "algo_linear.h" //一层两岁小孩下棋(别看了, 没用的, 注释也不存在的)
+#include "algo_point.h"  //一层三岁小孩下棋(别看了, 没用的, 注释也不存在的)
 // #include "algo_final.h"//Alphabet剪枝加各种优化
-#include "algo_rebuild.h"//Alphabet剪枝加各种优化(重构) (算法核心)
-#include "printboard.h"//显示棋盘所用的函数
-#include "socket.h"//自动对战接口定义
+#include "algo_rebuild.h" //Alphabet剪枝加各种优化(重构) (算法核心)
+#include "printboard.h"   //显示棋盘所用的函数
+#include "socket.h"       //自动对战接口定义
 
 //支持:
 //禁手判断
@@ -23,17 +26,17 @@
 //迭代加深搜索
 //只针对改变部分的快速局面评分函数
 
-//同步进行胜手优先搜索(没加)
+//同步进行胜手优先(贪心)搜索(没加)
 
-#define TEST              \
-    ManualSetUp(1, 2, 1); \
-    PrintBoard();
+
 
 /*
 Todo:
 调整hash表
-通过棋盘变化赋权
+// 通过棋盘变化赋权
 注释
+_Judgewin
+_StartTimer(4)
 */
 
 int Algo_Choosed = ALGO_BASIC; //默认使用算法Random
@@ -82,7 +85,7 @@ int main(int argc, char *argv[])
         // fflush(stdin);//windows
         setbuf(stdin, NULL); //For all OSs, clear buf to eat \n
     }
-    else//参数处理
+    else //参数处理
     {
         while (--argc)
         {
@@ -101,31 +104,31 @@ int main(int argc, char *argv[])
             }
             if (!strcmp(*argv, "-auto"))
             {
-                mode_choosed = 3;//自动对战模式
+                mode_choosed = 3; //自动对战模式
                 puts("mode_choosed = 3");
 
                 continue;
             }
-            if (!strcmp(*argv, "-test"))//测试模式
+            if (!strcmp(*argv, "-test")) //测试模式
             {
                 mode_choosed = 4;
                 puts("mode_choosed = 4");
 
                 continue;
             }
-            if (!strcmp(*argv, "-b"))//玩家执黑
+            if (!strcmp(*argv, "-b")) //玩家执黑
             {
                 player = BLACK;
                 puts("player = BLACK");
                 continue;
             }
-            if (!strcmp(*argv, "-w"))//玩家执白
+            if (!strcmp(*argv, "-w")) //玩家执白
             {
                 player = WHITE;
                 puts("player = WHITE");
                 continue;
             }
-            if (!strcmp(*argv, "-r"))//读取日志
+            if (!strcmp(*argv, "-r")) //读取日志
             {
                 --argc;
                 ++argv;
@@ -133,35 +136,35 @@ int main(int argc, char *argv[])
                 goto showlog;
                 continue;
             }
-            if (!strcmp(*argv, "-1"))//选择算法1
+            if (!strcmp(*argv, "-1")) //选择算法1
             {
                 Algo_Choosed = 1;
                 puts("Algo_Choosed = 1");
 
                 continue;
             }
-            if (!strcmp(*argv, "-2"))//选择算法2
+            if (!strcmp(*argv, "-2")) //选择算法2
             {
                 Algo_Choosed = 2;
                 puts("Algo_Choosed = 2");
 
                 continue;
             }
-            if (!strcmp(*argv, "-3"))//选择算法3
+            if (!strcmp(*argv, "-3")) //选择算法3
             {
                 Algo_Choosed = 3;
                 puts("Algo_Choosed = 3");
 
                 continue;
             }
-            if (!strcmp(*argv, "-s"))//测试用
+            if (!strcmp(*argv, "-s")) //测试用
             {
                 _usesimpletest = 1;
                 puts("_usesimpletest=1");
 
                 continue;
             }
-            if (!strcmp(*argv, "-log"))//此次对战保留日志(默认不保存)
+            if (!strcmp(*argv, "-log")) //此次对战保留日志(默认不保存)
             {
                 set_savelog = 1;
                 puts("set_savelog=1");
@@ -187,7 +190,9 @@ int main(int argc, char *argv[])
         break;
     case 4:
         log_file = InitializeSaving();
-        TEST
+#ifdef TEST
+        #include "test.h"
+#endif
             BP;
         break;
     case 5:
@@ -212,7 +217,7 @@ int main(int argc, char *argv[])
     puts("Gobang.c finished successfully.");
 }
 
-int PvpMode()//人人对战
+int PvpMode() //人人对战
 //自注释风格的函数和变量名命名, 应该不用太多注释....
 {
     int a;
@@ -266,7 +271,7 @@ int PvpMode()//人人对战
     return 0;
 }
 
-int PveMode()//人机对战
+int PveMode() //人机对战
 {
     int a;
     int b;
@@ -374,7 +379,7 @@ int PveMode()//人机对战
     return 0;
 }
 
-int SocketMode()//无人值守自动对战模式, 使用的接口定义参见socket.h
+int SocketMode() //无人值守自动对战模式, 使用的接口定义参见socket.h
 {
     int a;
     int b;
@@ -481,7 +486,7 @@ int SocketMode()//无人值守自动对战模式, 使用的接口定义参见soc
     return 0;
 }
 
-int SetUpBoard()//初始化棋盘记录数组
+int SetUpBoard() //初始化棋盘记录数组
 {
     memset(board, 0, sizeof(int) * BOUNDRY * BOUNDRY);
     return 0;
@@ -524,7 +529,7 @@ int ManualSetUp(int a, int b, int color) //设置当前棋盘某一位置(程序
     return -1;
 }
 
-int ForcedManualSetUp(int a, int b, int color)//设置当前棋盘某一位置(调试用)
+int ForcedManualSetUp(int a, int b, int color) //设置当前棋盘某一位置(调试用)
 {
     if (a >= 0 && a < BOUNDRY && b >= 0 && b < BOUNDRY && (color == 0 || color == BLACK || color == WHITE))
     {
@@ -536,11 +541,11 @@ int ForcedManualSetUp(int a, int b, int color)//设置当前棋盘某一位置(�
 }
 int Save(int a, int b) //保存当前操作到棋谱
 {
-    ShowMove(a, b, colornow);//顺便显示当前走子位置
+    ShowMove(a, b, colornow); //顺便显示当前走子位置
     fprintf(log_file, "%d %d\n", a, b);
 }
 
-int DisplayLog()//显示已有棋谱
+int DisplayLog() //显示已有棋谱
 {
 
     int a;
@@ -621,7 +626,7 @@ FILE *InitializeSaving() //初始化保存文件
     }
 }
 
-int MakeMove(int *ap, int *bp)//人机对战算法调用函数, 通过不同的配置调用不同的算法
+int MakeMove(int *ap, int *bp) //人机对战算法调用函数, 通过不同的配置调用不同的算法
 {
     switch (Algo_Choosed)
     {
