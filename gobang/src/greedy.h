@@ -16,21 +16,26 @@
 
 int (*SavePWMartix(int original_martix[BOUNDRY][BOUNDRY]))[BOUNDRY]
 {
+    StartTimer(7);
     int(*temp)[BOUNDRY];
     temp = (int(*)[BOUNDRY])malloc(sizeof(int) * BOUNDRY * BOUNDRY);
     memcpy(temp, original_martix, sizeof(int) * BOUNDRY * BOUNDRY);
+    EndTimer(7);
     return temp;
 }
 
 int RecoveryPWMartix(int original_martix[BOUNDRY][BOUNDRY], int temp[BOUNDRY][BOUNDRY])
 {
-    memcpy(temp, original_martix, sizeof(int) * BOUNDRY * BOUNDRY);
+    StartTimer(8);    
+    memcpy(original_martix,temp , sizeof(int) * BOUNDRY * BOUNDRY);
     free(temp);
+    EndTimer(8);    
     return 0;
 }
 
 int UpdatePositionWeight(int a, int b, int color, int original_martix[BOUNDRY][BOUNDRY])
 {
+    StartTimer(9);
     for (int x = -1; x <= 1; x++)
     {
         for (int y = -1; y <= 1; y++)
@@ -175,15 +180,15 @@ int UpdatePositionWeight(int a, int b, int color, int original_martix[BOUNDRY][B
             leftend = i;
             leftendtype = _BLOCK_;
         }
-        CK(leftend);
-        CK(leftendtype);
-        CK(leftspace);
-        CK(leftopcolor);
-        CK(rightend);
-        CK(rightendtype);
-        CK(rightspace);
-        CK(rightopcolor);
-        CK(link);
+        // CK(leftend);
+        // CK(leftendtype);
+        // CK(leftspace);
+        // CK(leftopcolor);
+        // CK(rightend);
+        // CK(rightendtype);
+        // CK(rightspace);
+        // CK(rightopcolor);
+        // CK(link);
 
         int addweight = 0;
         switch (link)
@@ -218,6 +223,7 @@ int UpdatePositionWeight(int a, int b, int color, int original_martix[BOUNDRY][B
             if (rightendtype == _SPACE_)
                 original_martix[a + rightend][b] += addweight;
         }
+        EndTimer(9);
     }
 
     for (int q = 0; q < 4;q++)
@@ -226,7 +232,7 @@ int UpdatePositionWeight(int a, int b, int color, int original_martix[BOUNDRY][B
         {
             int at = a + i * direction[q][0];
             int bt = b + i * direction[q][1];
-            if (Board(at, bt))
+            if (!Board(at, bt))
             {
                 original_martix[at][bt]*=(!TestForbidMove(at, bt,Inverse(color)));
             }
@@ -240,7 +246,7 @@ int DBG_ShowPWM(int m[BOUNDRY][BOUNDRY])
     {
         for (int b = 0; b < BOUNDRY; b++)
         {
-            printf("%d ", m[a][b]);
+            printf("%d\t", m[a][b]);
         }
         puts("");
     }

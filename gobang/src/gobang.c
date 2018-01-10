@@ -336,7 +336,6 @@ int PveMode() //人机对战
                 // scanf("%d%d", &a, &b);
                 getinput(&a, &b);
 #endif
-
             ;
         }
         else
@@ -357,6 +356,8 @@ int PveMode() //人机对战
             MakeMove(&a, &b);
             ManualSetUp(a, b, colornow);
         }
+        UpdatePositionWeight(a, b, colornow, WMartix);
+        DBG_ShowPWM(WMartix);
         Save(a, b);
         movecnt++;
         if (colornow == BLACK)

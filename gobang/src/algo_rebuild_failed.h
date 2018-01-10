@@ -30,13 +30,14 @@
 //全局变量
 int GetAroundPosition();
 int showweight[BOUNDRY][BOUNDRY];
+int WMartix[BOUNDRY][BOUNDRY];
 time_t _starttime = 0;
 int best_weight_found;
 int maxlevel = LEVEL;
 int thinkingupperbound = 200;
 int deeplevelupperbound = 200;
 int deeplevel = 4;
-int maxneabor=2;
+int maxneabor = 2;
 //------------------------------------------
 int ChangeMaxLevel()
 {
@@ -44,11 +45,12 @@ int ChangeMaxLevel()
     cnt++;
     if (cnt == 1)
     {
-        maxlevel = 6;
-        thinkingupperbound = 250;
-        deeplevelupperbound = 250;
-        deeplevel = 9;
+        maxlevel = 12;
+        thinkingupperbound = 15;
+        deeplevelupperbound = 10;
+        deeplevel = 6;
         maxneabor = 1;
+        maxneabor = 2;
     }
     if (cnt == 2)
     {
@@ -56,7 +58,7 @@ int ChangeMaxLevel()
         thinkingupperbound = 250;
         deeplevelupperbound = 250;
         deeplevel = 9;
-        maxneabor = 1;
+        // maxneabor = 1;
     }
     if (cnt == 4)
     {
@@ -71,50 +73,9 @@ int ChangeMaxLevel()
         thinkingupperbound = 80;
         deeplevelupperbound = 40;
         deeplevel = 4;
-        maxneabor = 2;
     }
     if (cnt == 10)
         maxlevel = 8;
-    
-}
-
-int GetAroundPosition(int (*_ValidPosition)[BOUNDRY], int depth, int color)
-{
-    StartTimer(4);
-    int checked[BOUNDRY][BOUNDRY];
-    memset(checked, 0, sizeof(checked));
-    memset(_ValidPosition, 0, sizeof(int) * BOUNDRY * BOUNDRY);
-    for (int a = 0; a < BOUNDRY; a++)
-    {
-        for (int b = 0; b < BOUNDRY; b++)
-        {
-            if (board[a][b])
-            {
-                for (int ia = -maxneabor; ia <= maxneabor; ia++)
-                {
-                    for (int ib = -maxneabor; ib <= maxneabor; ib++)
-                    {
-                        int _a = BoundLim(a + ia);
-                        int _b = BoundLim(b + ib);
-                        if ((!board[_a][_b]) && (!checked[_a][_b]))
-                        {
-                            checked[_a][_b] = 1;
-                            _ValidPosition[_a][_b] = 1;
-#ifdef KILLSEARCH
-                            if (depth <= (toplevel - KILLSEARCH))
-                                _ValidPosition[_a][_b] *= TestKillPoint(_a, _b);
-
-#endif
-#ifdef ENABLEFBDMOVE
-                            _ValidPosition[_a][_b] *= !TestForbidMove(_a, _b, color);
-#endif
-                        }
-                    }
-                }
-            }
-        }
-    }
-    EndTimer(4);
 }
 
 #define OUTPUTWEIGHT                         \
@@ -134,7 +95,7 @@ int hashv = 0; //dbghash
 #define MAXNODE 20
 struct move bestmoverec = {-1, -1};
 
-int AlphaBeta(int depth, int color, int alpha, int beta, unsigned long long zob, unsigned long long zob2, int toplevel, int original_weight)
+int AlphaBeta(int depth, int color, int alpha, int beta, unsigned long long zob, unsigned long long zob2, int toplevel, int original_weight, int martix[BOUNDRY][BOUNDRY])
 {
 #ifdef TIMELIMIT
     if ((clock() - _starttime) > TIMELIMIT)
@@ -178,8 +139,6 @@ int AlphaBeta(int depth, int color, int alpha, int beta, unsigned long long zob,
 
     int type = 0;
     int valid_position[BOUNDRY][BOUNDRY];
-    memset(valid_position, 0, sizeof(valid_position));
-    GetAroundPosition(valid_position, depth, color);
     struct heuristic_element heuristic_list[BOUNDRY * BOUNDRY];
     memset(heuristic_list, 0, sizeof(heuristic_list));
     int hcnt = 0; //hcnt-1 为最后一个节点的位置
@@ -187,9 +146,9 @@ int AlphaBeta(int depth, int color, int alpha, int beta, unsigned long long zob,
     {
         for (int b = 0; b < BOUNDRY; b++)
         {
-            if (valid_position[a][b])
+            if (martix[a][b])
             {
-                AddTo_heuristic_list(heuristic_list, hcnt, a, b, depth, (valid_position[a][b]) + 100 * FindIn_history_table(history_table, a, b, depth));
+                AddTo_heuristic_list(heuristic_list, hcnt, a, b, depth, (martix[a][b]) + 100 * FindIn_history_table(history_table, a, b, depth));
                 hcnt++;
             }
         }
@@ -200,23 +159,6 @@ int AlphaBeta(int depth, int color, int alpha, int beta, unsigned long long zob,
     {
         return original_weight;
     }
-#endif
-
-#ifdef WEIGHTHEURISTIC
-    LinearGenWeightMartix_Algo1();
-
-    for (int a = 0; a < BOUNDRY; a++)
-    {
-        for (int b = 0; b < BOUNDRY; b++)
-        {
-            if (valid_position[a][b])
-            {
-                AddTo_heuristic_list(heuristic_list, hcnt, a, b, depth, Abs(weight[a][b]));
-                hcnt++;
-            }
-        }
-    }
-    memset(weight, 0, sizeof(weight));
 #endif
 
     Qsort_heuristic_element(heuristic_list, 0, hcnt - 1);
@@ -251,8 +193,13 @@ int AlphaBeta(int depth, int color, int alpha, int beta, unsigned long long zob,
             unsigned long long hash2next = NextHash2(zob2, a, b, color);
 
             board[a][b] = color;
-            score = AlphaBeta(depth - 1, Inverse(color), alpha, beta, hashnext, hash2next, toplevel, UpdateWeight(a, b, original_weight));
+
+            int(*t)[BOUNDRY];
+            t = SavePWMartix(martix);
+            UpdatePositionWeight(a, b, color, martix);
+            score = AlphaBeta(depth - 1, Inverse(color), alpha, beta, hashnext, hash2next, toplevel, UpdateWeight(a, b, original_weight),martix);
             board[a][b] = 0;
+            RecoveryPWMartix(martix, t);
             if (depth == toplevel)
             {
                 showweight[a][b] = score;
@@ -323,8 +270,13 @@ int AlphaBeta(int depth, int color, int alpha, int beta, unsigned long long zob,
             unsigned long long hash2next = NextHash2(zob2, a, b, color);
 
             board[a][b] = color;
-            score = AlphaBeta(depth - 1, Inverse(color), alpha, beta, hashnext, hash2next, toplevel, UpdateWeight(a, b, original_weight));
+            int(*t)[BOUNDRY];
+            t = SavePWMartix(martix);
+            UpdatePositionWeight(a, b, color, martix);
+            score = AlphaBeta(depth - 1, Inverse(color), alpha, beta, hashnext, hash2next, toplevel, UpdateWeight(a, b, original_weight),martix);
             board[a][b] = 0;
+            RecoveryPWMartix(martix, t);
+            
             if (depth == toplevel)
             {
                 showweight[a][b] = score;
@@ -405,7 +357,7 @@ int IterativeDeepenAB()
     while (levelnow <= maxlevel)
     {
         printf("Started level %d at %d\n", levelnow, clock() - _starttime);
-        AlphaBeta(levelnow, colornow, -INF, INF, Getzob(), Getzob2(), levelnow, original_weight);
+        AlphaBeta(levelnow, colornow, -INF, INF, Getzob(), Getzob2(), levelnow, original_weight,WMartix);
         levelnow++;
 #ifdef TIMELIMIT
         if ((clock() - _starttime) < TIMELIMIT)
@@ -426,7 +378,6 @@ int IterativeDeepenAB()
     ShowTimer();
     return 0;
 }
-
 
 // struct move bestmoverec = {-1, -1};
 // int Search(int color, int alpha, int beta, int depth, unsigned long long zob, unsigned long long zob2)

@@ -28,6 +28,10 @@ DBG_ShowPWM(tm);
 RecoveryPWMartix(tm, t);
 DBG_ShowPWM(tm);
 
+// int (*t)[BOUNDRY];
+// t=SavePWMartix(tm);
+// UpdatePositionWeight(6, 3, 1, tm);
+// RecoveryPWMartix(tm, t);
 
 // int t=GenerateWeight();
 // colornow = 1;
