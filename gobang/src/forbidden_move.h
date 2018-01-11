@@ -35,235 +35,78 @@ int TestForbidMove(int a, int b, int colornow) //判断一点是否为禁手点,
     int block = 0;
 
     board[a][b] = BLACK;
-    for (int i = 0; i < 9; i++)
+
+    for (int q = 0; q < 4; q++)
     {
-        _fbd_line[i] = Board(a - 4 + i, b);
-    }
-    // fbd_Testline();
-    {
-        for (int p = 1; p <= 4; p++)
+        for (int i = -5; i <= 5; i++)
         {
-            if (_fbd_line[4 - p] == BLACK)
-                link++;
-            else
+            _fbd_line[i + 5] = Board(a + i * direction[q][0], b + i * direction[q][1]);
+        }
+        // fbd_Testline();
+        {
+            for (int p = 1; p <= 4; p++)
             {
-                if (_fbd_line[4 - p] == 0)
-                    break;
+                if (_fbd_line[5 - p] == BLACK)
+                    link++;
                 else
                 {
-                    block++;
-                    break;
+                    if (_fbd_line[5 - p] == 0)
+                    {
+                        if (_fbd_line[5 - p - 1] == BLACK)
+                            continue;
+                        else
+                            break;
+                    }
+                    else
+                    {
+                        block++;
+                        break;
+                    }
                 }
             }
-        }
-        for (int p = 1; p <= 4; p++)
-        {
-            if (_fbd_line[4 + p] == BLACK)
-                link++;
-            else
+            for (int p = 1; p <= 4; p++)
             {
-                if (_fbd_line[4 + p] == 0)
-                    break;
+                if (_fbd_line[5 + p] == BLACK)
+                    link++;
                 else
                 {
-                    block++;
-                    break;
+                    if (_fbd_line[5 + p] == 0)
+                    {
+                        if (_fbd_line[5 + p + 1] == BLACK)
+                            continue;
+                        else
+                            break;
+                    }
+                    else
+                    {
+                        block++;
+                        break;
+                    }
                 }
             }
-        }
 
-        if (link >= 3 && (block == 0)) //33FORBID
-        {
-            huo3++;
-        }
-        if (link >= 4 && (block != 2)) //44FORBID
-        {
-            huo4++;
-        }
-        if (5==link) //5 edge enabled
-        {
-            huo5++;
-        }
-        if (link >= 5)
-        { //long link forbid_move
-            longlink5++;
-        }
-
-        link = 1;
-        block = 0;
-    }
-
-    for (int i = 0; i < 9; i++)
-    {
-        _fbd_line[i] = Board(a, b - 4 + i);
-    }
-    // fbd_Testline();
-    {
-        for (int p = 1; p <= 4; p++)
-        {
-            if (_fbd_line[4 - p] == BLACK)
-                link++;
-            else
+            if (link >= 3 && (block == 0)) //33FORBID
             {
-                if (_fbd_line[4 - p] == 0)
-                    break;
-                else
-                {
-                    block++;
-                    break;
-                }
+                huo3++;
             }
-        }
-        for (int p = 1; p <= 4; p++)
-        {
-            if (_fbd_line[4 + p] == BLACK)
-                link++;
-            else
+            if (link >= 4 && (block != 2)) //44FORBID
             {
-                if (_fbd_line[4 + p] == 0)
-                    break;
-                else
-                {
-                    block++;
-                    break;
-                }
+                huo4++;
             }
-        }
+            if (5 == link) //5 edge enabled
+            {
+                huo5++;
+            }
+            if (link >= 5)
+            { //long link forbid_move
+                longlink5++;
+            }
 
-        if (link >= 3 && (block == 0)) //33FORBID
-        {
-            huo3++;
+            link = 1;
+            block = 0;
         }
-        if (link >= 4 && (block != 2)) //44FORBID
-        {
-            huo4++;
-        }
-        if (5 == link) //5 edge enabled
-        {
-            huo5++;
-        }
-        if (link >= 5)
-        { //long link forbid_move
-            longlink5++;
-        }
-        link = 1;
-        block = 0;
     }
 
-    for (int i = 0; i < 9; i++)
-    {
-        _fbd_line[i] = Board(a - 4 + i, b - 4 + i);
-    }
-    // fbd_Testline();
-    {
-        for (int p = 1; p <= 4; p++)
-        {
-            if (_fbd_line[4 - p] == BLACK)
-                link++;
-            else
-            {
-                if (_fbd_line[4 - p] == 0)
-                    break;
-                else
-                {
-                    block++;
-                    break;
-                }
-            }
-        }
-        for (int p = 1; p <= 4; p++)
-        {
-            if (_fbd_line[4 + p] == BLACK)
-                link++;
-            else
-            {
-                if (_fbd_line[4 + p] == 0)
-                    break;
-                else
-                {
-                    block++;
-                    break;
-                }
-            }
-        }
-        if (link >= 3 && (block == 0)) //33FORBID
-        {
-            huo3++;
-        }
-        if (link >= 4 && (block != 2)) //44FORBID
-        {
-            huo4++;
-        }
-        if (5 == link) //5 edge enabled
-        {
-            huo5++;
-        }
-        if (link >= 5)
-        { //long link forbid_move
-            longlink5++;
-        }
-
-        link = 1;
-        block = 0;
-    }
-
-    for (int i = 0; i < 9; i++)
-    {
-        _fbd_line[i] = Board(a - 4 + i, b + 4 - i);
-    }
-    // fbd_Testline();
-    {
-        for (int p = 1; p <= 4; p++)
-        {
-            if (_fbd_line[4 - p] == BLACK)
-                link++;
-            else
-            {
-                if (_fbd_line[4 - p] == 0)
-                    break;
-                else
-                {
-                    block++;
-                    break;
-                }
-            }
-        }
-        for (int p = 1; p <= 4; p++)
-        {
-            if (_fbd_line[4 + p] == BLACK)
-                link++;
-            else
-            {
-                if (_fbd_line[4 + p] == 0)
-                    break;
-                else
-                {
-                    block++;
-                    break;
-                }
-            }
-        }
-
-        if (link >= 3 && (block == 0)) //33FORBID
-        {
-            huo3++;
-        }
-        if (link >= 4 && (block != 2)) //44FORBID
-        {
-            huo4++;
-        }
-        if (5 == link) //5 edge enabled
-        {
-            huo5++;
-        }
-        if (link >= 5)
-        { //long link forbid_move
-            longlink5++;
-        }
-
-        link = 1;
-        block = 0;
-    }
     EndTimer(0);
     //====================================
     board[a][b] = 0;
@@ -275,7 +118,7 @@ int TestForbidMove(int a, int b, int colornow) //判断一点是否为禁手点,
     {
         if (huo4 >= 1)
             return 0;
-    return 1;
+        return 1;
     }
     if (huo4 >= 2)
         return 1;

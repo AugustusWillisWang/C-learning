@@ -14,6 +14,9 @@
 #define _SPACE_ 1
 #define _BLOCK_ 2
 
+int greedy_martix[BOUNDRY][BOUNDRY];
+int threat_martix[BOUNDRY][BOUNDRY];
+
 int (*SavePWMartix(int original_martix[BOUNDRY][BOUNDRY]))[BOUNDRY]
 {
     int(*temp)[BOUNDRY];
@@ -64,6 +67,7 @@ int UpdatePositionWeight(int a, int b, int color, int original_martix[BOUNDRY][B
     int rightendtype = 0;
     int leftopcolor = 0;
     int rightopcolor = 0;
+
     for (int q = 0; q < 4; q++)
     {
         link = 1;
@@ -175,15 +179,15 @@ int UpdatePositionWeight(int a, int b, int color, int original_martix[BOUNDRY][B
             leftend = i;
             leftendtype = _BLOCK_;
         }
-        CK(leftend);
-        CK(leftendtype);
-        CK(leftspace);
-        CK(leftopcolor);
-        CK(rightend);
-        CK(rightendtype);
-        CK(rightspace);
-        CK(rightopcolor);
-        CK(link);
+        // CK(leftend);
+        // CK(leftendtype);
+        // CK(leftspace);
+        // CK(leftopcolor);
+        // CK(rightend);
+        // CK(rightendtype);
+        // CK(rightspace);
+        // CK(rightopcolor);
+        // CK(link);
 
         int addweight = 0;
         switch (link)
@@ -220,15 +224,208 @@ int UpdatePositionWeight(int a, int b, int color, int original_martix[BOUNDRY][B
         }
     }
 
-    for (int q = 0; q < 4;q++)
+    for (int q = 0; q < 4; q++)
     {
         for (int i = -5; i <= 5; i++)
         {
+            int at = BoundLim(a + i * direction[q][0]);
+            int bt = BoundLim(b + i * direction[q][1]);
+            if (!Board(at, bt))
+            {
+                original_martix[at][bt] *= (!TestForbidMove(at, bt, Inverse(color)));
+            }
+        }
+    }
+}
+
+// int _recordm[4][BOUNDRY];
+// int SavePositionWeight(int a, int b, int color, int original_martix[BOUNDRY][BOUNDRY])
+// {
+//         for (int i = 0; i < BOUNDRY;i++){
+//             int at = 0 + direction[q][0];
+//             int bt = 0 + direction[q][1];
+
+//         }
+// }
+// int RecoverPositionWeight(int a, int b, int color, int original_martix[BOUNDRY][BOUNDRY]){};
+
+int UpdateThreat(int a, int b, int color, int threatcolor)
+{
+    threat_martix[a][b] = 0;
+    if (color == threatcolor)
+    {
+
+    int link = 0;
+    int leftspace = 0;
+    int rightspace = 0;
+    int leftend = 0;
+    int rightend = 0;
+    int leftendtype = 0;
+    int rightendtype = 0;
+    int leftopcolor = 0;
+    int rightopcolor = 0;
+
+    for (int q = 0; q < 4; q++)
+    {
+        link = 1;
+        leftspace = 0;
+        rightspace = 0;
+        leftend = 0;
+        rightend = 0;
+        leftendtype = 0;
+        rightendtype = 0;
+        leftopcolor = 0;
+        rightopcolor = 0;
+
+        //right
+        for (int i = 1; i <= 6; i++)
+        {
             int at = a + i * direction[q][0];
             int bt = b + i * direction[q][1];
-            if (Board(at, bt))
+            if (rightendtype)
             {
-                original_martix[at][bt]*=(!TestForbidMove(at, bt,Inverse(color)));
+                int colortemp = Board(at, bt);
+                if (colortemp == Inverse(color) || colortemp == OUTOFBOARD)
+                {
+                    rightopcolor = i;
+                    break;
+                }
+                continue;
+            }
+            if (Board(at, bt) == color)
+            {
+                link++;
+                continue;
+            }
+            if (Board(at, bt) == 0)
+            {
+                if (rightspace == 0)
+                {
+                    rightend = i;
+                    rightspace = i;
+                    continue;
+                }
+                else
+                {
+                    if (i == (rightspace + 1))
+                    {
+                        rightend = rightspace;
+                        rightspace = 0;
+                        rightendtype = _SPACE_; //1 means space
+                        continue;
+                    }
+                    else
+                    {
+                        rightend = i;
+                        rightendtype = _SPACE_; //1 means space
+                        continue;
+                    }
+                }
+            }
+            // (Board(at,bt)==3orInverse(color))
+            rightend = i;
+            rightendtype = _BLOCK_;
+        }
+
+        //left
+        for (int i = 1; i <= 6; i++)
+        {
+            int at = a - i * direction[q][0];
+            int bt = b - i * direction[q][1];
+            if (leftendtype)
+            {
+                int colortemp = Board(at, bt);
+                if (colortemp == Inverse(color) || colortemp == OUTOFBOARD)
+                {
+                    leftopcolor = i;
+                    break;
+                }
+                continue;
+            }
+            if (Board(at, bt) == color)
+            {
+                link++;
+                continue;
+            }
+            if (Board(at, bt) == 0)
+            {
+                if (leftspace == 0)
+                {
+                    leftend = i;
+                    leftspace = i;
+                    continue;
+                }
+                else
+                {
+                    if (i == (leftspace + 1))
+                    {
+                        leftend = leftspace;
+                        leftspace = 0;
+                        leftendtype = _SPACE_; //1 means space
+                        continue;
+                    }
+                    else
+                    {
+                        leftend = i;
+                        leftendtype = _SPACE_; //1 means space
+                        continue;
+                    }
+                }
+            }
+            // (Board(at,bt)==3orInverse(color))
+            leftend = i;
+            leftendtype = _BLOCK_;
+        }
+
+        // CK(leftend);
+        // CK(leftendtype);
+        // CK(leftspace);
+        // CK(leftopcolor);
+        // CK(rightend);
+        // CK(rightendtype);
+        // CK(rightspace);
+        // CK(rightopcolor);
+        // CK(link);
+        int addweight = 0;
+        switch (link)
+        {
+        case 0:
+            addweight = 0;
+            break;
+        case 1:
+            addweight = 0;
+            break;
+        default:
+            addweight = 1;
+            break;
+        }
+        if (!((leftendtype == _BLOCK_) && (rightendtype == _BLOCK_) && ((leftend + rightend - 1) < 5)))
+        {
+            if (leftspace)
+                threat_martix[a - leftspace][b] = addweight;
+            if (rightspace)
+                threat_martix[a + rightspace][b] = addweight;
+            if (leftendtype == _SPACE_)
+                threat_martix[a - leftend][b] = addweight;
+            if (rightendtype == _SPACE_)
+                threat_martix[a + rightend][b] = addweight;
+        }
+    }
+
+    }
+    else if (color != threatcolor)
+    {
+        for (int q = 0; q < 4; q++)
+        {
+            int best = 0;
+            for (int i = 1; i <= 4; i++)
+            {
+                if (Board(a + i * direction[q][0], b + i * direction[q][1]) == color)
+                    best = i;
+            }
+            for (int i = 1; i < best; i++)
+            {
+                threat_martix[BoundLim(a + i * direction[q][0])][BoundLim(b + i * direction[q][1])] = 0;
             }
         }
     }

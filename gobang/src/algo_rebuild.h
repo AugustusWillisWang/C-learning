@@ -9,9 +9,9 @@
 #define LEVEL 6
 #define NEABOR 2 //for GetAroundPosition()
 //(6,2)is recommended;
-#define THINKINGUPPERBOUND 100
-#define DEEPLEVELUPPERBOUND 60
-#define DEEPLEVEL 4
+#define THINKINGUPPERBOUND
+#define DEEPLEVELUPPERBOUND
+#define DEEPLEVEL
 // #define WEIGHTHEURISTIC
 // #define ENABLEHASH
 #define FUCK_PLAGIARIZER
@@ -24,7 +24,7 @@
 #include "heuristic.h"
 #include "weight.h"
 #include "killfirst.h"
-#include "fuck_plagiarizer.h"
+#include "rand_move.h"
 #include "greedy.h"
 
 //全局变量
@@ -37,6 +37,7 @@ int thinkingupperbound = 200;
 int deeplevelupperbound = 200;
 int deeplevel = 4;
 int maxneabor=2;
+int defendmode = 0;
 //------------------------------------------
 int ChangeMaxLevel()
 {
@@ -49,33 +50,37 @@ int ChangeMaxLevel()
         deeplevelupperbound = 250;
         deeplevel = 9;
         maxneabor = 1;
+        if(colornow==WHITE){
+            defendmode = 1;
+        }
     }
     if (cnt == 2)
     {
         maxlevel = 8;
-        thinkingupperbound = 250;
-        deeplevelupperbound = 250;
-        deeplevel = 9;
+        thinkingupperbound = 200;
+        deeplevelupperbound = 200;
+        deeplevel = 6;
         maxneabor = 1;
     }
     if (cnt == 4)
     {
         maxlevel = 8;
-        thinkingupperbound = 120;
-        deeplevelupperbound = 45;
-        deeplevel = 4;
+        thinkingupperbound = 200;
+        deeplevelupperbound = 200;
+        deeplevel = 9;
     }
-    if (cnt == 8)
+    if (cnt == 7)
     {
         maxlevel = 8;
-        thinkingupperbound = 80;
-        deeplevelupperbound = 40;
-        deeplevel = 4;
-        maxneabor = 2;
+        thinkingupperbound = 200;
+        deeplevelupperbound = 200;
+        deeplevel = 9;
+        maxneabor = 1;
     }
-    if (cnt == 10)
+    if (cnt == 10){
         maxlevel = 8;
-    
+        defendmode = 0;
+    }
 }
 
 int GetAroundPosition(int (*_ValidPosition)[BOUNDRY], int depth, int color)
@@ -89,7 +94,10 @@ int GetAroundPosition(int (*_ValidPosition)[BOUNDRY], int depth, int color)
         for (int b = 0; b < BOUNDRY; b++)
         {
             if (board[a][b])
-            {
+            {   if(defendmode){
+                if(board[a][b]==WHITE)
+                    continue;
+                }
                 for (int ia = -maxneabor; ia <= maxneabor; ia++)
                 {
                     for (int ib = -maxneabor; ib <= maxneabor; ib++)
