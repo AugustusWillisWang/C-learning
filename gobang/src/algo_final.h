@@ -1,6 +1,7 @@
 //对矩阵的各点进行查找
 //Based on algo_point.
 //ALGO_MINMAX
+//没用
 #define ALGO_FINAL 3
 #define EDGE 3
 #define LEVEL 4

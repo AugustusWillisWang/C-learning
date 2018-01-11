@@ -67,7 +67,6 @@ int UpdatePositionWeight(int a, int b, int color, int original_martix[BOUNDRY][B
     int rightendtype = 0;
     int leftopcolor = 0;
     int rightopcolor = 0;
-
     for (int q = 0; q < 4; q++)
     {
         link = 1;
@@ -211,16 +210,16 @@ int UpdatePositionWeight(int a, int b, int color, int original_martix[BOUNDRY][B
             addweight = 2500;
             break;
         }
-        if (!((leftendtype == _BLOCK_) && (rightendtype == _BLOCK_) && ((leftend + rightend - 1) < 5)))
+        if (!((leftendtype == _BLOCK_) && (rightendtype == _BLOCK_) && ((leftopcolor + rightopcolor - 1) < 5)))
         {
             if (leftspace)
-                original_martix[a - leftspace][b] += addweight;
+                original_martix[a - leftspace*direction[q][0]][b-leftspace*direction[q][1]] += addweight;
             if (rightspace)
-                original_martix[a + rightspace][b] += addweight;
+                original_martix[a + rightspace*direction[q][0]][b+rightspace*direction[q][0]] += addweight;
             if (leftendtype == _SPACE_)
-                original_martix[a - leftend][b] += addweight;
+                original_martix[a - leftend*direction[q][0]][b - leftend*direction[q][1]] += addweight;
             if (rightendtype == _SPACE_)
-                original_martix[a + rightend][b] += addweight;
+                original_martix[a + rightend*direction[q][0]][b + rightend*direction[q][1]] += addweight;
         }
     }
 
@@ -232,7 +231,7 @@ int UpdatePositionWeight(int a, int b, int color, int original_martix[BOUNDRY][B
             int bt = BoundLim(b + i * direction[q][1]);
             if (!Board(at, bt))
             {
-                original_martix[at][bt] *= (!TestForbidMove(at, bt, Inverse(color)));
+                original_martix[at][bt] *= (!ForbidMove(at, bt, Inverse(color)));
             }
         }
     }
@@ -399,22 +398,23 @@ int UpdateThreat(int a, int b, int color, int threatcolor)
             addweight = 1;
             break;
         }
-        if (!((leftendtype == _BLOCK_) && (rightendtype == _BLOCK_) && ((leftend + rightend - 1) < 5)))
+        if (!((leftendtype == _BLOCK_) && (rightendtype == _BLOCK_) && ((leftopcolor + rightopcolor - 1) < 5)))
         {
             if (leftspace)
-                threat_martix[a - leftspace][b] = addweight;
+                threat_martix[a - leftspace*direction[q][0]][b-leftspace*direction[q][1]] += addweight;
             if (rightspace)
-                threat_martix[a + rightspace][b] = addweight;
+                threat_martix[a + rightspace*direction[q][0]][b+rightspace*direction[q][0]] += addweight;
             if (leftendtype == _SPACE_)
-                threat_martix[a - leftend][b] = addweight;
+                threat_martix[a - leftend*direction[q][0]][b - leftend*direction[q][1]] += addweight;
             if (rightendtype == _SPACE_)
-                threat_martix[a + rightend][b] = addweight;
+                threat_martix[a + rightend*direction[q][0]][b + rightend*direction[q][1]] += addweight;
         }
+        // DBG_ShowPWM(threat_martix);
     }
-
     }
     else if (color != threatcolor)
     {
+        return 0;
         for (int q = 0; q < 4; q++)
         {
             int best = 0;

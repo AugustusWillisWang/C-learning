@@ -1,3 +1,6 @@
+// Copyright (c) 2017-2018 Augustus Wang
+// 计时器与函数性能分析
+
 #ifndef _TIMER_H
 #define _TIMER_H
 

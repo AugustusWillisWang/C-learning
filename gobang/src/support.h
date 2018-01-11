@@ -104,6 +104,7 @@ int EqualDouble(int a, int b) //浮点数相等判断
 
 int JudgeWin() //Haveoutput.version //快速胜负判断, 早期写法, 性能最优, 但是一点都不优雅233333
 //不写注释了, 胜负判断使用weight.h里的函数来判断更加清楚
+//已弃用
 {
     // int weight_for_shape_now = 0.0;
     //line
@@ -497,34 +498,34 @@ int Abs_double(int input) //绝对值
     }
 }
 
-int MaxWeight(int (*weight)[BOUNDRY])
-{
-    int max = NINF;
-    //    int min = 100000000000.0;
-    for (int a = 0; a < BOUNDRY; a++)
-    {
-        for (int b = 0; b < BOUNDRY; b++)
-        {
-            if (weight[a][b] > max)
-                max = weight[a][b];
-        }
-    }
-    return max;
-}
+// int MaxWeight(int (*weight)[BOUNDRY])
+// {
+//     int max = NINF;
+//     //    int min = 100000000000.0;
+//     for (int a = 0; a < BOUNDRY; a++)
+//     {
+//         for (int b = 0; b < BOUNDRY; b++)
+//         {
+//             if (weight[a][b] > max)
+//                 max = weight[a][b];
+//         }
+//     }
+//     return max;
+// }
 
-int MinWeight(int (*weight)[BOUNDRY])
-{
-    int min = INF;
-    for (int a = 0; a < BOUNDRY; a++)
-    {
-        for (int b = 0; b < BOUNDRY; b++)
-        {
-            if (weight[a][b] < min)
-                min = weight[a][b];
-        }
-    }
-    return min;
-}
+// int MinWeight(int (*weight)[BOUNDRY])
+// {
+//     int min = INF;
+//     for (int a = 0; a < BOUNDRY; a++)
+//     {
+//         for (int b = 0; b < BOUNDRY; b++)
+//         {
+//             if (weight[a][b] < min)
+//                 min = weight[a][b];
+//         }
+//     }
+//     return min;
+// }
 
 int SetUp(int a, int b, int color) //设置当前棋盘某一位置(程序用)
 {

@@ -1,5 +1,5 @@
 // Copyright (c) 2017-2018 Augustus Wang
-// 自动对战借口
+// 自动对战接口
 #ifndef _SOCKET_H
 #define _SOCKET_H
 #include <stdio.h>
@@ -13,6 +13,14 @@
 //Before 1st move: call InitializeBlackSocket() or InitializeWhiteSocket()
 //Opposite's move: OppositeMove().a OppositeMove().b all of them are int type;
 //Transfer your move after calculating: Transfer(int a, int b);
+
+//eg:
+//InitializeBlackSocket()
+//(a,b)=AIMAKEMOVE();
+//Transfer(a,b);
+//(a,b)=(OppositeMove().a, OppositeMove().b)
+//MAKEMOVE(a,b);
+//(a,b)=AIMAKEMOVE(); (......)
 
 //-------------------------------------------------------
 struct position

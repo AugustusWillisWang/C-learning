@@ -95,8 +95,8 @@ int TestKillPoint(int a, int b)
 
 int killboard[BOUNDRY][BOUNDRY];
 
-int UpdateKillBoard(int a, int b, int color){
-    killboard[a][b] = 0;
+// int UpdateKillBoard(int a, int b, int color){
+//     killboard[a][b] = 0;
 
-}
+// }
 #endif

@@ -1,5 +1,5 @@
 //测试用完全随机算法
-
+//没用
 #define ALGO_BASIC 0
 #include "support.h"
 // static int GenWeight();

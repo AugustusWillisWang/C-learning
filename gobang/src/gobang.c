@@ -620,7 +620,7 @@ FILE *InitializeSaving() //初始化保存文件
     else
     {
         char *log_name = "tempfile";
-        printf("No log is recquired.");
+        printf("No log is recquired.\n");
         log_file = fopen(log_name, "a+");
         // char log_name_str[] = ctime(&time_now);
         // log_file = fopen(log_name_str, "a");
