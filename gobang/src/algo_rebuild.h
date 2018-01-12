@@ -6,13 +6,13 @@
 #define EDGE 3
 
 //程序设置
-#define LEVEL 12 //最大搜索层数
+#define LEVEL 2 //最大搜索层数
 #define NEABOR 2 //for GetAroundPosition(), 落子时只考虑已有棋子边NEABOR个点
 //(6,2)is recommended;
 #define THINKINGUPPERBOUND  //设置启发上界
 #define DEEPLEVELUPPERBOUND //在层数较深时降低启发上界
 #define DEEPLEVEL           //定义"较深的层数"
-#define WEIGHTHEURISTIC
+// #define WEIGHTHEURISTIC
 #define ENABLEHASH //激活置换表
 #define RANDFST    //首步随机落子
 #define DEFENDMODE //白棋前十步采取守势
@@ -37,12 +37,13 @@ int best_weight_found;            //显示当前局面评分
 int maxlevel = LEVEL;             // 搜索层数控制
 int thinkingupperbound = 200;     //搜索宽度
 int deeplevelupperbound = 200;    //深层搜索宽度
-int deeplevel = 4;                //"深层"
+int deeplevel = 10;                //"深层"
 int maxneabor = NEABOR;           //落子时只考虑已有棋子边NEABOR个点
 int defendmode = 0;               //白棋特殊操作
 //------------------------------------------
 int ChangeMaxLevel() //按照当前手数对全局变量进行调整
 {
+    // return 0;
     static int cnt = 0; //子数统计
     cnt++;
     if (colornow == WHITE)
@@ -85,8 +86,9 @@ int ChangeMaxLevel() //按照当前手数对全局变量进行调整
         if (cnt == 10)
         {
             maxlevel = 9;
+            deeplevel = 4;
+            maxneabor = 1;            
             defendmode = 0;
-            maxneabor = 1;
         }
     }
     else
@@ -107,9 +109,9 @@ int ChangeMaxLevel() //按照当前手数对全局变量进行调整
             deeplevelupperbound = 200;
             deeplevel = 6;
             maxneabor = 1;
-#ifdef DEFENDMODE
-            defendmode = 1;
-#endif
+// #ifdef DEFENDMODE
+//             defendmode = 1;
+// #endif
         }
         if (cnt == 3)
         {
@@ -124,11 +126,14 @@ int ChangeMaxLevel() //按照当前手数对全局变量进行调整
             thinkingupperbound = 200;
             deeplevelupperbound = 200;
             deeplevel = 9;
+            defendmode = 0;
             maxneabor = 1;
         }
         if (cnt == 10)
         {
             maxlevel = 9;
+            deeplevel = 4;
+            maxneabor = 1;            
             defendmode = 0;
         }
     }
@@ -264,7 +269,7 @@ int AlphaBeta(int depth, int color, int alpha, int beta, unsigned long long zob,
             {
             //收集元素, 准备排序.
 #ifdef WEIGHTHEURISTIC
-                AddTo_heuristic_list(heuristic_list, hcnt, a, b, depth, 0 * (valid_position[a][b]) + 100 * FindIn_history_table(history_table, a, b, depth));
+                AddTo_heuristic_list(heuristic_list, hcnt, a, b, depth, 1 * (valid_position[a][b]) + 100 * FindIn_history_table(history_table, a, b, depth));
 #else
                 AddTo_heuristic_list(heuristic_list, hcnt, a, b, depth, FindIn_history_table(history_table, a, b, depth));
 #endif
@@ -474,7 +479,7 @@ int AlphaBeta(int depth, int color, int alpha, int beta, unsigned long long zob,
 int IterativeDeepenAB() //迭代深化
 {
     _starttime = clock();
-    int levelnow = 1; //从一层开始不断加深
+    int levelnow = 4; //从一层开始不断加深
     int ltrec_a;      //找到的最好点记录
     int ltrec_b;      //找到的最好点记录
 
@@ -491,7 +496,7 @@ int IterativeDeepenAB() //迭代深化
     {
         printf("Started level %d at %d\n", levelnow, clock() - _starttime);
         AlphaBeta(levelnow, colornow, -INF, INF, Getzob(), Getzob2(), levelnow, original_weight);
-        levelnow++;
+        levelnow+=1;
 #ifdef TIMELIMIT
         if ((clock() - _starttime) < TIMELIMIT) //采纳在时间不超限的情况下最后一个结果
         {

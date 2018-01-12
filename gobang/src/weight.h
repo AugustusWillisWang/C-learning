@@ -12,14 +12,14 @@
 #define EDGE 3 //越棋盘界
 
 //这里的权值是随便赋的, 反正能用就行
-#define WEIGHT1_2SIDE 2  //一子2气
-#define WEIGHT2_2SIDE 30 //二子2气
-#define WEIGHT3_2SIDE 500
-#define WEIGHT4_2SIDE 20000
-#define WEIGHT1_1SIDE 1 //1子1气
-#define WEIGHT2_1SIDE 10
-#define WEIGHT3_1SIDE 30
-#define WEIGHT4_1SIDE 500
+#define WEIGHT1_2SIDE 1  //一子2气
+#define WEIGHT2_2SIDE 40 //二子2气
+#define WEIGHT3_2SIDE 200
+#define WEIGHT4_2SIDE 2000
+#define WEIGHT1_1SIDE 0 //1子1气
+#define WEIGHT2_1SIDE 4
+#define WEIGHT3_1SIDE 40
+#define WEIGHT4_1SIDE 200
 
 #define WEIGHT5 100000
 #define BIG_WEIGHT 80000
@@ -98,16 +98,21 @@ int DBG_ShowRecord(int record[BOUNDRY + 2][3][3][2])
 {
     for (int a = 0; a < 5; a++)
     {
+        printf("link%d", a);
         for (int b = 0; b < 3; b++)
         {
+            printf("side%d", b);
             for (int c = 0; c < 3; c++)
             {
+                printf("color%d:", c);
                 for (int d = 0; d < 2; d++)
                 {
-                    printf("%d ", record[a][b][c][d]);
+                    printf("space%d:", d);
+                    printf("% d\n", record[a][b][c][d]);
                 }
             }
         }
+        puts("-----------------");
     }
     // record[BOUNDRY + 2][3][3][2]
 }
@@ -622,22 +627,31 @@ int UpdateFBDWeight(int a, int b, int weight) //和weight.h基于相同原理
     }
 
     board[a][b] = _color;
+    // DBG_ShowRecord(record);
 
+    int huo4 = record[4][2][BLACK][0];
+    int chong4 = record[5][2][BLACK][1] + record[5][1][BLACK][1] + record[5][0][BLACK][1] + record[4][1][BLACK][0] + record[4][1][BLACK][1] + record[4][2][BLACK][1] + record[4][0][BLACK][1];
+    int huo3 = record[3][2][BLACK][0] + record[3][2][BLACK][1];
     if (_color == BLACK)
     {
         if (record[5][0][BLACK][0] || record[5][1][BLACK][0] || record[5][2][BLACK][0]) //成5直接终止判断
-            // return INF;
-            ;
-        int huo4 = record[4][2][BLACK][0];
-        int chong4 = record[5][2][BLACK][1] + record[5][1][BLACK][1] + record[5][0][BLACK][1] + record[4][1][BLACK][0] + record[4][1][BLACK][1] + record[4][2][BLACK][1] + record[4][0][BLACK][1];
-        int huo3 = record[3][2][BLACK][0] + record[3][2][BLACK][1];
+            return INF;
+
         if ((huo4 + chong4) >= 2) //44禁手
-            // return -INF;
-            ;
+            return -INF;
+
         if (huo3 >= 2) //33禁手
-            // return -INF;
-            ;
+            return -INF;
     }
+    if ((huo4 + huo3 + chong4) >= 2)
+        weight += 1500;
+
+    huo4 = record[4][2][WHITE][0];
+    chong4 = record[5][2][WHITE][1] + record[5][1][WHITE][1] + record[5][0][WHITE][1] + record[4][1][WHITE][0] + record[4][1][WHITE][1] + record[4][2][WHITE][1] + record[4][0][WHITE][1];
+    huo3 = record[3][2][WHITE][0] + record[3][2][WHITE][1];
+
+    if ((huo4 + huo3 + chong4) >= 2)
+        weight -= 1500 ;
 
     weight += record[1][1][BLACK][0] * WEIGHT1_1SIDE;
     weight += record[1][2][BLACK][0] * WEIGHT1_2SIDE;
@@ -650,46 +664,51 @@ int UpdateFBDWeight(int a, int b, int weight) //和weight.h基于相同原理
 
     // weight += record[1][1][BLACK][1] * WEIGHT1_1SIDE;
     // weight += record[1][2][BLACK][1] * WEIGHT1_1SIDE;
-    weight += record[2][1][BLACK][1] * WEIGHT1_1SIDE;
-    weight += record[2][2][BLACK][1] * WEIGHT2_1SIDE;
-    weight += record[3][1][BLACK][1] * WEIGHT2_1SIDE;
-    weight += record[3][2][BLACK][1] * WEIGHT3_1SIDE;
-    weight += record[4][1][BLACK][1] * WEIGHT3_1SIDE;
+    weight += record[2][1][BLACK][1] * WEIGHT2_1SIDE;
+    weight += record[2][2][BLACK][1] * WEIGHT2_2SIDE;
+    weight += record[3][1][BLACK][1] * WEIGHT3_1SIDE;
+    weight += record[3][2][BLACK][1] * WEIGHT3_2SIDE;
+    weight += record[4][1][BLACK][1] * WEIGHT4_1SIDE;
     weight += record[4][2][BLACK][1] * WEIGHT4_1SIDE;
+    weight += record[4][2][BLACK][0] * WEIGHT4_1SIDE;
 
-    weight += record[1][1][WHITE][0] * WEIGHT1_1SIDE*(-1);
-    weight += record[1][2][WHITE][0] * WEIGHT1_2SIDE*(-1);
-    weight += record[2][1][WHITE][0] * WEIGHT2_1SIDE*(-1);
-    weight += record[2][2][WHITE][0] * WEIGHT2_2SIDE*(-1);
-    weight += record[3][1][WHITE][0] * WEIGHT3_1SIDE*(-1);
-    weight += record[3][2][WHITE][0] * WEIGHT3_2SIDE*(-1);
-    weight += record[4][1][WHITE][0] * WEIGHT4_1SIDE*(-1);
-    weight += record[4][2][WHITE][0] * WEIGHT4_2SIDE*(-1);
-
-    // weight += record[1][1][WHITE][1] * WEIGHT1_1SIDE;
-    // weight += record[1][2][WHITE][1] * WEIGHT1_1SIDE;
-    weight += record[2][1][WHITE][1] * WEIGHT1_1SIDE*(-1);
-    weight += record[2][2][WHITE][1] * WEIGHT2_1SIDE*(-1);
-    weight += record[3][1][WHITE][1] * WEIGHT2_1SIDE*(-1);
-    weight += record[3][2][WHITE][1] * WEIGHT3_1SIDE*(-1);
-    weight += record[4][1][WHITE][1] * WEIGHT3_1SIDE*(-1);
-    weight += record[4][2][WHITE][1] * WEIGHT4_1SIDE*(-1);
-
-    //-----------------------
+    //长连禁手的判断其实有点问题.....算了不管了
     weight += record[5][0][BLACK][0] * WEIGHT5;
-    weight += record[5][0][WHITE][0] * WEIGHT5 * (-1);
     weight += record[5][1][BLACK][0] * WEIGHT5;
-    weight += record[5][1][WHITE][0] * WEIGHT5 * (-1);
     weight += record[5][2][BLACK][0] * WEIGHT5;
-    weight += record[5][2][WHITE][0] * WEIGHT5 * (-1);
 
     weight += record[5][0][BLACK][1] * WEIGHT4_1SIDE;
-    weight += record[5][0][WHITE][1] * WEIGHT4_1SIDE * (-1);
     weight += record[5][1][BLACK][1] * WEIGHT4_1SIDE;
-    weight += record[5][1][WHITE][1] * WEIGHT4_1SIDE * (-1);
     weight += record[5][2][BLACK][1] * WEIGHT4_1SIDE;
-    weight += record[5][2][WHITE][1] * WEIGHT4_1SIDE * (-1);
+    //------------------
+    weight += record[1][1][WHITE][0] * (-1) * WEIGHT1_1SIDE;
+    weight += record[1][2][WHITE][0] * (-1) * WEIGHT1_2SIDE;
+    weight += record[2][1][WHITE][0] * (-1) * WEIGHT2_1SIDE;
+    weight += record[2][2][WHITE][0] * (-1) * WEIGHT2_2SIDE;
+    weight += record[3][1][WHITE][0] * (-1) * WEIGHT3_1SIDE;
+    weight += record[3][2][WHITE][0] * (-1) * WEIGHT3_2SIDE;
+    weight += record[4][1][WHITE][0] * (-1) * WEIGHT4_1SIDE;
+    weight += record[4][2][WHITE][0] * (-1) * WEIGHT4_2SIDE;
 
+    // weight += record[1][1][BLACK][1] * WEIGHT1_1SIDE;
+    // weight += record[1][2][BLACK][1] * WEIGHT1_1SIDE;
+    weight += record[2][1][WHITE][1] * (-1) * WEIGHT2_1SIDE;
+    weight += record[2][2][WHITE][1] * (-1) * WEIGHT2_2SIDE;
+    weight += record[3][1][WHITE][1] * (-1) * WEIGHT3_1SIDE;
+    weight += record[3][2][WHITE][1] * (-1) * WEIGHT3_2SIDE;
+    weight += record[4][1][WHITE][1] * (-1) * WEIGHT4_1SIDE;
+    weight += record[4][2][WHITE][1] * (-1) * WEIGHT4_1SIDE;
+    weight += record[4][2][WHITE][0] * (-1) * WEIGHT4_1SIDE;
+
+    //长连禁手的判断其实有点问题.....算了不管了
+    weight += record[5][0][WHITE][0] * (-1) * WEIGHT5;
+    weight += record[5][1][WHITE][0] * (-1) * WEIGHT5;
+    weight += record[5][2][WHITE][0] * (-1) * WEIGHT5;
+
+    weight += record[5][0][WHITE][1] * (-1) * WEIGHT4_1SIDE;
+    weight += record[5][1][WHITE][1] * (-1) * WEIGHT4_1SIDE;
+    weight += record[5][2][WHITE][1] * (-1) * WEIGHT4_1SIDE;
+    //------------------
     return weight;
 }
 
@@ -771,6 +790,12 @@ int GenerateFBDWeight() //为当前局面打分, 黑方优势为正值, 白方�
     }
 
 
+    int huo4 = record[4][2][WHITE][0];
+    int chong4 = record[5][2][WHITE][1] + record[5][1][WHITE][1] + record[5][0][WHITE][1] + record[4][1][WHITE][0] + record[4][1][WHITE][1] + record[4][2][WHITE][1] + record[4][0][WHITE][1];
+    int huo3 = record[3][2][WHITE][0] + record[3][2][WHITE][1];
+
+    if ((huo4 + huo3 + chong4) >= 2)
+        weight -= 1500 ;
 
     weight += record[1][1][BLACK][0] * WEIGHT1_1SIDE;
     weight += record[1][2][BLACK][0] * WEIGHT1_2SIDE;
@@ -783,46 +808,53 @@ int GenerateFBDWeight() //为当前局面打分, 黑方优势为正值, 白方�
 
     // weight += record[1][1][BLACK][1] * WEIGHT1_1SIDE;
     // weight += record[1][2][BLACK][1] * WEIGHT1_1SIDE;
-    weight += record[2][1][BLACK][1] * WEIGHT1_1SIDE;
-    weight += record[2][2][BLACK][1] * WEIGHT2_1SIDE;
-    weight += record[3][1][BLACK][1] * WEIGHT2_1SIDE;
-    weight += record[3][2][BLACK][1] * WEIGHT3_1SIDE;
-    weight += record[4][1][BLACK][1] * WEIGHT3_1SIDE;
+    weight += record[2][1][BLACK][1] * WEIGHT2_1SIDE;
+    weight += record[2][2][BLACK][1] * WEIGHT2_2SIDE;
+    weight += record[3][1][BLACK][1] * WEIGHT3_1SIDE;
+    weight += record[3][2][BLACK][1] * WEIGHT3_2SIDE;
+    weight += record[4][1][BLACK][1] * WEIGHT4_1SIDE;
     weight += record[4][2][BLACK][1] * WEIGHT4_1SIDE;
+    weight += record[4][2][BLACK][0] * WEIGHT4_1SIDE;
 
-    weight += record[1][1][WHITE][0] * WEIGHT1_1SIDE*(-1);
-    weight += record[1][2][WHITE][0] * WEIGHT1_2SIDE*(-1);
-    weight += record[2][1][WHITE][0] * WEIGHT2_1SIDE*(-1);
-    weight += record[2][2][WHITE][0] * WEIGHT2_2SIDE*(-1);
-    weight += record[3][1][WHITE][0] * WEIGHT3_1SIDE*(-1);
-    weight += record[3][2][WHITE][0] * WEIGHT3_2SIDE*(-1);
-    weight += record[4][1][WHITE][0] * WEIGHT4_1SIDE*(-1);
-    weight += record[4][2][WHITE][0] * WEIGHT4_2SIDE*(-1);
-
-    // weight += record[1][1][WHITE][1] * WEIGHT1_1SIDE;
-    // weight += record[1][2][WHITE][1] * WEIGHT1_1SIDE;
-    weight += record[2][1][WHITE][1] * WEIGHT1_1SIDE*(-1);
-    weight += record[2][2][WHITE][1] * WEIGHT2_1SIDE*(-1);
-    weight += record[3][1][WHITE][1] * WEIGHT2_1SIDE*(-1);
-    weight += record[3][2][WHITE][1] * WEIGHT3_1SIDE*(-1);
-    weight += record[4][1][WHITE][1] * WEIGHT3_1SIDE*(-1);
-    weight += record[4][2][WHITE][1] * WEIGHT4_1SIDE*(-1);
-
-    //-----------------------
+    //长连禁手的判断其实有点问题.....算了不管了
     weight += record[5][0][BLACK][0] * WEIGHT5;
-    weight += record[5][0][WHITE][0] * WEIGHT5 * (-1);
     weight += record[5][1][BLACK][0] * WEIGHT5;
-    weight += record[5][1][WHITE][0] * WEIGHT5 * (-1);
     weight += record[5][2][BLACK][0] * WEIGHT5;
-    weight += record[5][2][WHITE][0] * WEIGHT5 * (-1);
 
     weight += record[5][0][BLACK][1] * WEIGHT4_1SIDE;
-    weight += record[5][0][WHITE][1] * WEIGHT4_1SIDE * (-1);
     weight += record[5][1][BLACK][1] * WEIGHT4_1SIDE;
-    weight += record[5][1][WHITE][1] * WEIGHT4_1SIDE * (-1);
     weight += record[5][2][BLACK][1] * WEIGHT4_1SIDE;
-    weight += record[5][2][WHITE][1] * WEIGHT4_1SIDE * (-1);
+    //------------------
+    weight += record[1][1][WHITE][0] * (-1) * WEIGHT1_1SIDE;
+    weight += record[1][2][WHITE][0] * (-1) * WEIGHT1_2SIDE;
+    weight += record[2][1][WHITE][0] * (-1) * WEIGHT2_1SIDE;
+    weight += record[2][2][WHITE][0] * (-1) * WEIGHT2_2SIDE;
+    weight += record[3][1][WHITE][0] * (-1) * WEIGHT3_1SIDE;
+    weight += record[3][2][WHITE][0] * (-1) * WEIGHT3_2SIDE;
+    weight += record[4][1][WHITE][0] * (-1) * WEIGHT4_1SIDE;
+    weight += record[4][2][WHITE][0] * (-1) * WEIGHT4_2SIDE;
 
+    // weight += record[1][1][BLACK][1] * WEIGHT1_1SIDE;
+    // weight += record[1][2][BLACK][1] * WEIGHT1_1SIDE;
+    weight += record[2][1][WHITE][1] * (-1) * WEIGHT2_1SIDE;
+    weight += record[2][2][WHITE][1] * (-1) * WEIGHT2_2SIDE;
+    weight += record[3][1][WHITE][1] * (-1) * WEIGHT3_1SIDE;
+    weight += record[3][2][WHITE][1] * (-1) * WEIGHT3_2SIDE;
+    weight += record[4][1][WHITE][1] * (-1) * WEIGHT4_1SIDE;
+    weight += record[4][2][WHITE][1] * (-1) * WEIGHT4_1SIDE;
+    weight += record[4][2][WHITE][0] * (-1) * WEIGHT4_1SIDE;
+
+    //长连禁手的判断其实有点问题.....算了不管了
+    weight += record[5][0][WHITE][0] * (-1) * WEIGHT5;
+    weight += record[5][1][WHITE][0] * (-1) * WEIGHT5;
+    weight += record[5][2][WHITE][0] * (-1) * WEIGHT5;
+
+    weight += record[5][0][WHITE][1] * (-1) * WEIGHT4_1SIDE;
+    weight += record[5][1][WHITE][1] * (-1) * WEIGHT4_1SIDE;
+    weight += record[5][2][WHITE][1] * (-1) * WEIGHT4_1SIDE;
+    //------------------
+
+    // DBG_ShowRecord(record);
     EndTimer(2);
 
     return weight;
