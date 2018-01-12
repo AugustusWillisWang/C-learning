@@ -9,7 +9,7 @@
                 "program": "${file}.exe",
                 // "args": ["-e","-3","-b"],
                 // "args": ["-e","-3","-w"],
-                "args": ["-test"],
+                // "args": ["-test"],
                 "stopAtEntry": false,
                 "cwd": "${workspaceRoot}",
                 "environment": [],

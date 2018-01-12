@@ -17,7 +17,8 @@
         "algo_linear.h": "c",
         "algo_basic.h": "c",
         "timer.h": "c",
-        "forbidden_move.h": "c"
+        "forbidden_move.h": "c",
+        "algo_rebuild.h": "c"
     },
     "C_Cpp.errorSquiggles": "Enabled",
     "cSpell.words": [

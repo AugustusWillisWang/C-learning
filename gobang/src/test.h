@@ -42,27 +42,57 @@
 
 // CK(t);
 
+// int p = GenerateFBDWeight();
+
+// SetUp(2, 3, 1);
+// p=UpdateFBDWeight(2,3,p);
+// int m=GenerateFBDWeight();
+// CK(p);
+// CK(m);
+
+// SetUp(2, 4, 1);
+// p=UpdateFBDWeight(2,4,p);
+// m=GenerateFBDWeight();
+// CK(p);
+// CK(m);
+
+
+// SetUp(2, 5, 1);
+// p=UpdateFBDWeight(2,5,p);
+// m=GenerateFBDWeight();
+// CK(p);
+// CK(m);
+
+
 int p = GenerateFBDWeight();
-
-SetUp(2, 3, 1);
-p=UpdateFBDWeight(2,3,p);
-int m=GenerateFBDWeight();
-CK(p);
-CK(m);
-
-SetUp(2, 4, 1);
-p=UpdateFBDWeight(2,4,p);
-m=GenerateFBDWeight();
-CK(p);
-CK(m);
-
-
 SetUp(2, 5, 1);
-p=UpdateFBDWeight(2,5,p);
-m=GenerateFBDWeight();
+struct fbd_weight result;
+result = UpdateFBDWeight(2, 5, p);
+p = GenerateFBDWeight();
 CK(p);
-CK(m);
+CK(result.weight);
 
+SetUp(2, 6, 1);
+// struct fbd_weight result;
+result = UpdateFBDWeight(2, 6, p);
+p = GenerateFBDWeight();
+CK(p);
+CK(result.weight);
 
+SetUp(2, 7, 1);
+// struct fbd_weight result;
+result = UpdateFBDWeight(2, 7, p);
+p = GenerateFBDWeight();
+CK(p);
+CK(result.weight);
+SetUp(2, 8, 2);
+// struct fbd_weight result;
+result = UpdateFBDWeight(2, 8, p);
+p = GenerateFBDWeight();
+CK(p);
+CK(result.weight);
+
+//   if (original_weight != GenerateFBDWeight())
+//                 printf("bommmmmmm%d %d %d\n", GenerateFBDWeight(), original_weight,depth);
 PrintBoard();
 // CK(ForbidMove(2, 6, 1));

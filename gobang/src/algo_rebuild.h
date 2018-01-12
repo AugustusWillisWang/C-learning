@@ -6,7 +6,7 @@
 #define EDGE 3
 
 //程序设置
-#define LEVEL 2 //最大搜索层数
+#define LEVEL 10 //最大搜索层数
 #define NEABOR 2 //for GetAroundPosition(), 落子时只考虑已有棋子边NEABOR个点
 //(6,2)is recommended;
 #define THINKINGUPPERBOUND  //设置启发上界
@@ -24,6 +24,8 @@
 #include "support.h"   //全局变量, 共用函数
 #include "heuristic.h" //启发式搜索框架
 #include "weight.h"    //部分更新估值函数
+// #include "change.h"    //部分更新估值函数
+//原有估值存在严重bug!
 #include "killfirst.h" //胜手深搜(未启用)
 #include "rand_move.h" //随机落子
 #include "greedy.h"    //贪婪启发(未启用)
@@ -37,7 +39,7 @@ int best_weight_found;            //显示当前局面评分
 int maxlevel = LEVEL;             // 搜索层数控制
 int thinkingupperbound = 200;     //搜索宽度
 int deeplevelupperbound = 200;    //深层搜索宽度
-int deeplevel = 10;                //"深层"
+int deeplevel = 10;               //"深层"
 int maxneabor = NEABOR;           //落子时只考虑已有棋子边NEABOR个点
 int defendmode = 0;               //白棋特殊操作
 //------------------------------------------
@@ -50,7 +52,7 @@ int ChangeMaxLevel() //按照当前手数对全局变量进行调整
     {
         if (cnt == 1)
         {
-            maxlevel = 9;
+            maxlevel = 8;
             thinkingupperbound = 250;
             deeplevelupperbound = 250;
             deeplevel = 9;
@@ -87,7 +89,7 @@ int ChangeMaxLevel() //按照当前手数对全局变量进行调整
         {
             maxlevel = 9;
             deeplevel = 4;
-            maxneabor = 1;            
+            maxneabor = 1;
             defendmode = 0;
         }
     }
@@ -109,9 +111,9 @@ int ChangeMaxLevel() //按照当前手数对全局变量进行调整
             deeplevelupperbound = 200;
             deeplevel = 6;
             maxneabor = 1;
-// #ifdef DEFENDMODE
-//             defendmode = 1;
-// #endif
+            // #ifdef DEFENDMODE
+            //             defendmode = 1;
+            // #endif
         }
         if (cnt == 3)
         {
@@ -123,9 +125,9 @@ int ChangeMaxLevel() //按照当前手数对全局变量进行调整
         if (cnt == 8)
         {
             maxlevel = 9;
-            thinkingupperbound = 200;
-            deeplevelupperbound = 200;
-            deeplevel = 9;
+            thinkingupperbound = 50;
+            deeplevelupperbound = 30;
+            deeplevel = 6;
             defendmode = 0;
             maxneabor = 1;
         }
@@ -133,7 +135,7 @@ int ChangeMaxLevel() //按照当前手数对全局变量进行调整
         {
             maxlevel = 9;
             deeplevel = 4;
-            maxneabor = 1;            
+            maxneabor = 1;
             defendmode = 0;
         }
     }
@@ -142,10 +144,20 @@ int ChangeMaxLevel() //按照当前手数对全局变量进行调整
 int GetAroundPosition(int (*_ValidPosition)[BOUNDRY], int depth, int color, int toplevel) //查找可落子点位置, 支持在这里进行禁手判断和其他操作 (旧版)
 //新版的函数保存了一个全局数组, 每次更新时只处理新落子周围的部分. 新函数在weight.h中
 {
-    StartTimer(4);
     int checked[BOUNDRY][BOUNDRY]; //记录已经检查过的点, 防止重复检查
     memset(checked, 0, sizeof(checked));
     memset(_ValidPosition, 0, sizeof(int) * BOUNDRY * BOUNDRY);
+
+    if (depth == toplevel)
+    {
+        if (haveonekill)
+        {
+            memcpy(_ValidPosition, onekillmove, sizeof(onekillmove));
+            return 1;
+        }
+    }
+    StartTimer(4);
+
     for (int a = 0; a < BOUNDRY; a++)
     {
         for (int b = 0; b < BOUNDRY; b++) //遍历棋盘
@@ -256,24 +268,36 @@ int AlphaBeta(int depth, int color, int alpha, int beta, unsigned long long zob,
 
     int type = 0;                         //若要使用哈希表, 需要保存节点类型
     int valid_position[BOUNDRY][BOUNDRY]; //可用位置
+    int weight_reg[BOUNDRY][BOUNDRY];     //保存计算出的权值
     memset(valid_position, 0, sizeof(valid_position));
     GetAroundPosition(valid_position, depth, color, toplevel);  //查找可用位置, 判断禁手, etc
     struct heuristic_element heuristic_list[BOUNDRY * BOUNDRY]; //准备启发式搜索
     memset(heuristic_list, 0, sizeof(heuristic_list));
     int hcnt = 0; //hcnt-1 为最后一个节点的位置
+
+    struct fbd_weight result;
+
     for (int a = 0; a < BOUNDRY; a++)
     {
         for (int b = 0; b < BOUNDRY; b++)
         {
             if (valid_position[a][b])
             {
-            //收集元素, 准备排序.
+                //收集元素, 准备排序.
+                board[a][b] = color;
+                result = UpdateFBDWeight(a, b, original_weight);
+                board[a][b] = 0;
+
+                if (!result.fbd) //若非禁手
+                {
+                    weight_reg[a][b] = result.weight;
 #ifdef WEIGHTHEURISTIC
-                AddTo_heuristic_list(heuristic_list, hcnt, a, b, depth, 1 * (valid_position[a][b]) + 100 * FindIn_history_table(history_table, a, b, depth));
+                    AddTo_heuristic_list(heuristic_list, hcnt, a, b, depth, Abs(weight_reg[a][b]) + 100 * FindIn_history_table(history_table, a, b, depth));
 #else
-                AddTo_heuristic_list(heuristic_list, hcnt, a, b, depth, FindIn_history_table(history_table, a, b, depth));
+                    AddTo_heuristic_list(heuristic_list, hcnt, a, b, depth, FindIn_history_table(history_table, a, b, depth));
 #endif
-                hcnt++;
+                    hcnt++;
+                }
             }
         }
     }
@@ -321,11 +345,12 @@ int AlphaBeta(int depth, int color, int alpha, int beta, unsigned long long zob,
 
             //走子
             board[a][b] = color;
+
 #ifdef ENABLEFBDMOVE
-            // if(GenerateFBDWeight()!=UpdateFBDWeight(a, b, original_weight))printf("bommmmmmm%d %d\n",GenerateFBDWeight(),UpdateFBDWeight(a, b, original_weight));
-            score = AlphaBeta(depth - 1, Inverse(color), alpha, beta, hashnext, hash2next, toplevel, UpdateFBDWeight(a, b, original_weight)); //搜索, 传入计算好的hash值和估值
+
+            score = AlphaBeta(depth - 1, Inverse(color), alpha, beta, hashnext, hash2next, toplevel, weight_reg[a][b]); //搜索, 传入计算好的hash值和估值
 #else
-            score = AlphaBeta(depth - 1, Inverse(color), alpha, beta, hashnext, hash2next, toplevel, UpdateWeight(a, b, original_weight)); //搜索, 传入计算好的hash值和估值
+            score = AlphaBeta(depth - 1, Inverse(color), alpha, beta, hashnext, hash2next, toplevel, weight_reg[a][b]); //搜索, 传入计算好的hash值和估值
 #endif
             //撤销
             board[a][b] = 0;
@@ -405,9 +430,9 @@ int AlphaBeta(int depth, int color, int alpha, int beta, unsigned long long zob,
 #ifdef ENABLEFBDMOVE
             // if(GenerateFBDWeight()!=UpdateFBDWeight(a, b, original_weight))printf("bommmmmmm%d %d\n",GenerateFBDWeight(),UpdateFBDWeight(a, b, original_weight));
 
-            score = AlphaBeta(depth - 1, Inverse(color), alpha, beta, hashnext, hash2next, toplevel, UpdateFBDWeight(a, b, original_weight)); //搜索, 传入计算好的hash值和估值
+            score = AlphaBeta(depth - 1, Inverse(color), alpha, beta, hashnext, hash2next, toplevel, weight_reg[a][b]); //搜索, 传入计算好的hash值和估值
 #else
-            score = AlphaBeta(depth - 1, Inverse(color), alpha, beta, hashnext, hash2next, toplevel, UpdateWeight(a, b, original_weight)); //搜索, 传入计算好的hash值和估值
+            score = AlphaBeta(depth - 1, Inverse(color), alpha, beta, hashnext, hash2next, toplevel, weight_reg[a][b]); //搜索, 传入计算好的hash值和估值
 #endif
             board[a][b] = 0;
             if (depth == maxlevel)
@@ -486,7 +511,7 @@ int IterativeDeepenAB() //迭代深化
 #ifdef ENABLEFBDMOVE
     int original_weight = GenerateFBDWeight(); //产生初始局面估值
 #else
-    int original_weight = GenerateWeight();                                                                                                //产生初始局面估值
+    int original_weight = GenerateWeight();                                                                             //产生初始局面估值
 #endif
     StartTimer(6);
 
@@ -496,7 +521,7 @@ int IterativeDeepenAB() //迭代深化
     {
         printf("Started level %d at %d\n", levelnow, clock() - _starttime);
         AlphaBeta(levelnow, colornow, -INF, INF, Getzob(), Getzob2(), levelnow, original_weight);
-        levelnow+=1;
+        levelnow += 1;
 #ifdef TIMELIMIT
         if ((clock() - _starttime) < TIMELIMIT) //采纳在时间不超限的情况下最后一个结果
         {
@@ -553,6 +578,8 @@ int AlgoFinal(int *ap, int *bp) //Write the position choosed into int* ap,int* b
     memset(history_table, 0, sizeof(history_table)); //每次重置历史启发所用的历史记录表
     memset(showweight, 0, sizeof(showweight));
 
+    TestOneStepKill(colornow);//确定当前是否有必胜点
+
 #ifndef TIMELIMIT
 #ifdef ENABLEFBDMOVE
     int original_weight = GenerateFBDWeight(); //产生当前局面估分
@@ -585,6 +612,6 @@ int AlgoFinal(int *ap, int *bp) //Write the position choosed into int* ap,int* b
     CK(_tot);
     _tot = 0;
 #endif
-    CK(best_weight_found); //显示当前局面评分
+    // CK(best_weight_found); //显示当前局面评分
     return 0;
 }
