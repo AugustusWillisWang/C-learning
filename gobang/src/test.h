@@ -42,12 +42,27 @@
 
 // CK(t);
 
+int p = GenerateFBDWeight();
+
 SetUp(2, 3, 1);
+p=UpdateFBDWeight(2,3,p);
+int m=GenerateFBDWeight();
+CK(p);
+CK(m);
+
 SetUp(2, 4, 1);
+p=UpdateFBDWeight(2,4,p);
+m=GenerateFBDWeight();
+CK(p);
+CK(m);
+
+
 SetUp(2, 5, 1);
-SetUp(3, 6, 1);
-SetUp(4, 6, 1);
-SetUp(5, 6, 1);
+p=UpdateFBDWeight(2,5,p);
+m=GenerateFBDWeight();
+CK(p);
+CK(m);
+
 
 PrintBoard();
-CK(ForbidMove(2, 6, 1));
+// CK(ForbidMove(2, 6, 1));

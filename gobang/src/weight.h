@@ -24,7 +24,7 @@
 #define WEIGHT5 100000
 #define BIG_WEIGHT 80000
 
-int _scanmartix[BOUNDRY * 6 - 2][BOUNDRY + 2]; //将棋盘转化为一维数组
+int _scanmatrix[BOUNDRY * 6 - 2][BOUNDRY + 2]; //将棋盘转化为一维数组
 
 // Board();
 
@@ -35,7 +35,7 @@ int _ShowScanMartix() //单元测试用
     {
         for (int b = 0; b < BOUNDRY + 2; b++)
         {
-            printf("%d ", _scanmartix[a][b]);
+            printf("%d ", _scanmatrix[a][b]);
         }
         puts("");
     }
@@ -55,7 +55,7 @@ int FlushScanMartix() //将棋盘转化为一维数组,形如"333300001210000000
     {
         for (int a = -1; a <= BOUNDRY; a++)
         {
-            _scanmartix[i][a + 1] = Board(a, b);
+            _scanmatrix[i][a + 1] = Board(a, b);
         }
         i++;
     }
@@ -65,7 +65,7 @@ int FlushScanMartix() //将棋盘转化为一维数组,形如"333300001210000000
     {
         for (int a = -1; a <= BOUNDRY; a++)
         {
-            _scanmartix[i][a + 1] = Board(b, a);
+            _scanmatrix[i][a + 1] = Board(b, a);
         }
         i++;
     }
@@ -76,7 +76,7 @@ int FlushScanMartix() //将棋盘转化为一维数组,形如"333300001210000000
         for (int a = -1; a <= BOUNDRY; a++)
         {
             //b=aplusb-a;
-            _scanmartix[i][a + 1] = Board(a, aplusb - a);
+            _scanmatrix[i][a + 1] = Board(a, aplusb - a);
         }
         i++;
     }
@@ -87,11 +87,29 @@ int FlushScanMartix() //将棋盘转化为一维数组,形如"333300001210000000
         //b=a-aminusb
         for (int a = -1; a <= BOUNDRY; a++)
         {
-            _scanmartix[i][a + 1] = Board(a, a - aminusb);
+            _scanmatrix[i][a + 1] = Board(a, a - aminusb);
         }
         i++;
     }
     // printf("%d ", i);
+}
+
+int DBG_ShowRecord(int record[BOUNDRY + 2][3][3][2])
+{
+    for (int a = 0; a < 5; a++)
+    {
+        for (int b = 0; b < 3; b++)
+        {
+            for (int c = 0; c < 3; c++)
+            {
+                for (int d = 0; d < 2; d++)
+                {
+                    printf("%d ", record[a][b][c][d]);
+                }
+            }
+        }
+    }
+    // record[BOUNDRY + 2][3][3][2]
 }
 
 int GenerateWeight() //为当前局面打分, 黑方优势为正值, 白方优势为负值
@@ -116,7 +134,7 @@ int GenerateWeight() //为当前局面打分, 黑方优势为正值, 白方优�
         int side = 0;
         while (p < BOUNDRY + 2)
         {
-            if (_scanmartix[i][p++] == incolor) //连续的几个同色点
+            if (_scanmatrix[i][p++] == incolor) //连续的几个同色点
             {
                 link++;
             }
@@ -127,31 +145,31 @@ int GenerateWeight() //为当前局面打分, 黑方优势为正值, 白方优�
                 case 0: //连续的空点
                     forecolor = 0;
                     link = 1;
-                    incolor = _scanmartix[i][p - 1];
+                    incolor = _scanmatrix[i][p - 1];
                     break;
                 case EDGE: //越过棋盘边界
                     forecolor = EDGE;
                     link = 1;
-                    incolor = _scanmartix[i][p - 1];
+                    incolor = _scanmatrix[i][p - 1];
                     break;
                 case BLACK:
-                    backcolor = _scanmartix[i][p - 1];
+                    backcolor = _scanmatrix[i][p - 1];
                     side = ((forecolor == 0) + (backcolor == 0));
                     if (link >= 5)
                         record[5][0][BLACK]++;
                     record[link][side][BLACK]++;
-                    incolor = _scanmartix[i][p - 1];
+                    incolor = _scanmatrix[i][p - 1];
                     link = 1;
                     forecolor = BLACK;
                     // side = 0;
                     break;
                 case WHITE:
-                    backcolor = _scanmartix[i][p - 1];
+                    backcolor = _scanmatrix[i][p - 1];
                     side = ((forecolor == 0) + (backcolor == 0));
                     if (link >= 5)
                         record[5][0][WHITE]++;
                     record[link][side][WHITE]++;
-                    incolor = _scanmartix[i][p - 1];
+                    incolor = _scanmatrix[i][p - 1];
                     link = 1;
                     forecolor = WHITE;
                     break;
@@ -181,11 +199,6 @@ int GenerateWeight() //为当前局面打分, 黑方优势为正值, 白方优�
     weight += record[5][0][BLACK] * WEIGHT5;
     weight += record[5][0][WHITE] * WEIGHT5 * (-1);
 
-    weight += record[1][1][BLACK] * WEIGHT1_1SIDE;
-    weight += record[1][1][BLACK] * WEIGHT1_1SIDE;
-    weight += record[1][1][BLACK] * WEIGHT1_1SIDE;
-    weight += record[1][1][BLACK] * WEIGHT1_1SIDE;
-    weight += record[1][1][BLACK] * WEIGHT1_1SIDE;
     EndTimer(2);
 
     return weight;
@@ -214,8 +227,8 @@ int UpdateWeight(int a, int b, int weight)
 
     for (int c = -1; c <= BOUNDRY; c++)
     {
-        _scanmartix[0][c + 1] = Board(a, c);
-        _scanmartix[1][c + 1] = Board(c, b);
+        _scanmatrix[0][c + 1] = Board(a, c);
+        _scanmatrix[1][c + 1] = Board(c, b);
     }
 
     // printf("%d ", i);
@@ -226,14 +239,14 @@ int UpdateWeight(int a, int b, int weight)
     for (int c = -1; c <= BOUNDRY; c++)
     {
         //b=aplusb-a;
-        _scanmartix[2][c + 1] = Board(c, aplusb - c);
+        _scanmatrix[2][c + 1] = Board(c, aplusb - c);
     }
 
     int aminusb = a - b;
     //b=a-aminusb
     for (int c = -1; c <= BOUNDRY; c++)
     {
-        _scanmartix[3][c + 1] = Board(c, c - aminusb);
+        _scanmatrix[3][c + 1] = Board(c, c - aminusb);
     }
 
     for (int i = 0; i < 4; i++)
@@ -247,7 +260,7 @@ int UpdateWeight(int a, int b, int weight)
         int side = 0;
         while (p < BOUNDRY + 2)
         {
-            if (_scanmartix[i][p++] == incolor) //连续的几个同色点
+            if (_scanmatrix[i][p++] == incolor) //连续的几个同色点
             {
                 link++;
             }
@@ -258,31 +271,31 @@ int UpdateWeight(int a, int b, int weight)
                 case 0: //连续的空点
                     forecolor = 0;
                     link = 1;
-                    incolor = _scanmartix[i][p - 1];
+                    incolor = _scanmatrix[i][p - 1];
                     break;
                 case EDGE: //越过棋盘边界
                     forecolor = EDGE;
                     link = 1;
-                    incolor = _scanmartix[i][p - 1];
+                    incolor = _scanmatrix[i][p - 1];
                     break;
                 case BLACK:
-                    backcolor = _scanmartix[i][p - 1];
+                    backcolor = _scanmatrix[i][p - 1];
                     side = ((forecolor == 0) + (backcolor == 0));
                     if (link >= 5)
                         record[5][0][BLACK]++;
                     record[link][side][BLACK]++;
-                    incolor = _scanmartix[i][p - 1];
+                    incolor = _scanmatrix[i][p - 1];
                     link = 1;
                     forecolor = BLACK;
                     // side = 0;
                     break;
                 case WHITE:
-                    backcolor = _scanmartix[i][p - 1];
+                    backcolor = _scanmatrix[i][p - 1];
                     side = ((forecolor == 0) + (backcolor == 0));
                     if (link >= 5)
                         record[5][0][WHITE]++;
                     record[link][side][WHITE]++;
-                    incolor = _scanmartix[i][p - 1];
+                    incolor = _scanmatrix[i][p - 1];
                     link = 1;
                     forecolor = WHITE;
                     break;
@@ -312,19 +325,13 @@ int UpdateWeight(int a, int b, int weight)
     weight += record[5][0][BLACK] * WEIGHT5;
     weight += record[5][0][WHITE] * WEIGHT5 * (-1);
 
-    weight += record[1][1][BLACK] * WEIGHT1_1SIDE;
-    weight += record[1][1][BLACK] * WEIGHT1_1SIDE;
-    weight += record[1][1][BLACK] * WEIGHT1_1SIDE;
-    weight += record[1][1][BLACK] * WEIGHT1_1SIDE;
-    weight += record[1][1][BLACK] * WEIGHT1_1SIDE;
-
     memset(record, 0, sizeof(record));
     int _color = board[a][b];
     board[a][b] = 0;
     for (int c = -1; c <= BOUNDRY; c++)
     {
-        _scanmartix[0][c + 1] = Board(a, c);
-        _scanmartix[1][c + 1] = Board(c, b);
+        _scanmatrix[0][c + 1] = Board(a, c);
+        _scanmatrix[1][c + 1] = Board(c, b);
     }
 
     // printf("%d ", i);
@@ -335,14 +342,14 @@ int UpdateWeight(int a, int b, int weight)
     for (int c = -1; c <= BOUNDRY; c++)
     {
         //b=aplusb-a;
-        _scanmartix[2][c + 1] = Board(c, aplusb - c);
+        _scanmatrix[2][c + 1] = Board(c, aplusb - c);
     }
 
     // int aminusb = a - b;
     //b=a-aminusb
     for (int c = -1; c <= BOUNDRY; c++)
     {
-        _scanmartix[3][c + 1] = Board(c, c - aminusb);
+        _scanmatrix[3][c + 1] = Board(c, c - aminusb);
     }
 
     for (int i = 0; i < 4; i++)
@@ -356,7 +363,7 @@ int UpdateWeight(int a, int b, int weight)
         int side = 0;
         while (p < BOUNDRY + 2)
         {
-            if (_scanmartix[i][p++] == incolor) //连续的几个同色点
+            if (_scanmatrix[i][p++] == incolor) //连续的几个同色点
             {
                 link++;
             }
@@ -367,31 +374,31 @@ int UpdateWeight(int a, int b, int weight)
                 case 0: //连续的空点
                     forecolor = 0;
                     link = 1;
-                    incolor = _scanmartix[i][p - 1];
+                    incolor = _scanmatrix[i][p - 1];
                     break;
                 case EDGE: //越过棋盘边界
                     forecolor = EDGE;
                     link = 1;
-                    incolor = _scanmartix[i][p - 1];
+                    incolor = _scanmatrix[i][p - 1];
                     break;
                 case BLACK:
-                    backcolor = _scanmartix[i][p - 1];
+                    backcolor = _scanmatrix[i][p - 1];
                     side = ((forecolor == 0) + (backcolor == 0));
                     if (link >= 5)
                         record[5][0][BLACK]++;
                     record[link][side][BLACK]++;
-                    incolor = _scanmartix[i][p - 1];
+                    incolor = _scanmatrix[i][p - 1];
                     link = 1;
                     forecolor = BLACK;
                     // side = 0;
                     break;
                 case WHITE:
-                    backcolor = _scanmartix[i][p - 1];
+                    backcolor = _scanmatrix[i][p - 1];
                     side = ((forecolor == 0) + (backcolor == 0));
                     if (link >= 5)
                         record[5][0][WHITE]++;
                     record[link][side][WHITE]++;
-                    incolor = _scanmartix[i][p - 1];
+                    incolor = _scanmatrix[i][p - 1];
                     link = 1;
                     forecolor = WHITE;
                     break;
@@ -421,14 +428,402 @@ int UpdateWeight(int a, int b, int weight)
     weight -= record[5][0][BLACK] * WEIGHT5;
     weight -= record[5][0][WHITE] * WEIGHT5 * (-1);
 
-    weight -= record[1][1][BLACK] * WEIGHT1_1SIDE;
-    weight -= record[1][1][BLACK] * WEIGHT1_1SIDE;
-    weight -= record[1][1][BLACK] * WEIGHT1_1SIDE;
-    weight -= record[1][1][BLACK] * WEIGHT1_1SIDE;
-    weight -= record[1][1][BLACK] * WEIGHT1_1SIDE;
+    board[a][b] = _color;
+    EndTimer(3);
+
+    return weight;
+}
+
+int UpdateFBDWeight(int a, int b, int weight) //和weight.h基于相同原理
+//带禁手的权值判断函数, 对于禁手点, 直接返回白胜(-INF)
+//注意只对于空点生效
+{
+
+    // 越界->3;
+    // 黑棋->1;
+    // 白棋->2;
+    // 空白->0;
+    int record[BOUNDRY + 2][3][3][2]; //record[link][side][color][space]
+    memset(record, 0, sizeof(record));
+
+    int _color = board[a][b];
+    for (int c = -1; c <= BOUNDRY; c++)
+    {
+        _scanmatrix[0][c + 1] = Board(a, c);
+        _scanmatrix[1][c + 1] = Board(c, b);
+    }
+
+    // printf("%d ", i);
+
+    // printf("%d ", i);
+
+    int aplusb = a + b;
+    for (int c = -1; c <= BOUNDRY; c++)
+    {
+        //b=aplusb-a;
+        _scanmatrix[2][c + 1] = Board(c, aplusb - c);
+    }
+
+    int aminusb = a - b;
+    //b=a-aminusb
+    for (int c = -1; c <= BOUNDRY; c++)
+    {
+        _scanmatrix[3][c + 1] = Board(c, c - aminusb);
+    }
+
+    for (int i = 0; i < 4; i++)
+    {
+        //每次扫描时保留前一个节点的值, 来判断连续的几个子两边有多少气
+        int p = 1;
+        int incolor = 3;
+        int forecolor = 3;
+        int backcolor = 0;
+        int link = 1;
+        int side = 0;
+        int space = 0;
+        while (p < BOUNDRY + 2)
+        {
+            if (_scanmatrix[i][p++] == incolor) //连续的几个同色点
+            {
+                link++;
+            }
+            else //连续的几个同色点的末端
+            {
+                if ((_scanmatrix[i][p] == incolor) && (_scanmatrix[i][p - 1] == 0) && (space == 0))
+                {
+                    space++;
+                    p++;
+                    continue;
+                }
+                switch (incolor)
+                {
+                case 0: //连续的空点
+                    forecolor = 0;
+                    link = 1;
+                    incolor = _scanmatrix[i][p - 1];
+                    break;
+                case EDGE: //越过棋盘边界
+                    forecolor = EDGE;
+                    link = 1;
+                    incolor = _scanmatrix[i][p - 1];
+                    break;
+                case BLACK:
+                    backcolor = _scanmatrix[i][p - 1];
+                    side = ((forecolor == 0) + (backcolor == 0)); //side 为棋形两边的气数
+                    if (link >= 5)
+                        record[5][side][BLACK][space]++;
+                    else
+                        record[link][side][BLACK][space]++;
+                    incolor = _scanmatrix[i][p - 1];
+                    link = 1;
+                    forecolor = BLACK;
+                    // side = 0;
+                    break;
+                case WHITE:
+                    backcolor = _scanmatrix[i][p - 1];
+                    side = ((forecolor == 0) + (backcolor == 0));
+                    if (link >= 5)
+                        record[5][side][WHITE][space]++;
+                    else
+                        record[link][side][WHITE][space]++;
+                    incolor = _scanmatrix[i][p - 1];
+                    link = 1;
+                    forecolor = WHITE;
+                    break;
+                    // side = 0;
+                }
+            }
+        }
+    }
+
+    board[a][b] = 0;
+
+    for (int c = -1; c <= BOUNDRY; c++)
+    {
+        _scanmatrix[0][c + 1] = Board(a, c);
+        _scanmatrix[1][c + 1] = Board(c, b);
+    }
+
+    for (int c = -1; c <= BOUNDRY; c++)
+    {
+        //b=aplusb-a;
+        _scanmatrix[2][c + 1] = Board(c, aplusb - c);
+    }
+
+    //b=a-aminusb
+    for (int c = -1; c <= BOUNDRY; c++)
+    {
+        _scanmatrix[3][c + 1] = Board(c, c - aminusb);
+    }
+
+    for (int i = 0; i < 4; i++)
+    {
+        //每次扫描时保留前一个节点的值, 来判断连续的几个字有两边多少气
+        int p = 1;
+        int incolor = 3;
+        int forecolor = 3;
+        int backcolor = 0;
+        int link = 1;
+        int side = 0;
+        int space = 0;
+        while (p < BOUNDRY + 2)
+        {
+            if (_scanmatrix[i][p++] == incolor) //连续的几个同色点
+            {
+                link++;
+            }
+            else //连续的几个同色点的末端
+            {
+                if ((_scanmatrix[i][p] == incolor) && (_scanmatrix[i][p - 1] == 0) && (space == 0))
+                {
+                    space++;
+                    p++;
+                    continue;
+                }
+                switch (incolor)
+                {
+                case 0: //连续的空点
+                    forecolor = 0;
+                    link = 1;
+                    incolor = _scanmatrix[i][p - 1];
+                    break;
+                case EDGE: //越过棋盘边界
+                    forecolor = EDGE;
+                    link = 1;
+                    incolor = _scanmatrix[i][p - 1];
+                    break;
+                case BLACK:
+                    backcolor = _scanmatrix[i][p - 1];
+                    side = ((forecolor == 0) + (backcolor == 0)); //side 为棋形两边的气数
+                    if (link >= 5)
+                        record[5][side][BLACK][space]--;
+                    else
+                        record[link][side][BLACK][space]--;
+                    incolor = _scanmatrix[i][p - 1];
+                    link = 1;
+                    forecolor = BLACK;
+                    // side = 0;
+                    break;
+                case WHITE:
+                    backcolor = _scanmatrix[i][p - 1];
+                    side = ((forecolor == 0) + (backcolor == 0));
+                    if (link >= 5)
+                        record[5][side][WHITE][space]--;
+                    else
+                        record[link][side][WHITE][space]--;
+                    incolor = _scanmatrix[i][p - 1];
+                    link = 1;
+                    forecolor = WHITE;
+                    break;
+                    // side = 0;
+                }
+            }
+        }
+    }
 
     board[a][b] = _color;
-        EndTimer(3);
+
+    if (_color == BLACK)
+    {
+        if (record[5][0][BLACK][0] || record[5][1][BLACK][0] || record[5][2][BLACK][0]) //成5直接终止判断
+            // return INF;
+            ;
+        int huo4 = record[4][2][BLACK][0];
+        int chong4 = record[5][2][BLACK][1] + record[5][1][BLACK][1] + record[5][0][BLACK][1] + record[4][1][BLACK][0] + record[4][1][BLACK][1] + record[4][2][BLACK][1] + record[4][0][BLACK][1];
+        int huo3 = record[3][2][BLACK][0] + record[3][2][BLACK][1];
+        if ((huo4 + chong4) >= 2) //44禁手
+            // return -INF;
+            ;
+        if (huo3 >= 2) //33禁手
+            // return -INF;
+            ;
+    }
+
+    weight += record[1][1][BLACK][0] * WEIGHT1_1SIDE;
+    weight += record[1][2][BLACK][0] * WEIGHT1_2SIDE;
+    weight += record[2][1][BLACK][0] * WEIGHT2_1SIDE;
+    weight += record[2][2][BLACK][0] * WEIGHT2_2SIDE;
+    weight += record[3][1][BLACK][0] * WEIGHT3_1SIDE;
+    weight += record[3][2][BLACK][0] * WEIGHT3_2SIDE;
+    weight += record[4][1][BLACK][0] * WEIGHT4_1SIDE;
+    weight += record[4][2][BLACK][0] * WEIGHT4_2SIDE;
+
+    // weight += record[1][1][BLACK][1] * WEIGHT1_1SIDE;
+    // weight += record[1][2][BLACK][1] * WEIGHT1_1SIDE;
+    weight += record[2][1][BLACK][1] * WEIGHT1_1SIDE;
+    weight += record[2][2][BLACK][1] * WEIGHT2_1SIDE;
+    weight += record[3][1][BLACK][1] * WEIGHT2_1SIDE;
+    weight += record[3][2][BLACK][1] * WEIGHT3_1SIDE;
+    weight += record[4][1][BLACK][1] * WEIGHT3_1SIDE;
+    weight += record[4][2][BLACK][1] * WEIGHT4_1SIDE;
+
+    weight += record[1][1][WHITE][0] * WEIGHT1_1SIDE*(-1);
+    weight += record[1][2][WHITE][0] * WEIGHT1_2SIDE*(-1);
+    weight += record[2][1][WHITE][0] * WEIGHT2_1SIDE*(-1);
+    weight += record[2][2][WHITE][0] * WEIGHT2_2SIDE*(-1);
+    weight += record[3][1][WHITE][0] * WEIGHT3_1SIDE*(-1);
+    weight += record[3][2][WHITE][0] * WEIGHT3_2SIDE*(-1);
+    weight += record[4][1][WHITE][0] * WEIGHT4_1SIDE*(-1);
+    weight += record[4][2][WHITE][0] * WEIGHT4_2SIDE*(-1);
+
+    // weight += record[1][1][WHITE][1] * WEIGHT1_1SIDE;
+    // weight += record[1][2][WHITE][1] * WEIGHT1_1SIDE;
+    weight += record[2][1][WHITE][1] * WEIGHT1_1SIDE*(-1);
+    weight += record[2][2][WHITE][1] * WEIGHT2_1SIDE*(-1);
+    weight += record[3][1][WHITE][1] * WEIGHT2_1SIDE*(-1);
+    weight += record[3][2][WHITE][1] * WEIGHT3_1SIDE*(-1);
+    weight += record[4][1][WHITE][1] * WEIGHT3_1SIDE*(-1);
+    weight += record[4][2][WHITE][1] * WEIGHT4_1SIDE*(-1);
+
+    //-----------------------
+    weight += record[5][0][BLACK][0] * WEIGHT5;
+    weight += record[5][0][WHITE][0] * WEIGHT5 * (-1);
+    weight += record[5][1][BLACK][0] * WEIGHT5;
+    weight += record[5][1][WHITE][0] * WEIGHT5 * (-1);
+    weight += record[5][2][BLACK][0] * WEIGHT5;
+    weight += record[5][2][WHITE][0] * WEIGHT5 * (-1);
+
+    weight += record[5][0][BLACK][1] * WEIGHT4_1SIDE;
+    weight += record[5][0][WHITE][1] * WEIGHT4_1SIDE * (-1);
+    weight += record[5][1][BLACK][1] * WEIGHT4_1SIDE;
+    weight += record[5][1][WHITE][1] * WEIGHT4_1SIDE * (-1);
+    weight += record[5][2][BLACK][1] * WEIGHT4_1SIDE;
+    weight += record[5][2][WHITE][1] * WEIGHT4_1SIDE * (-1);
+
+    return weight;
+}
+
+int GenerateFBDWeight() //为当前局面打分, 黑方优势为正值, 白方优势为负值
+{
+    StartTimer(2);
+
+    //根据转化之后的一维数组, 判断各种棋形
+    //稍加改动可以写成胜负判断, 禁手判断函数(只要比较下一子前后各种棋形的数量)
+    int weight = 0;
+    int record[BOUNDRY + 2][3][3][2]; //record[link][side][color][space]
+    memset(record, 0, sizeof(record));
+    FlushScanMartix(); //将棋盘转化为一维数组
+
+    for (int i = 0; i < BOUNDRY * 6 - 2; i++)
+
+    {
+        //每次扫描时保留前一个节点的值, 来判断连续的几个子两边有多少气
+        int p = 1;
+        int incolor = 3;
+        int forecolor = 3;
+        int backcolor = 0;
+        int link = 1;
+        int side = 0;
+        int space = 0;
+        while (p < BOUNDRY + 2)
+        {
+            if (_scanmatrix[i][p++] == incolor) //连续的几个同色点
+            {
+                link++;
+            }
+            else //连续的几个同色点的末端
+            {
+                if ((_scanmatrix[i][p] == incolor) && (_scanmatrix[i][p - 1] == 0) && (space == 0))
+                {
+                    space++;
+                    p++;
+                    continue;
+                }
+                switch (incolor)
+                {
+                case 0: //连续的空点
+                    forecolor = 0;
+                    link = 1;
+                    incolor = _scanmatrix[i][p - 1];
+                    break;
+                case EDGE: //越过棋盘边界
+                    forecolor = EDGE;
+                    link = 1;
+                    incolor = _scanmatrix[i][p - 1];
+                    break;
+                case BLACK:
+                    backcolor = _scanmatrix[i][p - 1];
+                    side = ((forecolor == 0) + (backcolor == 0)); //side 为棋形两边的气数
+                    if (link >= 5)
+                        record[5][side][BLACK][space]++;
+                    else
+                        record[link][side][BLACK][space]++;
+                    incolor = _scanmatrix[i][p - 1];
+                    link = 1;
+                    forecolor = BLACK;
+                    // side = 0;
+                    break;
+                case WHITE:
+                    backcolor = _scanmatrix[i][p - 1];
+                    side = ((forecolor == 0) + (backcolor == 0));
+                    if (link >= 5)
+                        record[5][side][WHITE][space]++;
+                    else
+                        record[link][side][WHITE][space]++;
+                    incolor = _scanmatrix[i][p - 1];
+                    link = 1;
+                    forecolor = WHITE;
+                    break;
+                    // side = 0;
+                }
+            }
+        }
+    }
+
+
+
+    weight += record[1][1][BLACK][0] * WEIGHT1_1SIDE;
+    weight += record[1][2][BLACK][0] * WEIGHT1_2SIDE;
+    weight += record[2][1][BLACK][0] * WEIGHT2_1SIDE;
+    weight += record[2][2][BLACK][0] * WEIGHT2_2SIDE;
+    weight += record[3][1][BLACK][0] * WEIGHT3_1SIDE;
+    weight += record[3][2][BLACK][0] * WEIGHT3_2SIDE;
+    weight += record[4][1][BLACK][0] * WEIGHT4_1SIDE;
+    weight += record[4][2][BLACK][0] * WEIGHT4_2SIDE;
+
+    // weight += record[1][1][BLACK][1] * WEIGHT1_1SIDE;
+    // weight += record[1][2][BLACK][1] * WEIGHT1_1SIDE;
+    weight += record[2][1][BLACK][1] * WEIGHT1_1SIDE;
+    weight += record[2][2][BLACK][1] * WEIGHT2_1SIDE;
+    weight += record[3][1][BLACK][1] * WEIGHT2_1SIDE;
+    weight += record[3][2][BLACK][1] * WEIGHT3_1SIDE;
+    weight += record[4][1][BLACK][1] * WEIGHT3_1SIDE;
+    weight += record[4][2][BLACK][1] * WEIGHT4_1SIDE;
+
+    weight += record[1][1][WHITE][0] * WEIGHT1_1SIDE*(-1);
+    weight += record[1][2][WHITE][0] * WEIGHT1_2SIDE*(-1);
+    weight += record[2][1][WHITE][0] * WEIGHT2_1SIDE*(-1);
+    weight += record[2][2][WHITE][0] * WEIGHT2_2SIDE*(-1);
+    weight += record[3][1][WHITE][0] * WEIGHT3_1SIDE*(-1);
+    weight += record[3][2][WHITE][0] * WEIGHT3_2SIDE*(-1);
+    weight += record[4][1][WHITE][0] * WEIGHT4_1SIDE*(-1);
+    weight += record[4][2][WHITE][0] * WEIGHT4_2SIDE*(-1);
+
+    // weight += record[1][1][WHITE][1] * WEIGHT1_1SIDE;
+    // weight += record[1][2][WHITE][1] * WEIGHT1_1SIDE;
+    weight += record[2][1][WHITE][1] * WEIGHT1_1SIDE*(-1);
+    weight += record[2][2][WHITE][1] * WEIGHT2_1SIDE*(-1);
+    weight += record[3][1][WHITE][1] * WEIGHT2_1SIDE*(-1);
+    weight += record[3][2][WHITE][1] * WEIGHT3_1SIDE*(-1);
+    weight += record[4][1][WHITE][1] * WEIGHT3_1SIDE*(-1);
+    weight += record[4][2][WHITE][1] * WEIGHT4_1SIDE*(-1);
+
+    //-----------------------
+    weight += record[5][0][BLACK][0] * WEIGHT5;
+    weight += record[5][0][WHITE][0] * WEIGHT5 * (-1);
+    weight += record[5][1][BLACK][0] * WEIGHT5;
+    weight += record[5][1][WHITE][0] * WEIGHT5 * (-1);
+    weight += record[5][2][BLACK][0] * WEIGHT5;
+    weight += record[5][2][WHITE][0] * WEIGHT5 * (-1);
+
+    weight += record[5][0][BLACK][1] * WEIGHT4_1SIDE;
+    weight += record[5][0][WHITE][1] * WEIGHT4_1SIDE * (-1);
+    weight += record[5][1][BLACK][1] * WEIGHT4_1SIDE;
+    weight += record[5][1][WHITE][1] * WEIGHT4_1SIDE * (-1);
+    weight += record[5][2][BLACK][1] * WEIGHT4_1SIDE;
+    weight += record[5][2][WHITE][1] * WEIGHT4_1SIDE * (-1);
+
+    EndTimer(2);
 
     return weight;
 }

@@ -178,14 +178,17 @@ int TestForbidMove(int a, int b, int colornow) //判断一点是否为禁手点,
 //     EndTimer(1);
 // }
 
-
-int ForbidMove(int a, int b, int color)//和weight.h基于相同原理, 效率低于原有禁手函数
+int ForbidMove(int a, int b, int color) //和weight.h基于相同原理, 效率低于原有禁手函数
 //注释见权重计算函数, 这里只处理了活三活四眠四来判断禁手相关的内容
 //禁手探测, 返回1为禁手, 0为非禁手
 //注意只对于空点生效
+//单独使用效率太低, 被整合到weight.h的权重判断中, 将黑棋禁手点的权值直接置为-INF
 {
     if (board[a][b])
-        BOOM("position must be empty!");
+    {
+        puts("position must be empty!");
+        return 1;
+    }
     if (color == WHITE)
         return 0;
     // 越界->3;
@@ -369,14 +372,14 @@ int ForbidMove(int a, int b, int color)//和weight.h基于相同原理, 效率�
             }
         }
     }
-    if (record[5][0][BLACK][0] || record[5][1][BLACK][0] || record[5][2][BLACK][0])//成5直接终止判断
+    if (record[5][0][BLACK][0] || record[5][1][BLACK][0] || record[5][2][BLACK][0]) //成5直接终止判断
         return 0;
     int huo4 = record[4][2][BLACK][0];
-    int chong4 = record[5][2][BLACK][1] + record[5][1][BLACK][1] + record[5][0][BLACK][1] + record[4][1][BLACK][0]+ record[4][1][BLACK][1]+record[4][2][BLACK][1]+record[4][0][BLACK][1];
+    int chong4 = record[5][2][BLACK][1] + record[5][1][BLACK][1] + record[5][0][BLACK][1] + record[4][1][BLACK][0] + record[4][1][BLACK][1] + record[4][2][BLACK][1] + record[4][0][BLACK][1];
     int huo3 = record[3][2][BLACK][0] + record[3][2][BLACK][1];
-    if ((huo4 + chong4) >= 2)//44禁手
+    if ((huo4 + chong4) >= 2) //44禁手
         return 1;
-    if (huo3 >= 2)//33禁手
+    if (huo3 >= 2) //33禁手
         return 1;
     return 0;
 }

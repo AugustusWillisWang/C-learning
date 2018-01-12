@@ -2,6 +2,7 @@
 // 贪婪启发, 维持一个按点赋值的全局数组, 每层迭代时先处理权值大的部分
 
 // 目前仍存在一些问题
+// 最后的版本没有用所以就没有注释了
 
 #ifndef _GREEDY_H
 #define _GREEDY_H
@@ -14,33 +15,37 @@
 #define _SPACE_ 1
 #define _BLOCK_ 2
 
-int greedy_martix[BOUNDRY][BOUNDRY];
+int greedy_matrix[MAXLEVEL][BOUNDRY][BOUNDRY];
 int threat_martix[BOUNDRY][BOUNDRY];
 
-int (*SavePWMartix(int original_martix[BOUNDRY][BOUNDRY]))[BOUNDRY]
+int (*SavePWMartix(int greedy_matrix[BOUNDRY][BOUNDRY]))[BOUNDRY]
+//不能使用, malloc的效率太低
 {
     int(*temp)[BOUNDRY];
     temp = (int(*)[BOUNDRY])malloc(sizeof(int) * BOUNDRY * BOUNDRY);
-    memcpy(temp, original_martix, sizeof(int) * BOUNDRY * BOUNDRY);
+    memcpy(temp, greedy_matrix, sizeof(int) * BOUNDRY * BOUNDRY);
     return temp;
 }
 
-int RecoveryPWMartix(int original_martix[BOUNDRY][BOUNDRY], int temp[BOUNDRY][BOUNDRY])
+int RecoveryPWMartix(int greedy_matrix[BOUNDRY][BOUNDRY], int temp[BOUNDRY][BOUNDRY])
+//效率太低
 {
-    memcpy(temp, original_martix, sizeof(int) * BOUNDRY * BOUNDRY);
+    memcpy(temp, greedy_matrix, sizeof(int) * BOUNDRY * BOUNDRY);
     free(temp);
     return 0;
 }
 
-int UpdatePositionWeight(int a, int b, int color, int original_martix[BOUNDRY][BOUNDRY])
+int UpdatePositionWeight(int a, int b, int color,int level,int nextlevel)
+//在当前level的基础上更新下一级(levelnext)的点赋值
 {
+
     for (int x = -1; x <= 1; x++)
     {
         for (int y = -1; y <= 1; y++)
         {
             if (Board(a + x, b + y) == 0)
             {
-                original_martix[a + x][b + y] += 1;
+                greedy_matrix[nextlevel][a + x][b + y] += 1;
             }
         }
     }
@@ -51,12 +56,12 @@ int UpdatePositionWeight(int a, int b, int color, int original_martix[BOUNDRY][B
         {
             if (Board(a + x, b + y) == 0)
             {
-                original_martix[a + x][b + y] += 1;
+                greedy_matrix[nextlevel][a + x][b + y] += 1;
             }
         }
     }
 #endif
-    original_martix[a][b] = 0;
+    greedy_matrix[nextlevel][a][b] = 0;
 
     int link = 0;
     int leftspace = 0;
@@ -213,13 +218,13 @@ int UpdatePositionWeight(int a, int b, int color, int original_martix[BOUNDRY][B
         if (!((leftendtype == _BLOCK_) && (rightendtype == _BLOCK_) && ((leftopcolor + rightopcolor - 1) < 5)))
         {
             if (leftspace)
-                original_martix[a - leftspace*direction[q][0]][b-leftspace*direction[q][1]] += addweight;
+                greedy_matrix[nextlevel][a - leftspace*direction[q][0]][b-leftspace*direction[q][1]] += addweight;
             if (rightspace)
-                original_martix[a + rightspace*direction[q][0]][b+rightspace*direction[q][0]] += addweight;
+                greedy_matrix[nextlevel][a + rightspace*direction[q][0]][b+rightspace*direction[q][0]] += addweight;
             if (leftendtype == _SPACE_)
-                original_martix[a - leftend*direction[q][0]][b - leftend*direction[q][1]] += addweight;
+                greedy_matrix[nextlevel][a - leftend*direction[q][0]][b - leftend*direction[q][1]] += addweight;
             if (rightendtype == _SPACE_)
-                original_martix[a + rightend*direction[q][0]][b + rightend*direction[q][1]] += addweight;
+                greedy_matrix[nextlevel][a + rightend*direction[q][0]][b + rightend*direction[q][1]] += addweight;
         }
     }
 
@@ -231,14 +236,14 @@ int UpdatePositionWeight(int a, int b, int color, int original_martix[BOUNDRY][B
             int bt = BoundLim(b + i * direction[q][1]);
             if (!Board(at, bt))
             {
-                original_martix[at][bt] *= (!ForbidMove(at, bt, Inverse(color)));
+                greedy_matrix[level][at][bt] *= (!ForbidMove(at, bt, Inverse(color)));
             }
         }
     }
 }
 
 // int _recordm[4][BOUNDRY];
-// int SavePositionWeight(int a, int b, int color, int original_martix[BOUNDRY][BOUNDRY])
+// int SavePositionWeight(int a, int b, int color, int greedy_matrix[BOUNDRY][BOUNDRY])
 // {
 //         for (int i = 0; i < BOUNDRY;i++){
 //             int at = 0 + direction[q][0];
@@ -246,7 +251,7 @@ int UpdatePositionWeight(int a, int b, int color, int original_martix[BOUNDRY][B
 
 //         }
 // }
-// int RecoverPositionWeight(int a, int b, int color, int original_martix[BOUNDRY][BOUNDRY]){};
+// int RecoverPositionWeight(int a, int b, int color, int greedy_matrix[BOUNDRY][BOUNDRY]){};
 
 int UpdateThreat(int a, int b, int color, int threatcolor)
 {
@@ -392,6 +397,9 @@ int UpdateThreat(int a, int b, int color, int threatcolor)
             addweight = 0;
             break;
         case 1:
+            addweight = 0;
+            break;
+        case 2:
             addweight = 0;
             break;
         default:

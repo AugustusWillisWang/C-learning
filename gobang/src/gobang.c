@@ -1,7 +1,7 @@
 //Copyright (c) 2017-2018 Augustus Wang
 //自注释风格的函数和变量名命名, 应该不用太多注释....
 //主程序
-#define TIMEIT
+// #define TIMEIT
 #define TEST
 #include "timer.h"          //性能分析, 计时相关
 #include "support.h"        //棋盘定义, 数据结构定义, 基础情况判断以及其他共用部分, 写成头文件以方便单元测试
@@ -183,7 +183,7 @@ int main(int argc, char *argv[])
     switch (mode_choosed)
     {
     case 1:
-        log_file = InitializeSaving();//初始化日志
+        log_file = InitializeSaving(); //初始化日志
         PvpMode();
         break;
     case 2:
@@ -197,13 +197,13 @@ int main(int argc, char *argv[])
     case 4:
         log_file = InitializeSaving();
 #ifdef TEST
-        #include "test.h"//在TEST模式下, 直接执行test.h里的语句 只要在头文件中定义宏TEST
+#include "test.h" //在TEST模式下, 直接执行test.h里的语句 只要在头文件中定义宏TEST
 #endif
-            BP;
+        BP;
         break;
     case 5:
     {
-        fgets(log_name, 30, stdin);//日志读取, 不是必需的部分就不详注了
+        fgets(log_name, 30, stdin); //日志读取, 不是必需的部分就不详注了
     showlog:
         log_file = fopen(log_name, "r");
         DisplayLog();
@@ -324,6 +324,7 @@ int PveMode() //人机对战
             puts("The board now is:");
             // ShowBoardArray();
             PrintBoard();
+            ShowMove(a, b, colornow); //顺便显示当前走子位置
 
             puts("------------------------------------------");
             printf("This is move %d.\n", movecnt);
@@ -353,6 +354,7 @@ int PveMode() //人机对战
             puts("The board now is:");
             // ShowBoardArray();
             PrintBoard();
+            ShowMove(a, b, colornow); //顺便显示当前走子位置
 
             puts("------------------------------------------");
             printf("This is move %d.\n", movecnt);
@@ -362,8 +364,8 @@ int PveMode() //人机对战
             MakeMove(&a, &b);
             ManualSetUp(a, b, colornow);
         }
-        UpdatePositionWeight(a, b, colornow, greedy_martix);
-        UpdateThreat(a, b, colornow, BLACK);
+        // UpdatePositionWeight(a, b, colornow, greedy_matrix);
+        UpdateThreat(a, b, colornow, colornow);
         DBG_ShowPWM(threat_martix);
         Save(a, b);
         movecnt++;
@@ -549,7 +551,6 @@ int ForcedManualSetUp(int a, int b, int color) //设置当前棋盘某一位置(
 }
 int Save(int a, int b) //保存当前操作到棋谱
 {
-    ShowMove(a, b, colornow); //顺便显示当前走子位置
     fprintf(log_file, "%d %d\n", a, b);
 }
 

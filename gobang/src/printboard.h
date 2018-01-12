@@ -1,3 +1,6 @@
+#ifndef _PRINTBOARD_H
+#define _PRINTBOARD_H
+
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -13,7 +16,7 @@
 int clearscreen()
 {
     // system("cls");
-    system("clear");
+    // system("clear");
 }
 
 //棋盘使用的是GBK编码，每一个中文字符占用2个字节。
@@ -125,3 +128,5 @@ int ShowMove(int a, int b, int colornow)
     char rb = 'A' + b;
     printf("%s made move at (%d, %c)\n", ((colornow == BLACK) ? "Black" : "White"), ra, rb);
 }
+
+#endif

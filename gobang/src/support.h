@@ -9,6 +9,7 @@
 #define BLACK 1      //黑方
 #define WHITE 2      //白方
 #define OUTOFBOARD 3 //棋盘边界, 超出棋盘范围的点用3表示
+#define MAXLEVEL 20
 
 #define NORMAL 0 //旧的判断函数用的, 懒得改掉了
 #define CLEAR 1  //旧的判断函数用的, 懒得改掉了
