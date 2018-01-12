@@ -14,12 +14,12 @@
 //这里的权值是随便赋的, 反正能用就行
 #define WEIGHT1_2SIDE 2  //一子2气
 #define WEIGHT2_2SIDE 30 //二子2气
-#define WEIGHT3_2SIDE 1000
-#define WEIGHT4_2SIDE 2000
+#define WEIGHT3_2SIDE 500
+#define WEIGHT4_2SIDE 20000
 #define WEIGHT1_1SIDE 1 //1子1气
 #define WEIGHT2_1SIDE 10
 #define WEIGHT3_1SIDE 30
-#define WEIGHT4_1SIDE 1000
+#define WEIGHT4_1SIDE 500
 
 #define WEIGHT5 100000
 #define BIG_WEIGHT 80000

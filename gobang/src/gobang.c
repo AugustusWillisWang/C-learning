@@ -3,7 +3,7 @@
 //主程序
 #define TIMEIT
 #define TEST
-#include "timer.h"          //性能分析
+#include "timer.h"          //性能分析, 计时相关
 #include "support.h"        //棋盘定义, 数据结构定义, 基础情况判断以及其他共用部分, 写成头文件以方便单元测试
 #include "forbidden_move.h" //禁手判断
 
@@ -26,17 +26,23 @@
 //迭代加深搜索
 //只针对改变部分的快速局面评分函数
 
-//同步进行胜手优先(贪心)搜索(没加)
+//同步进行胜手优先搜索(没开)
+//贪心启发搜索搜索(没开)
 
+//因为使用多线程会导致跨平台出现麻烦, 所以并没有考虑多线程算法
+//否则, 可以同时开启VCF, 并将基本的AlphaBeta剪枝替换成极小窗口搜索来多线程执行
 
+//若没有特别说明, int形的函数表示一个操作的, 如 SetUpBoard()返回0代表正常执行. 名如 Weight()的函数会返回名称所对应的值. 形如 Is_Tested()为真时返回1, 否则返回0
+//有特殊返回值的函数会另行说明
 
+//程序在windows10下使用gcc编译通过
 /*
 Todo:
-调整hash表
+// 调整hash表
 // 通过棋盘变化赋权
-注释
-_Judgewin
-_StartTimer(4)
+补注释
+// _Judgewin
+// _StartTimer(4)
 */
 
 int Algo_Choosed = ALGO_BASIC; //默认使用算法Random
@@ -177,7 +183,7 @@ int main(int argc, char *argv[])
     switch (mode_choosed)
     {
     case 1:
-        log_file = InitializeSaving();
+        log_file = InitializeSaving();//初始化日志
         PvpMode();
         break;
     case 2:
@@ -191,13 +197,13 @@ int main(int argc, char *argv[])
     case 4:
         log_file = InitializeSaving();
 #ifdef TEST
-        #include "test.h"
+        #include "test.h"//在TEST模式下, 直接执行test.h里的语句 只要在头文件中定义宏TEST
 #endif
             BP;
         break;
     case 5:
     {
-        fgets(log_name, 30, stdin);
+        fgets(log_name, 30, stdin);//日志读取, 不是必需的部分就不详注了
     showlog:
         log_file = fopen(log_name, "r");
         DisplayLog();

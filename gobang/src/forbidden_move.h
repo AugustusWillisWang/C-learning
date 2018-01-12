@@ -180,6 +180,7 @@ int TestForbidMove(int a, int b, int colornow) //判断一点是否为禁手点,
 
 
 int ForbidMove(int a, int b, int color)//和weight.h基于相同原理, 效率低于原有禁手函数
+//注释见权重计算函数, 这里只处理了活三活四眠四来判断禁手相关的内容
 //禁手探测, 返回1为禁手, 0为非禁手
 //注意只对于空点生效
 {
@@ -221,7 +222,7 @@ int ForbidMove(int a, int b, int color)//和weight.h基于相同原理, 效率�
 
     for (int i = 0; i < 4; i++)
     {
-        //每次扫描时保留前一个节点的值, 来判断连续的几个字有两边多少气
+        //每次扫描时保留前一个节点的值, 来判断连续的几个子两边有多少气
         int p = 1;
         int incolor = 3;
         int forecolor = 3;
@@ -371,7 +372,7 @@ int ForbidMove(int a, int b, int color)//和weight.h基于相同原理, 效率�
     if (record[5][0][BLACK][0] || record[5][1][BLACK][0] || record[5][2][BLACK][0])//成5直接终止判断
         return 0;
     int huo4 = record[4][2][BLACK][0];
-    int chong4 = record[5][2][BLACK][1] + record[5][1][BLACK][1] + record[5][0][BLACK][1] + record[4][1][BLACK][0];
+    int chong4 = record[5][2][BLACK][1] + record[5][1][BLACK][1] + record[5][0][BLACK][1] + record[4][1][BLACK][0]+ record[4][1][BLACK][1]+record[4][2][BLACK][1]+record[4][0][BLACK][1];
     int huo3 = record[3][2][BLACK][0] + record[3][2][BLACK][1];
     if ((huo4 + chong4) >= 2)//44禁手
         return 1;

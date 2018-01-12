@@ -18,7 +18,7 @@
 // #define DEFENDMODE //白棋前十步采取守势
 
 #define ENABLEFBDMOVE   //禁手探测 (会极大拖慢速度)
-#define TIMELIMIT 15000 //迭代加深时间限制
+#define TIMELIMIT 14800 //迭代加深时间限制
 
 #include "zobrist.h"   //哈希
 #include "support.h"   //全局变量, 共用函数
@@ -129,18 +129,19 @@ int ChangeMaxLevel() //按照当前手数对全局变量进行调整
 }
 
 int GetAroundPosition(int (*_ValidPosition)[BOUNDRY], int depth, int color) //查找可落子点位置, 支持在这里进行禁手判断和其他操作 (旧版)
+//新版的函数保存了一个全局数组, 每次更新时只处理新落子周围的部分. 新函数在weight.h中
 {
     StartTimer(4);
-    int checked[BOUNDRY][BOUNDRY]; //防止重复检查
+    int checked[BOUNDRY][BOUNDRY]; //记录已经检查过的点, 防止重复检查
     memset(checked, 0, sizeof(checked));
     memset(_ValidPosition, 0, sizeof(int) * BOUNDRY * BOUNDRY);
     for (int a = 0; a < BOUNDRY; a++)
     {
-        for (int b = 0; b < BOUNDRY; b++)
+        for (int b = 0; b < BOUNDRY; b++)//遍历棋盘
         {
             if (board[a][b])
             {
-                if (defendmode)
+                if (defendmode)//白棋采取守势, 特殊走法
                 {
                     if (board[a][b] == WHITE)
                         continue;
@@ -149,18 +150,19 @@ int GetAroundPosition(int (*_ValidPosition)[BOUNDRY], int depth, int color) //�
                 {
                     for (int ib = -maxneabor; ib <= maxneabor; ib++)
                     {
-                        int _a = BoundLim(a + ia);
+                        int _a = BoundLim(a + ia);//BoundLim的作用是将点坐标转化为合法的坐标, 将超出边界的值转移到边界上
                         int _b = BoundLim(b + ib);
                         if ((!board[_a][_b]) && (!checked[_a][_b]))
                         {
                             checked[_a][_b] = 1;
                             _ValidPosition[_a][_b] = 1;
 #ifdef KILLSEARCH //胜手深搜
+//经过考虑后决定不开启此功能, 如果开启, 建议使用多线程与主搜索函数同步进行
                             if (depth <= (toplevel - KILLSEARCH))
                                 _ValidPosition[_a][_b] *= TestKillPoint(_a, _b);
-
 #endif
-#ifdef ENABLEFBDMOVE //禁手判断
+
+#ifdef ENABLEFBDMOVE //禁手判断, 如果是禁手则标为禁止落子点
                             _ValidPosition[_a][_b] *= !ForbidMove(_a, _b, color);
 #endif
                             if ((defendmode && depth == maxlevel))
@@ -308,7 +310,7 @@ int AlphaBeta(int depth, int color, int alpha, int beta, unsigned long long zob,
             //撤销
             board[a][b] = 0;
 
-            if (depth == toplevel)
+            if (depth == toplevel)//根节点
             {
                 showweight[a][b] = score;
                 //输出推断出的最好情况估分

@@ -13,7 +13,7 @@
 int clearscreen()
 {
     // system("cls");
-    // system("clear");
+    system("clear");
 }
 
 //棋盘使用的是GBK编码，每一个中文字符占用2个字节。

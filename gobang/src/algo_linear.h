@@ -250,7 +250,7 @@ int AlgoLinear(int *ap, int *bp) //Write the position choosed into int* ap,int* 
 
     //在上一个条件不满足时执行:
     //落子在有棋子的区域附近, 以提高效果并加快速度
-    int BoundLim(int a)
+    int BoundLim(int a)//BoundLim的作用是将点坐标转化为合法的坐标, 将超出边界的值转移到边界上
     {
         if (a < 0)
         {
