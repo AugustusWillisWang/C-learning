@@ -18,8 +18,8 @@
 #include "charlib.h" //处理用户输入输出的文本
 #include <malloc.h>
 
-#define INF 10000000
-#define NINF -1000000
+#define INF 100000
+#define NINF -100000
 
 //结构和变量定义
 //global vars.

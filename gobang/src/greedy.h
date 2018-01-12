@@ -400,7 +400,7 @@ int UpdateThreat(int a, int b, int color, int threatcolor)
             addweight = 0;
             break;
         case 2:
-            addweight = 0;
+            addweight = 1;
             break;
         default:
             addweight = 1;

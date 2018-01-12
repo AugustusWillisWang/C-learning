@@ -54,24 +54,24 @@ int ChangeMaxLevel() //按照当前手数对全局变量进行调整
             deeplevelupperbound = 250;
             deeplevel = 9;
             maxneabor = 1;
-#ifdef DEFENDMODE
-            defendmode = 1;
-#endif
         }
         if (cnt == 2)
         {
             maxlevel = 9;
             thinkingupperbound = 200;
             deeplevelupperbound = 200;
-            deeplevel = 6;
+            deeplevel = 10;
             maxneabor = 1;
+#ifdef DEFENDMODE
+            defendmode = 1;
+#endif
         }
         if (cnt == 4)
         {
             maxlevel = 9;
             thinkingupperbound = 200;
             deeplevelupperbound = 200;
-            deeplevel = 4;
+            // deeplevel = 4;
             defendmode = 1;
         }
         if (cnt == 8)
@@ -79,8 +79,8 @@ int ChangeMaxLevel() //按照当前手数对全局变量进行调整
             maxlevel = 9;
             thinkingupperbound = 200;
             deeplevelupperbound = 200;
-            deeplevel = 6;
-            maxneabor = 2;
+            // deeplevel = 6;
+            maxneabor = 1;
         }
         if (cnt == 10)
         {
@@ -98,7 +98,7 @@ int ChangeMaxLevel() //按照当前手数对全局变量进行调整
             deeplevelupperbound = 250;
             deeplevel = 9;
             maxneabor = 1;
-            defendmode = 1;
+            // defendmode = 1;
         }
         if (cnt == 2)
         {
@@ -107,6 +107,9 @@ int ChangeMaxLevel() //按照当前手数对全局变量进行调整
             deeplevelupperbound = 200;
             deeplevel = 6;
             maxneabor = 1;
+#ifdef DEFENDMODE
+            defendmode = 1;
+#endif
         }
         if (cnt == 3)
         {
@@ -121,7 +124,7 @@ int ChangeMaxLevel() //按照当前手数对全局变量进行调整
             thinkingupperbound = 200;
             deeplevelupperbound = 200;
             deeplevel = 9;
-            maxneabor = 2;
+            maxneabor = 1;
         }
         if (cnt == 10)
         {
@@ -131,7 +134,7 @@ int ChangeMaxLevel() //按照当前手数对全局变量进行调整
     }
 }
 
-int GetAroundPosition(int (*_ValidPosition)[BOUNDRY], int depth, int color) //查找可落子点位置, 支持在这里进行禁手判断和其他操作 (旧版)
+int GetAroundPosition(int (*_ValidPosition)[BOUNDRY], int depth, int color, int toplevel) //查找可落子点位置, 支持在这里进行禁手判断和其他操作 (旧版)
 //新版的函数保存了一个全局数组, 每次更新时只处理新落子周围的部分. 新函数在weight.h中
 {
     StartTimer(4);
@@ -169,7 +172,7 @@ int GetAroundPosition(int (*_ValidPosition)[BOUNDRY], int depth, int color) //�
                             // #ifdef ENABLEFBDMOVE //禁手判断, 如果是禁手则标为禁止落子点
                             //                             _ValidPosition[_a][_b] *= !ForbidMove(_a, _b, color);
                             // #endif
-                            if ((defendmode && depth == maxlevel))
+                            if ((defendmode && (depth == toplevel)))
                                 _ValidPosition[_a][_b] *= threat_martix[_a][_b];
                         }
                     }
@@ -249,7 +252,7 @@ int AlphaBeta(int depth, int color, int alpha, int beta, unsigned long long zob,
     int type = 0;                         //若要使用哈希表, 需要保存节点类型
     int valid_position[BOUNDRY][BOUNDRY]; //可用位置
     memset(valid_position, 0, sizeof(valid_position));
-    GetAroundPosition(valid_position, depth, color);            //查找可用位置, 判断禁手, etc
+    GetAroundPosition(valid_position, depth, color, toplevel);  //查找可用位置, 判断禁手, etc
     struct heuristic_element heuristic_list[BOUNDRY * BOUNDRY]; //准备启发式搜索
     memset(heuristic_list, 0, sizeof(heuristic_list));
     int hcnt = 0; //hcnt-1 为最后一个节点的位置
@@ -314,7 +317,7 @@ int AlphaBeta(int depth, int color, int alpha, int beta, unsigned long long zob,
             //走子
             board[a][b] = color;
 #ifdef ENABLEFBDMOVE
-// if(GenerateFBDWeight()!=UpdateFBDWeight(a, b, original_weight))printf("bommmmmmm%d %d\n",GenerateFBDWeight(),UpdateFBDWeight(a, b, original_weight));
+            // if(GenerateFBDWeight()!=UpdateFBDWeight(a, b, original_weight))printf("bommmmmmm%d %d\n",GenerateFBDWeight(),UpdateFBDWeight(a, b, original_weight));
             score = AlphaBeta(depth - 1, Inverse(color), alpha, beta, hashnext, hash2next, toplevel, UpdateFBDWeight(a, b, original_weight)); //搜索, 传入计算好的hash值和估值
 #else
             score = AlphaBeta(depth - 1, Inverse(color), alpha, beta, hashnext, hash2next, toplevel, UpdateWeight(a, b, original_weight)); //搜索, 传入计算好的hash值和估值
@@ -322,7 +325,7 @@ int AlphaBeta(int depth, int color, int alpha, int beta, unsigned long long zob,
             //撤销
             board[a][b] = 0;
 
-            if (depth == toplevel) //根节点
+            if (depth == maxlevel) //根节点
             {
                 showweight[a][b] = score;
                 //输出推断出的最好情况估分
@@ -346,7 +349,7 @@ int AlphaBeta(int depth, int color, int alpha, int beta, unsigned long long zob,
                 beta = score;
                 if (depth == toplevel) //根节点
                 {
-                    showweight[a][b] = score;
+                    // showweight[a][b] = score;
                     bestmoverec.a = a;
                     bestmoverec.b = b;
                     //这是目前找到的最好点
@@ -395,14 +398,14 @@ int AlphaBeta(int depth, int color, int alpha, int beta, unsigned long long zob,
 
             board[a][b] = color;
 #ifdef ENABLEFBDMOVE
-// if(GenerateFBDWeight()!=UpdateFBDWeight(a, b, original_weight))printf("bommmmmmm%d %d\n",GenerateFBDWeight(),UpdateFBDWeight(a, b, original_weight));
+            // if(GenerateFBDWeight()!=UpdateFBDWeight(a, b, original_weight))printf("bommmmmmm%d %d\n",GenerateFBDWeight(),UpdateFBDWeight(a, b, original_weight));
 
             score = AlphaBeta(depth - 1, Inverse(color), alpha, beta, hashnext, hash2next, toplevel, UpdateFBDWeight(a, b, original_weight)); //搜索, 传入计算好的hash值和估值
 #else
             score = AlphaBeta(depth - 1, Inverse(color), alpha, beta, hashnext, hash2next, toplevel, UpdateWeight(a, b, original_weight)); //搜索, 传入计算好的hash值和估值
 #endif
             board[a][b] = 0;
-            if (depth == toplevel)
+            if (depth == maxlevel)
             {
                 showweight[a][b] = score;
                 //输出推断出的最好情况估分

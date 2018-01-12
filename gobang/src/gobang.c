@@ -1,7 +1,7 @@
 //Copyright (c) 2017-2018 Augustus Wang
 //自注释风格的函数和变量名命名, 应该不用太多注释....
 //主程序
-// #define TIMEIT
+#define TIMEIT
 #define TEST
 #include "timer.h"          //性能分析, 计时相关
 #include "support.h"        //棋盘定义, 数据结构定义, 基础情况判断以及其他共用部分, 写成头文件以方便单元测试
@@ -324,7 +324,7 @@ int PveMode() //人机对战
             puts("The board now is:");
             // ShowBoardArray();
             PrintBoard();
-            ShowMove(a, b, colornow); //顺便显示当前走子位置
+            ShowMove(a, b, Inverse(colornow)); //顺便显示当前走子位置
 
             puts("------------------------------------------");
             printf("This is move %d.\n", movecnt);
@@ -339,7 +339,7 @@ int PveMode() //人机对战
                 // scanf("%d%d", &a, &b);
                 getinput(&a, &b);
 #else
-            while (ManualSetUp(a, b, colornow))
+            while (ManualSetUp(a, b, Inverse(colornow))
                 // scanf("%d%d", &a, &b);
                 getinput(&a, &b);
 #endif
