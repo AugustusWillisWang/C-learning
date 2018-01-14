@@ -15,10 +15,10 @@
 // #define WEIGHTHEURISTIC
 #define ENABLEHASH //激活置换表
 #define RANDFST    //首步随机落子
-#define DEFENDMODE //白棋前十步采取守势
+// #define DEFENDMODE //白棋前十步采取守势
 
 #define ENABLEFBDMOVE   //禁手探测 (会极大拖慢速度)
-#define TIMELIMIT 14800 //迭代加深时间限制
+#define TIMELIMIT 3000 //迭代加深时间限制
 
 #include "zobrist.h"   //哈希
 #include "support.h"   //全局变量, 共用函数
@@ -48,23 +48,31 @@ int ChangeMaxLevel() //按照当前手数对全局变量进行调整
     // return 0;
     static int cnt = 0; //子数统计
     cnt++;
-    if (colornow == WHITE)
-    {
-        if (cnt == 1)
-        {
-            maxlevel = 8;
-            thinkingupperbound = 250;
-            deeplevelupperbound = 250;
-            deeplevel = 9;
-            maxneabor = 1;
-        }
-        if (cnt == 2)
-        {
-            maxlevel = 9;
-            thinkingupperbound = 200;
-            deeplevelupperbound = 200;
-            deeplevel = 10;
-            maxneabor = 1;
+
+#ifdef WEIGHTHEURISTIC
+            thinkingupperbound = 10;
+            deeplevelupperbound = 7;
+            deeplevel = 4;
+            maxlevel = 12;
+            return 0;
+#endif
+            if (colornow == WHITE)
+            {
+                if (cnt == 1)
+                {
+                    maxlevel = 8;
+                    // thinkingupperbound = 250;
+                    // deeplevelupperbound = 250;
+                    deeplevel = 9;
+                    maxneabor = 1;
+                }
+                if (cnt == 2)
+                {
+                    maxlevel = 9;
+                    // thinkingupperbound = 200;
+                    // deeplevelupperbound = 200;
+                    deeplevel = 10;
+                    maxneabor = 1;
 #ifdef DEFENDMODE
             defendmode = 1;
 #endif
@@ -72,16 +80,16 @@ int ChangeMaxLevel() //按照当前手数对全局变量进行调整
         if (cnt == 4)
         {
             maxlevel = 9;
-            thinkingupperbound = 200;
-            deeplevelupperbound = 200;
+            // thinkingupperbound = 200;
+            // deeplevelupperbound = 200;
             // deeplevel = 4;
             defendmode = 1;
         }
         if (cnt == 8)
         {
             maxlevel = 9;
-            thinkingupperbound = 200;
-            deeplevelupperbound = 200;
+            // thinkingupperbound = 200;
+            // deeplevelupperbound = 200;
             // deeplevel = 6;
             maxneabor = 1;
         }
@@ -98,8 +106,8 @@ int ChangeMaxLevel() //按照当前手数对全局变量进行调整
         if (cnt == 1)
         {
             maxlevel = 9;
-            thinkingupperbound = 250;
-            deeplevelupperbound = 250;
+            // thinkingupperbound = 250;
+            // deeplevelupperbound = 250;
             deeplevel = 9;
             maxneabor = 1;
             // defendmode = 1;
@@ -107,8 +115,8 @@ int ChangeMaxLevel() //按照当前手数对全局变量进行调整
         if (cnt == 2)
         {
             maxlevel = 9;
-            thinkingupperbound = 200;
-            deeplevelupperbound = 200;
+            // thinkingupperbound = 200;
+            // deeplevelupperbound = 200;
             deeplevel = 6;
             maxneabor = 1;
             // #ifdef DEFENDMODE
@@ -148,14 +156,14 @@ int GetAroundPosition(int (*_ValidPosition)[BOUNDRY], int depth, int color, int 
     memset(checked, 0, sizeof(checked));
     memset(_ValidPosition, 0, sizeof(int) * BOUNDRY * BOUNDRY);
 
-    if (depth == toplevel)
-    {
-        if (haveonekill)
-        {
-            memcpy(_ValidPosition, onekillmove, sizeof(onekillmove));
-            return 1;
-        }
-    }
+    // if (depth == toplevel)
+    // {
+    //     if (haveonekill)
+    //     {
+    //         memcpy(_ValidPosition, onekillmove, sizeof(onekillmove));
+    //         return 1;
+    //     }
+    // }
     StartTimer(4);
 
     for (int a = 0; a < BOUNDRY; a++)

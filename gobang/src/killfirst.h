@@ -119,7 +119,7 @@ int TestOneStepKill(int colornow)
                 board[a][b] = 0;
                 if (result.fbd == 0)
                 {
-                    if (Abs(result.weight) > 1400)
+                    if (Abs(result.weight) > 800)
                     {
                         haveonekill = 1;
                         onekillmove[a][b] = 1;

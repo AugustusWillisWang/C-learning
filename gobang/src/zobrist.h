@@ -6,7 +6,7 @@
 
 #include <stdlib.h>
 #define SEED 233
-#define HASHSIZE 0x0FFFFFF
+#define HASHSIZE 0x02FFFFFF
 #include "support.h"
 #include "MersenneTwisterRand.h"
 //使用梅森旋转法生成随机数, 而非C99自带的实现

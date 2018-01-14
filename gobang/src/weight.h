@@ -12,6 +12,18 @@
 #define EDGE 3 //越棋盘界
 
 //这里的权值是随便赋的, 反正能用就行
+// #define WEIGHT1_2SIDE 1  //一子2气
+// #define WEIGHT2_2SIDE 40 //二子2气
+// #define WEIGHT3_2SIDE 200
+// #define WEIGHT4_2SIDE 2000
+// #define WEIGHT1_1SIDE 0 //1子1气
+// #define WEIGHT2_1SIDE 4
+// #define WEIGHT3_1SIDE 40
+// #define WEIGHT4_1SIDE 200
+
+// #define WEIGHT5 100000
+// #define BIG_WEIGHT 80000
+
 #define WEIGHT1_2SIDE 1  //一子2气
 #define WEIGHT2_2SIDE 40 //二子2气
 #define WEIGHT3_2SIDE 200
