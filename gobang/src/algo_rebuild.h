@@ -4,7 +4,6 @@
 //常量定义
 #define ALGO_FINAL 3
 #define EDGE 3
-
 //程序设置
 #define LEVEL 10 //最大搜索层数
 #define NEABOR 2 //for GetAroundPosition(), 落子时只考虑已有棋子边NEABOR个点
