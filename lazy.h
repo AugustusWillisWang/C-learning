@@ -28,7 +28,7 @@
 //签名
 #endif
 
-#define LICENSE (printf("\n%s\n", __FILE__), printf("Copyright (c) 2018 Augustus Wang\n"), printf("Compiled on %s at %s\n\n", __DATE__, __TIME__))
+#define LICENSE (printf("\n%s\n", __FILE__), printf("Copyright (c) 2018 Augustus Wang (Wang Huaqiang) \n"), printf("Compiled on %s at %s\n\n", __DATE__, __TIME__))
 //签名
 
 
@@ -83,7 +83,7 @@ int M_GETLINE(char s[],int lim){
     return i;
 }
 
-int SHOW(void* array,char* type,int length){
+int SHOW(void* array,char* type,int length){//显示一维数组
     if(!strcmp(type,"int")){
         int *point = (int *)array;
         for (int i = 0; i < length; i++)
@@ -108,7 +108,7 @@ int SHOW(void* array,char* type,int length){
         {
                 if(i%10==0)
                     puts("");
-                printf("%d ", *(point + i));
+                printf("%f ", *(point + i));
         }
         puts("");
     }else if(!strcmp(type,"char")){
@@ -126,23 +126,5 @@ int SHOW(void* array,char* type,int length){
     }
 }
 
-char *M_REVERSE(char *str)
-{
-    int length = 0;
-    while (str[length] != '\0')
-        length++;
-    // CK(length);
-    int first = 0;
-    int last = length - 1;
-    while (first < last)
-    {
-        char temp = str[last];
-        str[last] = str[first];
-        str[first] = temp;
-        first++;
-        last--;
-    }
-    return str;
-}
 
 #endif
